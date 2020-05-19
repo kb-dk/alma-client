@@ -48,8 +48,8 @@
         <!--      <api.check.phase>process-classes</api.check.phase>-->
 
 
-        <spring-version>5.1.9.RELEASE</spring-version>
-        <cxf-version>3.3.5</cxf-version>
+        <cxf.version>3.3.5</cxf.version>
+        <jackson.version>2.9.10</jackson.version>
 
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
@@ -59,85 +59,42 @@
 
 
     <dependencies>
-        <!--Utilities-->
-        <dependency>
-            <groupId>dk.statsbiblioteket.sbutil</groupId>
-            <artifactId>sbutil-common</artifactId>
-            <version>0.5.56</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
-        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>29.0-jre</version>
         </dependency>
 
-        <!--Logging-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
-        <dependency>
-            <!--Pulls in all the cxf we need for the rest servlet and openapi-->
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
-            <version>${cxf-version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.activation</artifactId>
-                    <groupId>com.sun.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javax.activation</artifactId>
-                    <groupId>com.sun.activation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
         <dependency>
             <!--For the alma rest client-->
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>${cxf-version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.activation</artifactId>
-                    <groupId>com.sun.activation</groupId>
-                </exclusion>
-            </exclusions>
+            <version>${cxf.version}</version>
         </dependency>
-
-
-
-        <!-- Apache CXF from Java 11 on - see https://stackoverflow.com/questions/55476331/tomcat8-5-and-openjdk11-noclassdeffounderror-could-not-initialize-class-org-apa -->
         <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>jakarta.activation</artifactId>
-            <version>1.2.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
 
 
 
@@ -155,6 +112,60 @@
     <build>
 
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>2.3.3</version>
+                        </path>
+                        <path>
+                            <groupId>com.google.guava</groupId>
+                            <artifactId>guava-beta-checker</artifactId>
+                            <version>1.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <!-- Remove -XepDisableAllChecks to keep all checks enabled -->
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:BetaApi:ERROR</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Disable Beta Checker for tests
+                                 NOTE: in this specific case, we could just NOT enable Error Prone at all -->
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <!-- Remove -XepDisableAllChecks to keep all checks enabled -->
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:BetaApi:OFF</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
