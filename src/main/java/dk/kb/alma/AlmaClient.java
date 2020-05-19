@@ -16,20 +16,29 @@ import dk.kb.alma.gen.User;
 import dk.kb.alma.gen.UserRequest;
 import dk.kb.alma.gen.UserRequests;
 import dk.kb.alma.gen.WebServiceResult;
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.jaxrs.client.ClientConfiguration;
+import org.apache.cxf.jaxrs.client.ClientProperties;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.RedirectionException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
@@ -58,14 +67,24 @@ public class AlmaClient {
     private final String almaEnvType;
     private final String almaHost;
 
+    private final int connectTimeout;
+    private final int readTimeout;
+    
     public AlmaClient(String almaTarget, String alma_apikey, long minSleep, long sleepVariation, String lang)
+            throws AlmaConnectionException {
+        this(almaTarget,alma_apikey, minSleep, sleepVariation,lang, 3000,3000);
+    }
+    
+    public AlmaClient(String almaTarget, String alma_apikey, long minSleep, long sleepVariation, String lang, int connectTimeout, int readTimeout)
         throws AlmaConnectionException {
         this.almaTarget = almaTarget;
         this.alma_apikey = alma_apikey;
         this.minSleepMillis = minSleep;
         this.sleepVariationMillis = sleepVariation;
         this.lang = lang;
-
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
+    
         int cacheSize = 1000;
         cache = CacheBuilder.newBuilder()
                             .maximumSize(cacheSize)
@@ -96,9 +115,13 @@ public class AlmaClient {
 
     public WebClient getWebClient(URI link) {
         URI host = UriBuilder.fromUri(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
-
+    
+        
         WebClient client = WebClient.create(host);
-
+        HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+        conduit.getClient().setConnectionTimeout(connectTimeout);
+        conduit.getClient().setReceiveTimeout(readTimeout);
+        
         if (link.getPath() != null) {
             client = client.path(link.getPath());
         }
@@ -174,6 +197,18 @@ public class AlmaClient {
                 WebClient webClient = link.replaceQueryParam(APIKEY, alma_apikey);
                 value = webClient.invoke(operation.name(), entity, type);
                 log.trace("{}ed on {}", operation, currentURI);
+            } catch (Fault | ProcessingException e){
+                //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
+                // but better safe than sorry
+                
+                //This checks if any exception in the hierachy is a socket timeout exception.
+                List<Throwable> causes = getCauses(e);
+                if (causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
+                    sleep("Socket timeout exception for '"+currentURI+"'");
+                    return invoke(link, type, entity, useCache, operation);
+                } else {
+                    throw new RuntimeException("Failed to retrieve '" + currentURI + "'", e);
+                }
             } catch (RedirectionException e) {
                 URI redirectLocation = e.getLocation();
                 log.debug("Redirecting {} to {}", operation, redirectLocation.getPath());
@@ -194,7 +229,7 @@ public class AlmaClient {
                     return invoke(newLink, type, entity, useCache, operation);
                 }
             } catch (WebApplicationException e) {
-                if (rateLimitSleep(e)) {
+                if (rateLimitSleep(e, currentURI)) {
                     return invoke(link, type, entity, useCache, operation);
                 }
 
@@ -252,8 +287,18 @@ public class AlmaClient {
             lock.unlock();
         }
     }
-
-
+    
+    private List<Throwable> getCauses(Throwable throwable) {
+        List<Throwable> result = new ArrayList<>();
+        Throwable current = throwable;
+        while (current != null){
+            result.add(current);
+            current = current.getCause();
+        }
+        return result;
+    }
+    
+    
     /**
      * If the exception is a rate-limit, then sleep for the defined time and return true.
      * Otherwise return false immediately
@@ -267,20 +312,23 @@ public class AlmaClient {
      * @see #minSleepMillis
      * @see #sleepVariationMillis
      */
-    private boolean rateLimitSleep(WebApplicationException e) {
+    private boolean rateLimitSleep(WebApplicationException e, URI currentURI) {
         if (429 == e.getResponse().getStatusInfo().getStatusCode()) {
-            long sleepTimeMillis = minSleepMillis + Math.round(Math.random() * sleepVariationMillis);
-            log.warn("Received response status 429, rate-limiting, so backing off for {} seconds",
-                     Math.round(sleepTimeMillis / 1000.0));
-            try {
-                Thread.sleep(sleepTimeMillis);
-            } catch (InterruptedException ex) {
-            }
+            sleep("Received response status 429(rate-limiting) for '"+currentURI+"'");
             return true;
         }
         return false;
     }
-
+    
+    
+    private void sleep(String s) {
+        long sleepTimeMillis = minSleepMillis + Math.round(Math.random() * sleepVariationMillis);
+        log.warn(s+", so backing off for {} seconds", Math.round(sleepTimeMillis / 1000.0));
+        try {
+            Thread.sleep(sleepTimeMillis);
+        } catch (InterruptedException ex) {
+        }
+    }
 
     public Item getItem(String barcode) throws AlmaConnectionException {
         return get(constructLink()
@@ -562,16 +610,6 @@ public class AlmaClient {
 
         return get(link, CodeTable.class);
     }
-
-
-    private class AlmaError {
-        String errorCode, errorMessage;
-
-        public AlmaError(String errorCode, String errorMessage) {
-            this.errorCode = errorCode;
-            this.errorMessage = errorMessage;
-        }
-    }
-
-
+    
+    
 }
