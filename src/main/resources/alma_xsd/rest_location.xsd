@@ -1,0 +1,164 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:documentation>A location in Alma represents a physical location in a library. This location might be used
+            for storing physical items.
+        </xs:documentation>
+    </xs:annotation>
+
+	<xs:element name="location2" type="location2" />
+
+	<xs:complexType name="location2">
+        <xs:annotation>
+            <xs:documentation>Location Object.</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get</xs:tags>
+                        <xs:example>LOC1</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The location code. Should be
+                        used in subsequent queries regarding the location.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:example>LOC1 location</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The location name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="external_name" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>If defined, this is the name which will be displayed to end users.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="type" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:codeTable>HLocation.locationType</xs:codeTable>
+                        <xs:example>OPEN</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The location type code. Optional.
+                        Possible codes are OPEN/CLOSED/REMOTE as listed in the 'HLocation.locationType'
+                        code-table.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="remote_storage" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Remote Storage code.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="map" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The map ID.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:example>true</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Indication whether the records in this location should be suppressed from
+                        Discovery.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fulfillment_unit" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:example>FU1</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        The related fulfillment unit's code. The fulfillment unit defines the policy rule to be applied
+                        when circulating items from this location.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="accession_placement" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:codeTable>accessionPlacementsOptions</xs:codeTable>
+                        <xs:example>852p</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        The MARC subfield to use for accession number.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="call_number_type" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The method in which the call number is generated.
+                    </xs:documentation>
+                    <xs:appinfo>
+                        <xs:tags>api get put</xs:tags>
+                        <xs:codeTable>CallNumberType</xs:codeTable>
+                        <xs:example>#</xs:example>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="link" type="xs:string" use="optional"/>
+
+    </xs:complexType>
+</xs:schema>
+

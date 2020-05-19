@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>A collection of User Requests</xs:documentation>
+	</xs:annotation>
+
+	<xs:include schemaLocation="rest_user_request.xsd" />
+
+	<xs:element name="user_requests" type="user_requests" />
+
+	<xs:complexType name="user_requests">
+		<xs:annotation>
+			<xs:documentation>A collection of Requests.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="user_request" type="user_request">
+				<xs:annotation>
+					<xs:documentation>A User Request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="total_record_count" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The total number of requests. This can be used when
+					retrieving the list using pagination.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

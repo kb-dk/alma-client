@@ -1,0 +1,109 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:documentation>A library in Alma represents a physical library in the institution, which gives library
+            services.
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="library" type="library"/>
+
+    <xs:complexType name="library">
+        <xs:annotation>
+            <xs:documentation>Library Object.</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="code" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>MAIN</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The library code. Should be
+                        used in subsequent queries regarding the library.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="path" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>API_GUEST.API_GUEST_INST.MAIN</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Full path of codes identifying the library technically.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>Main library</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The library name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>Supports undergraduate level programs</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The library description.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="resource_sharing" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>false</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Indication whether the library is defined as a Resource Sharing Library.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="campus" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>MAINCAMPUS</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Code of the campus to which the library belongs.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="proxy" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The proxy.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="default_location" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>main</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Code of the library default location.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="link" type="xs:string" use="optional"/>
+    </xs:complexType>
+</xs:schema>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation>Code Tables in Alma contains list of codes and their related description.
+When using Alma RESTful API, codes should be sent to the system.
+Descriptions are usually returned in the GET action as a "desc" attribute of the relevant field.
+Code Tables are usually defined in the scope of the institution. There are few Code Tables that might be defined in the scope of a library - e.g. Item Policy.
+Descriptions in the Code Table might be in any of the institution's languages.
+Examples of code tables: PhysicalMaterialTypeJobTitles , UserGroups , UserBlockTypes.
+See [Working with the code tables API|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API] for more details.
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="code_table" type="code_table"/>	
+
+	<xs:complexType name="code_table">
+		<xs:annotation>
+			<xs:documentation>Code Table Object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The code table name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The code table's related description.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sub_system" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>Sub Systems</xs:codeTable>
+						<xs:example>ALL</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The code table's related sub system.
+Possible codes are listed in 'Sub Systems' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="patron_facing" type="xs:boolean"
+				minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indication whether the code table is patron facing or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="updated_by" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The last staff user which updated the code table. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="update_date" type="xs:date" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The last date in which the code table was updated. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="language" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The language in which the code table is retrieved.
+Default is the institution's default language ("default_language" in the "Customer Parameters" code table).
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="scope" type="scope" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Code Tables are usually defined in the scope of the institution.
+There are few Code Tables that might be defined in the scope of a library - e.g. Item Policy.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rows" type="rows" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The code table's rows.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="scope">
+		<xs:sequence>
+			<xs:element name="institution_id" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The institution in which the code table is defined.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="library_id" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The library in which the code table is defined.
+						Relevant only for Code Tables that might be defined in the scope of a library - e.g. Item Policy.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="rows">
+		<xs:annotation>
+			<xs:documentation>The code table's rows.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="row" type="row" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Specific code table's row.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="row">
+		<xs:annotation>
+			<xs:documentation>Specific code table's row.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="code" type="xs:string" maxOccurs="1"
+				minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string" maxOccurs="1"
+				minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="default" type="xs:boolean" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indication if this is the default row. Optional.
+						Default is False.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enabled" type="xs:boolean" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indication if this is an enabled row. Optional.
+						Default is True.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="updated_by" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The last staff user which updated the row. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="update_date" type="xs:date" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The last date in which the row was updated.
+						Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

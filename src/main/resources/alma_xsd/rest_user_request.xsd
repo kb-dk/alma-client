@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>A resource request.
+			This can be a request for delivering a physical item to a patron (request types: HOLD,BOOKING),
+			a request for digitizing a file for a patron (DIGITIZATION),
+			a move request (MOVE) or work order (WORK_ORDER).
+			A request object can be retrieved, created and updated.
+			Currently only HOLD, DIGITIZATION and BOOKING can be created by API.
+			Note that the request object includes fields which are relevant only for specific request type(s).
+		</xs:documentation>
+	</xs:annotation>
+
+    <xs:element name="user_request" type="user_request"/>
+
+	<xs:complexType name="user_request">
+		<xs:annotation>
+			<xs:documentation>Request object.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="user_primary_id" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>100005</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The primary identifier of the requesting user. Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="request_id" type="xs:string" nillable="false"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>950621550000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The identifier of the request in Alma. Output parameter.
+Should be used in subsequent queries regarding the request.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="request_type" type="request_types"
+				minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>HOLD</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The type of the request. Mandatory.
+					GET action: Possible values are: HOLD, DIGITIZATION, BOOKING, MOVE, WORK_ORDER.
+					POST action: Possible values are: HOLD, DIGITIZATION, BOOKING.
+					Note that it is currently NOT possible to create GENERAL_DIGITIZATION, MOVE or WORK_ORDER request.
+					PUT action: This field cannot be updated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="request_sub_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>PATRON_PHYSICAL</xs:example>
+						<!-- 						<xs:codeTable>PlanTypeDefinition</xs:codeTable>  -->
+					</xs:appinfo>
+					<xs:documentation>The sub type of the request. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Patron physical item request</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="mms_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1244570001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Bibliographic record identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="title" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>University of New Hampshire law review</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The title of the requested resource. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="author" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>John Smith</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The author of the requested resource. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+					<xs:example></xs:example>
+						<xs:tags>api post put get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The description of the requested resource when dealing with multi volume/issue resource.
+					For item level requests this is an output parameter.
+					When creating or updating a request for a specific periodical resource, the request is title level, but the specific volume/issue requested is input using this description field (e.g. "v.30, #4 Dec, 1966"). Please note that this field is sensitive to case and white spaces.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="manual_description" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+					<xs:example></xs:example>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The manual description of the requested resource.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pickup_location" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Resource Sharing Library</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Description of the pickup location (library or circulation desk) where the resource will be delivered.
+					Output parameter.
+					Not relevant when request_type = DIGITIZATION.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pickup_location_type" type="pickup_location_types"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>LIBRARY</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The pickup location type.
+					Possible values are: LIBRARY, CIRCULATION_DESK, USER_WORK_ADDRESS, USER_HOME_ADDRESS.
+					Relevant and mandatory when request_type = HOLD or BOOKING.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pickup_location_library" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>RES_SHARE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The pickup location library code.
+Relevant and mandatory when request_type = HOLD or BOOKING.
+see [Get libraries API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed].
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pickup_location_circulation_desk" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The pickup location circulation desk code.
+						Relevant when request_type = HOLD or BOOKING, if pickup_location_type = CIRCULATION_DESK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="target_destination" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>digi_departments</xs:codeTable>
+						<xs:example>DIGI_DEPT_INST</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The code of the department chosen to fulfill the digitization or work order request.
+					A list of relevant departments can be retrieved using GET /almaws/v1/conf/departments?Type=DIGI</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="material_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>PhysicalMaterialType</xs:codeTable>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The requested material type code. Optional.
+						Possible codes are listed in 'Physical Material Type' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+This field is output parameter when the request is in item level, and input parameter when the request is in title level.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="last_interest_date" type="xs:date"
+				nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2013-12-13Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The last date for which the request is needed. Optional.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="partial_digitization" type="xs:boolean"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the digitization is partial or full.
+Relevant and mandatory when request_type = DIGITIZATION.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chapter_or_article_title" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The title of the chapter or article.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chapter_or_article_author" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>John Smith</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The author of the chapter or article.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="required_pages" type="required_pages" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The pages required for digitization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="full_chapter" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the full chapter is requested for digitization. Valid options are: true of false (lower case).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="comment" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>your request is important to us.</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The related note of the request.
+Mandatory when request_type = DIGITIZATION and partial_digitization is true.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="request_status" type="request_status"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Not Started</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The status of the request.
+Possible values are: In Process, On Hold Shelf, Not Started. Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="place_in_queue" type="xs:int" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The place in queue of the request.
+					Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="request_date" type="xs:date" nillable="false"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2013-11-12Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Deprecated - use request_time instead. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="request_time" type="xs:dateTime" nillable="false"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2013-11-12T14:59:59.000Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The creation date and  exact time of the request. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="task_name" type="xs:string" nillable="false"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The task name.
+					Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="expiry_date" type="xs:date" nillable="false"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2030-01-16Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The expiry date of the request.
+					Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="booking_start_date" type="xs:dateTime"
+				nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2017-05-03Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The start date in which the request is needed.
+						Relevant and mandatory when request_type = BOOKING.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="booking_end_date" type="xs:dateTime"
+				nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2020-05-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The end date in which the request is needed.
+						Relevant and mandatory when request_type = BOOKING.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="adjusted_booking_start_date" type="xs:dateTime"
+				nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2017-05-03Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The actual start date of the request, as calculated by the system.
+Relevant when request_type = BOOKING.
+Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="adjusted_booking_end_date" type="xs:dateTime"
+				nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2020-05-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The actual end date of the request, as calculated by the system.
+Relevant when request_type = BOOKING.
+Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="destination_location" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The location in the library to which the item is to be moved.
+					Relevant when request_type = MOVE.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="call_number_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>CallNumberType</xs:codeTable>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The call number type of the holding to which the item is to be moved.
+					Relevant when request_type = MOVE.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="call_number" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The call number of the holding to which the item is to be moved.
+					Relevant when request_type = MOVE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="item_policy" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>ItemPolicy</xs:codeTable>
+						<xs:example>09</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item policy to be applied in the new location.
+					Relevant when request_type = MOVE.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="due_back_date" type="xs:date" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2020-05-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item is due back.
+					Relevant when request_type = MOVE and request_sub_type = MOVE_TO_TEMPORARY.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="item_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>4583210001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Item pid of the request's related item.
+					Output parameter.
+					Relevant only when the request is in item level or is bound to a single item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="barcode" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>00023705571000021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Barcode of the request's related item.
+					Output parameter.
+					Relevant only when the request is in item level or is bound to a single item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="resource_sharing" type="resource_sharing" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The related resource sharing request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="copyrights_declaration_signed_by_patron" type="xs:boolean"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether copyrights declaration was signed by patron.
+					 Relevant for patron digitization requests only.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="resource_sharing">
+		<xs:annotation>
+		     <xs:appinfo>
+                <xs:tags>api get</xs:tags>          
+            </xs:appinfo>
+			<xs:documentation>The resource sharing request information.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="id" type="xs:string" nillable="false" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>321100452871021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The identifier of the resource sharing request in Alma.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="status" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>ACTIVE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The code of the resource sharing request status.
+					Comes from the MandatoryBorrowingWorkflowSteps or OptionalBorrowingWorkflowSteps code tables.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="required_pages">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get put post</xs:tags>
+				<xs:example>0</xs:example>
+			</xs:appinfo>
+			<xs:documentation>The pages required for the digitization.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="required_pages_range" type="page_range" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get put post</xs:tags>
+							<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The ranges of pages requested for digitization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="page_range">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get put post</xs:tags>
+				<xs:example></xs:example>
+			</xs:appinfo>
+			<xs:documentation>A range of pages.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="from_page" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="to_page" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:all>
+	</xs:complexType>
+<!--    <xs:simpleType name="request_types">-->
+<!--        <xs:restriction base="xs:string">-->
+<!--            <xs:enumeration value="HOLD"/>-->
+<!--            <xs:enumeration value="BOOKING"/>-->
+<!--            <xs:enumeration value="DIGITIZATION"/>-->
+<!--            <xs:enumeration value="MOVE"/>-->
+<!--            <xs:enumeration value="WORK_ORDER"/>-->
+<!--        </xs:restriction>-->
+<!--    </xs:simpleType>-->
+	<xs:simpleType name="pickup_location_types">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LIBRARY"/>
+			<xs:enumeration value="CIRCULATION_DESK"/>
+			<xs:enumeration value="USER_WORK_ADDRESS"/>
+			<xs:enumeration value="USER_HOME_ADDRESS"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="request_status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="In Process"/>
+			<xs:enumeration value="On Hold Shelf"/>
+			<xs:enumeration value="Not Started"/>
+			<xs:enumeration value="History"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

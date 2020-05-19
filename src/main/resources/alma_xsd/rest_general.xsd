@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>General Configuration</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="general" type="general" />
+
+	<xs:complexType name="general">
+		<xs:annotation>
+			<xs:documentation>General Configuration</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="institution" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>01MY_INST</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Institution.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="alma_url" type="xs:string" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>https://na01.alma.exlibrisgroup.com:1443/</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Alma backoffice URL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="environment_type" type="xs:string"
+				minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>production</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Type of environment (production or sandbox).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="digital" type="digital">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Digital related configuration.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="digital">
+		<xs:sequence>
+			<xs:element name="bucket" type="xs:string" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>na-st01.ext.exlibrisgroup.com</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Bucket name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="region" type="xs:string" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>us-east-1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>AWS region.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ingest_url" type="xs:string" minOccurs="1"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>https://s3.amazonaws.com/na-st01.ext.exlibrisgroup.com</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Ingest URL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="delivery_url" type="xs:string"
+				minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>https://na-st01.ext.exlibrisgroup.com</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Delivery URL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

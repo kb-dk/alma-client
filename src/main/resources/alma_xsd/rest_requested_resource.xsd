@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>A requested resource is a physical
+            material that should be picked from the shelf in order to fulfill a request.
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="requested_resource" type="requested_resource"/>
+
+    <xs:complexType name="requested_resource">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Requested resource to be picked from the shelf.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="resource_metadata" type="resource_metadata"
+                        minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                    </xs:appinfo>
+                    <xs:documentation>Metadata about the requested resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="location" type="location" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Location of the requested resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="requests" type="requests" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                    </xs:appinfo>
+                    <xs:documentation>Requests for the resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="resource_metadata">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Metadata about the requested resource.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="mms_id" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The MMS id of the resource.
+                        See [GET BIB
+                        API|https://developers.exlibrisgroup.com/alma/apis/bibs/GET/gwPcGly021om4RTvtjbPleCklCGxeYAf3JPdiJpJhUA=/af2fb69d-64f4-42bc-bb05-d8a0ae56936e].
+                    </xs:documentation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>99102122810001021</xs:example>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="link" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>Sources of the self : the making of the modern identity / Charles Taylor.
+                        </xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The resource title.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="author" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>Taylor, Charles, 1931-</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>An entity primarily responsible for making the
+                        resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="issn" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>ISSN</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="isbn" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>0674824253 (alk. paper)</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>ISBN</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="publisher" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>Harvard University</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>An entity responsible for making the resource
+                        available.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="publication_place" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>Cambridge, Mass. :</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Place of publication.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="publication_year" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>1989</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The year associated with the publication of the
+                        resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="location">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Location of the requested resource.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="holding_id" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Holding pid, a unique holding id that the
+                        resource is associated with.
+                    </xs:documentation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>22321797490001021</xs:example>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="link" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="library" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>TML</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Library of the requested resource.
+                        See [Get libraries
+                        API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed].
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="call_number" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>BD450 .T266 1989</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Call number of the item.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="shelving_location" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>STACK</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The location.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="copies" type="copies" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                    </xs:appinfo>
+                    <xs:documentation>Physical copies of resource in a specific location.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="copies">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Copies of resource in a specific location.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="copy" type="copy" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                    </xs:appinfo>
+                    <xs:documentation>Specific copy of resource in a specific location.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="copy">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Specific copy of resource in a specific location.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="pid" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>23321797470001021</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The resource's pid.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="barcode" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>38751000062809</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The item's barcode.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="base_status" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:codeTable>BaseStatus</xs:codeTable>
+                        <xs:example>0</xs:example>
+                        <xs:documentation>The item's basic status: In place / Not in
+                            place. Possible codes are listed in 'BaseStatus' [code
+                            table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+                        </xs:documentation>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="alternative_call_number" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Alternative call number.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="storage_location_id" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get</xs:tags>
+                        <xs:example>159111000</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The item's storage location id.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="link" type="xs:string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="requests">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+                <xs:example>/almaws/v1/bibs/99102122810001021/holding/22321797490001021/items/2332179747001021
+                </xs:example>
+            </xs:appinfo>
+            <xs:documentation>Requests for resource.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="request" type="request" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Request for the specific resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="request">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Request object.</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>1117421001021</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The identifier of the request in Alma.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="request_type" type="request_types" minOccurs="1"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                    </xs:appinfo>
+                    <xs:documentation>The type of the request. Mandatory.
+                        Possible values are:
+                        HOLD, DIGITIZATION, BOOKING, MOVE, WORK_ORDER. This
+                        field cannot be updated.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="request_sub_type" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The sub type of the request.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="destination" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example></xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The destination will be a library in most cases. However, it may at times be:
+                        A circulation desk (when the pickup location is a reading room)
+                        A Home/Office code, where the request is for personal delivery
+                        A Work Order department
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="request_date" type="xs:date" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>2015-05-05Z</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Deprecated - use request_time instead. The request date.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="request_time" type="xs:dateTime" nillable="false"
+                        minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get</xs:tags>
+                        <xs:example>2013-11-12T14:59:59.000Z</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The creation date and exact time of the request. Output parameter.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="requester" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>A description of the requester.
+                    </xs:documentation>
+                    <xs:appinfo>
+                        <xs:tags>api get post</xs:tags>
+                        <xs:example>John Smith</xs:example>
+                    </xs:appinfo>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string" use="optional"/>
+                            <xs:attribute name="link" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="comment" type="xs:string" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get</xs:tags>
+                        <xs:example>your request is important to us</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The related note of the request.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="printed" type="xs:boolean" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get</xs:tags>
+                        <xs:example>true</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Indication whether the request is printed.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reported" type="xs:boolean" minOccurs="0"
+                        maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get</xs:tags>
+                        <xs:example>true</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Indication whether the request is reported.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="link" type="xs:string" use="optional"/>
+    </xs:complexType>
+    <xs:simpleType name="request_types">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BOOKING"/>
+            <xs:enumeration value="DIGITIZATION"/>
+            <xs:enumeration value="HOLD"/>
+            <xs:enumeration value="MOVE"/>
+            <xs:enumeration value="WORK_ORDER"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

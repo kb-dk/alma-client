@@ -1,0 +1,32 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:documentation>List of the institution's libraries.</xs:documentation>
+    </xs:annotation>
+
+    <xs:include schemaLocation="rest_library.xsd"/>
+
+    <xs:element name="libraries" type="libraries"/>
+
+    <xs:complexType name="libraries">
+        <xs:annotation>
+            <xs:documentation>A list of libraries.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="library" type="library">
+                <xs:annotation>
+                    <xs:documentation>library object.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+
+        <xs:attribute name="total_record_count" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The total number of libraries.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+
+</xs:schema>

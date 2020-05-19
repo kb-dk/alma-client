@@ -14,13 +14,11 @@
     <artifactId>alma-client</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>digitization-on-demand-client</name>
 
 
     <scm>
-        <url>https://sbprojects.statsbiblioteket.dk/stash/projects/SSYS/repos/kb-dod/browse</url>
-        <connection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/kb-dod.git</connection>
-        <developerConnection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/kb-dod.git</developerConnection>
+        <connection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</connection>
+        <developerConnection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</developerConnection>
     </scm>
 
     <repositories>
@@ -95,20 +93,8 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <version>1.7.25</version>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-        </dependency>
 
 
-        <!-- Web -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
         <dependency>
             <!--Pulls in all the cxf we need for the rest servlet and openapi-->
@@ -144,26 +130,7 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <!--For the swagger UI-->
-            <groupId>org.webjars</groupId>
-            <artifactId>swagger-ui</artifactId>
-            <version>3.25.0</version>
-        </dependency>
 
-
-        <!--Spring for wiring everything together-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring-version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-jcl</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <!-- Apache CXF from Java 11 on - see https://stackoverflow.com/questions/55476331/tomcat8-5-and-openjdk11-noclassdeffounderror-could-not-initialize-class-org-apa -->
         <dependency>
@@ -172,17 +139,6 @@
             <version>1.2.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>1.6.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>activation</artifactId>
-                    <groupId>javax.activation</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
 
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
@@ -193,34 +149,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-engine -->
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-engine</artifactId>
-            <version>1.5.2</version>
-            <scope>test</scope>
-        </dependency>
 
 
     </dependencies>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>conf</directory>
-                <excludes>
-                    <exclude>logback.xml</exclude>
-                </excludes>
-            </testResource>
-        </testResources>
+
         <plugins>
 
             <plugin>
@@ -295,62 +228,7 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <tarLongFileMode>posix</tarLongFileMode>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptors>
-                        <descriptor>src/main/assembly/assembly.xml</descriptor>
-                    </descriptors>
-                    <attach>true</attach>
-                </configuration>
-            </plugin>
 
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/jetty-res</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/jetty</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>10.0.0.alpha1</version>
-                <configuration>
-                    <useTestScope>true</useTestScope>
-                    <webApp>
-                        <contextPath>/${project.artifactId}/</contextPath>
-                        <descriptor>${project.basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
-                        <jettyEnvXml>${project.basedir}/target/jetty-res/jetty-env.xml</jettyEnvXml>
-                    </webApp>
-                </configuration>
-            </plugin>
 
         </plugins>
 

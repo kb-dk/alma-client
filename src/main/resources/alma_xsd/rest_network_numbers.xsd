@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:element name="network_numbers" type="network_numbers"/>
+
+	<xs:complexType name="network_numbers">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>The control numbers of this bibliographic record. Output parameter.
+Returned only when view=label.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="network_number" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>
