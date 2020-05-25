@@ -1,10 +1,14 @@
 package dk.kb.alma.locks;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AutoClosableLocks<T> {
+    protected final static Logger log = LoggerFactory.getLogger(AutoClosableLocks.class);
     
     private final HashMap<T, Lock> currentLocks = new HashMap<>();
     
@@ -24,7 +28,9 @@ public class AutoClosableLocks<T> {
      */
     public AutoClosableLock<T> lock(T key) {
         Lock logForKey = findLock(key);
+        log.debug("Thread {} attempting to lock {}",Thread.currentThread().getName(),key);
         logForKey.lock();
+        log.debug("Thread {} locked {}",Thread.currentThread().getName(),key);
         return new AutoClosableLock<>(key, this);
     }
     
@@ -44,6 +50,7 @@ public class AutoClosableLocks<T> {
         if (lockForKey != null) {
             lockForKey.unlock();
             currentLocks.remove(key);
+            log.debug("Thread {} unlocked lock for {}",Thread.currentThread().getName(),key);
         }
     }
 }
