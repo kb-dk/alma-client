@@ -29,21 +29,29 @@ import java.util.stream.StreamSupport;
 public class AlmaClient extends AlmaRestClient {
     
     
-    private final int batchSize = 100;
+    private final int batchSize;
     
-    public AlmaClient(String almaTarget, String alma_apikey, long minSleep, long sleepVariation, String lang)
+    public AlmaClient(String almaTarget,
+                      String alma_apikey,
+                      int batchSize,
+                      long minSleep,
+                      long sleepVariation,
+                      String lang)
             throws AlmaConnectionException {
         super(almaTarget, alma_apikey, minSleep, sleepVariation, lang);
+        this.batchSize = batchSize;
     }
     
     public AlmaClient(String almaTarget,
                       String alma_apikey,
+                      int batchSize,
                       long minSleep,
                       long sleepVariation,
                       String lang,
                       int connectTimeout,
                       int readTimeout) throws AlmaConnectionException {
         super(almaTarget, alma_apikey, minSleep, sleepVariation, lang, connectTimeout, readTimeout);
+        this.batchSize = batchSize;
     }
     
     public <T> T get(final String link, Class<T> type) throws AlmaConnectionException {

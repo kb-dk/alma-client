@@ -17,9 +17,10 @@ public class TestUtils {
         }
         return new AlmaClient(dodpro.getProperty("alma.url"),
                               dodpro.getProperty("alma.apikey"),
-                              Long.parseLong(dodpro.getProperty("alma_rate_limit_min_sleep_millis")),
+                              100, Long.parseLong(dodpro.getProperty("alma_rate_limit_min_sleep_millis")),
                               Long.parseLong(dodpro.getProperty("alma_rate_limit_sleep_variation_millis")),
                               dodpro.getProperty("lang"),
-                              Integer.parseInt(dodpro.getProperty("connect_timeout")), Integer.parseInt(dodpro.getProperty("read_timeout")));
+                              Integer.parseInt(dodpro.getProperty("connect_timeout")), Integer.parseInt(dodpro.getProperty("read_timeout"))
+        );
     }
 }
