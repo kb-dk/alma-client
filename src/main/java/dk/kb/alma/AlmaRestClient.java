@@ -11,6 +11,7 @@ import dk.kb.alma.locks.AutoClosableLocks;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,7 @@ public class AlmaRestClient {
                             .expireAfterAccess(5, TimeUnit.HOURS)
                             .build();
         
-        locks = new AutoClosableLocks<URI>();
+        locks = new AutoClosableLocks<>();
         
         
         log.debug("Getting ALMA general info to determine alma host");
@@ -115,6 +116,7 @@ public class AlmaRestClient {
         WebClient client = WebClient.create(host);
         HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
         conduit.getClient().setConnectionTimeout(connectTimeout);
+        conduit.getClient().setConnectionRequestTimeout(connectTimeout);
         conduit.getClient().setReceiveTimeout(readTimeout);
         
         if (link.getPath() != null) {
@@ -200,9 +202,17 @@ public class AlmaRestClient {
                 if (causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
                     //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
                     // different levels of the hierachy
-                    //TODO should we increase the timeout when retrying?
                     //TODO should we run a counter to avoid eternal retries?
                     sleep("Socket timeout exception for '" + currentURI + "'");
+                    HTTPClientPolicy clientPolicy = WebClient.getConfig(link).getHttpConduit().getClient();
+                    clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
+                    clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
+                    clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout()*2);
+                    log.debug("Increased timeouts to connect={} and receive={}",
+                              clientPolicy.getConnectionTimeout(),
+                              clientPolicy.getReceiveTimeout());
+                            
+                            
                     return invoke(link, type, entity, useCache, operation);
                 } else {
                     throw new RuntimeException("Failed to retrieve '" + currentURI + "'", e);
