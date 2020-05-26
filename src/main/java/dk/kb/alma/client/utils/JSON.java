@@ -1,6 +1,7 @@
-package dk.kb.alma;
+package dk.kb.alma.client.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import javax.ws.rs.ext.ContextResolver;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.util.Date;
@@ -36,7 +38,45 @@ public class JSON implements ContextResolver<ObjectMapper> {
     mapper.setDateFormat(new RFC3339DateFormat());
     mapper.registerModule(new JavaTimeModule());
   }
-
+  
+  public static String toJson(Object object) {
+      return toJson(object, true);
+  }
+  
+  public static <T> String toJson(T object, boolean indent) {
+      
+      if (object == null) {
+          return "";
+      }
+      JSON json = new JSON();
+      ObjectMapper mapper = json.getContext(object.getClass());
+      
+      
+      if (indent) {
+          mapper.enable(SerializationFeature.INDENT_OUTPUT);
+      } else {
+          mapper.disable(SerializationFeature.INDENT_OUTPUT);
+      }
+      
+      
+      try {
+          return mapper.writeValueAsString(object);
+      } catch (JsonProcessingException e) {
+          throw new RuntimeException(e);
+      }
+  }
+  
+  public static <T> T fromJson(String object, Class<T> type) {
+      JSON json = new JSON();
+      ObjectMapper mapper = json.getContext(type);
+      
+      try {
+          return mapper.readValue(object, type);
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
+  }
+  
   /**
    * Set the date format for JSON (de)serialization with Date properties.
    * @param dateFormat Date format

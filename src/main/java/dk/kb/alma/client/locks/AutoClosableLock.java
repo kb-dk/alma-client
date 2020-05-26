@@ -1,4 +1,4 @@
-package dk.kb.alma.locks;
+package dk.kb.alma.client.locks;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ public class AutoClosableLock<T> implements AutoCloseable {
     private final T key;
     private final AutoClosableLocks<T> pool;
     
-    protected AutoClosableLock(T key, AutoClosableLocks<T> pool) {
+    protected AutoClosableLock(T key, dk.kb.alma.client.locks.AutoClosableLocks<T> pool) {
         this.key = key;
         this.pool = pool;
     }

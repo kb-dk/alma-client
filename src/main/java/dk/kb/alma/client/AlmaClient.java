@@ -1,4 +1,4 @@
-package dk.kb.alma;
+package dk.kb.alma.client;
 
 import com.google.common.collect.Iterables;
 import dk.kb.alma.gen.Bib;

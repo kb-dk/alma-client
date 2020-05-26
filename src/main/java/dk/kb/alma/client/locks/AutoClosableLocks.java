@@ -1,4 +1,4 @@
-package dk.kb.alma.locks;
+package dk.kb.alma.client.locks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +26,12 @@ public class AutoClosableLocks<T> {
      * @param key the key to lock for
      * @return
      */
-    public AutoClosableLock<T> lock(T key) {
+    public dk.kb.alma.client.locks.AutoClosableLock<T> lock(T key) {
         Lock logForKey = findLock(key);
         log.debug("Thread {} attempting to lock {}",Thread.currentThread().getName(),key);
         logForKey.lock();
         log.debug("Thread {} locked {}",Thread.currentThread().getName(),key);
-        return new AutoClosableLock<>(key, this);
+        return new dk.kb.alma.client.locks.AutoClosableLock<>(key, this);
     }
     
     private synchronized Lock findLock(T key) {

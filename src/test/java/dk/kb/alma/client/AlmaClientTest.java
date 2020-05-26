@@ -1,4 +1,4 @@
-package dk.kb.alma;
+package dk.kb.alma.client;
 
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.User;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static dk.kb.alma.TestUtils.getAlmaClient;
+import static dk.kb.alma.client.TestUtils.getAlmaClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 

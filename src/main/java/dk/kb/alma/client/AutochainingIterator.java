@@ -1,4 +1,4 @@
-package dk.kb.alma;
+package dk.kb.alma.client;
 
 
 import java.util.Iterator;

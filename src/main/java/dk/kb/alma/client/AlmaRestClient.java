@@ -1,13 +1,14 @@
-package dk.kb.alma;
+package dk.kb.alma.client;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.General;
 import dk.kb.alma.gen.RequestedResource;
 import dk.kb.alma.gen.RequestedResources;
 import dk.kb.alma.gen.WebServiceResult;
-import dk.kb.alma.locks.AutoClosableLock;
-import dk.kb.alma.locks.AutoClosableLocks;
+import dk.kb.alma.client.locks.AutoClosableLock;
+import dk.kb.alma.client.locks.AutoClosableLocks;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -203,19 +204,22 @@ public class AlmaRestClient {
                     //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
                     // different levels of the hierachy
                     //TODO should we run a counter to avoid eternal retries?
+                    log.trace("Socket timeout for "+operation.name()+" on "+currentURI, e);
                     sleep("Socket timeout exception for '" + currentURI + "'");
                     HTTPClientPolicy clientPolicy = WebClient.getConfig(link).getHttpConduit().getClient();
                     clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
                     clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
                     clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout()*2);
-                    log.debug("Increased timeouts to connect={} and receive={}",
+                    log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
                               clientPolicy.getConnectionTimeout(),
-                              clientPolicy.getReceiveTimeout());
+                              clientPolicy.getReceiveTimeout(),
+                              operation.name(),
+                              currentURI);
                             
                             
                     return invoke(link, type, entity, useCache, operation);
                 } else {
-                    throw new RuntimeException("Failed to retrieve '" + currentURI + "'", e);
+                    throw new RuntimeException("Failed to "+operation.name()+"ing '" + currentURI + "'", e);
                 }
             } catch (RedirectionException e) {
                 URI redirectLocation = e.getLocation();
@@ -244,7 +248,7 @@ public class AlmaRestClient {
                 String entityMessage = "";
                 if (entity != null) {
                     try {
-                        entityMessage = "with entity '" + Utilities.toXml(entity) + "' ";
+                        entityMessage = "with entity '" + XML.toXml(entity) + "' ";
                     } catch (JAXBException jaxbException) {
                         throw new RuntimeException(jaxbException);
                     }

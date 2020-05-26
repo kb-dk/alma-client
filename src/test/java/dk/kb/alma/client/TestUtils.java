@@ -1,6 +1,8 @@
-package dk.kb.alma;
+package dk.kb.alma.client;
 
 import com.google.common.base.Charsets;
+import dk.kb.alma.client.AlmaClient;
+import dk.kb.alma.client.AlmaConnectionException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
