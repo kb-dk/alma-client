@@ -1,6 +1,7 @@
 package dk.kb.alma.client;
 
 import com.google.common.collect.Iterables;
+import dk.kb.alma.client.utils.ParallelUtils;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.Bibs;
 import dk.kb.alma.gen.CodeTable;
@@ -85,18 +86,20 @@ public class AlmaClient extends AlmaRestClient {
     
     
     public Set<Bib> getBibs(Set<String> bibIDs) {
-        
+        String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
         return StreamSupport.stream(partition.spliterator(), true)
-                            .map(partion -> {
-                                String partionBibIDs = String.join(",", partion);
-                                return get(constructLink()
-                                                            .path("/bibs/")
-                                                            .query("mms_id", partionBibIDs)
-                                                            .query("view", "full")
-                                                            .query("expand", "None"),
-                                                    Bibs.class);
-                            })
+                            .map(ParallelUtils.namedThread(
+                                    (List<String> partion) -> {
+                                        String partionBibIDs = String.join(",", partion);
+                                        return get(constructLink()
+                                                           .path("/bibs/")
+                                                           .query("mms_id", partionBibIDs)
+                                                           .query("view", "full")
+                                                           .query("expand", "None"),
+                                                   Bibs.class);
+                                    },
+                                    partion -> threadName+"->"+"Bibs-from-" + partion.get(0) + "-to-" + partion.get(partion.size() - 1)))
                             .filter(Objects::nonNull)
                             .filter(bibs -> bibs.getBibs() != null)
                             .flatMap(bibs -> bibs.getBibs().stream())

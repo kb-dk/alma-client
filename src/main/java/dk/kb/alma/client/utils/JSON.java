@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import javax.ws.rs.ext.ContextResolver;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.FieldPosition;
@@ -76,6 +77,17 @@ public class JSON implements ContextResolver<ObjectMapper> {
           throw new RuntimeException(e);
       }
   }
+    
+    public static <T> T fromJson(File object, Class<T> type) {
+        JSON json = new JSON();
+        ObjectMapper mapper = json.getContext(type);
+        
+        try {
+            return mapper.readValue(object, type);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
   
   /**
    * Set the date format for JSON (de)serialization with Date properties.
