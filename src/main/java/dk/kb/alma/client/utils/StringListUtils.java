@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -154,4 +155,12 @@ public class StringListUtils {
         return string;
     }
     
+    public static <T> List<T> toList(T... strings) {
+        if (strings == null) {
+            return new ArrayList<>();
+            //Important that this is not a unmodifiable list
+        } else {
+            return Arrays.asList(strings);
+        }
+    }
 }
