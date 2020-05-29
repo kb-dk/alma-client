@@ -2,6 +2,9 @@ package dk.kb.alma.client;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import dk.kb.alma.client.exceptions.AlmaConnectionException;
+import dk.kb.alma.client.exceptions.AlmaKnownException;
+import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.General;
 import dk.kb.alma.gen.RequestedResource;
@@ -179,8 +182,8 @@ public class AlmaRestClient {
         useCache &= operation == Operation.GET;
         
         URI currentURI = link.getCurrentURI();
-       
-        try(AutoClosableLock<URI> ignored = locks.lock(currentURI)) {
+        
+        try (AutoClosableLock<URI> ignored = locks.lock(currentURI)) {
             if (useCache) {
                 Object cacheValue = cache.getIfPresent(currentURI);
                 if (type.isInstance(cacheValue)) {
@@ -204,22 +207,22 @@ public class AlmaRestClient {
                     //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
                     // different levels of the hierachy
                     //TODO should we run a counter to avoid eternal retries?
-                    log.trace("Socket timeout for "+operation.name()+" on "+currentURI, e);
+                    log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
                     sleep("Socket timeout exception for '" + currentURI + "'");
                     HTTPClientPolicy clientPolicy = WebClient.getConfig(link).getHttpConduit().getClient();
                     clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
                     clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
-                    clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout()*2);
+                    clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
                     log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
                               clientPolicy.getConnectionTimeout(),
                               clientPolicy.getReceiveTimeout(),
                               operation.name(),
                               currentURI);
-                            
-                            
+                    
+                    
                     return invoke(link, type, entity, useCache, operation);
                 } else {
-                    throw new RuntimeException("Failed to "+operation.name()+"ing '" + currentURI + "'", e);
+                    throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
                 }
             } catch (RedirectionException e) {
                 URI redirectLocation = e.getLocation();
@@ -250,19 +253,19 @@ public class AlmaRestClient {
                     try {
                         entityMessage = "with entity '" + XML.toXml(entity) + "' ";
                     } catch (JAXBException jaxbException) {
-                        throw new RuntimeException(jaxbException);
+                        throw new AlmaConnectionException("Failed to parse entity '" + entity + "' as xml",
+                                                          jaxbException);
                     }
                 }
                 
                 Response response = e.getResponse();
+                //Buffer entity so we can read the response multiple times
+                response.bufferEntity();
                 WebServiceResult result;
                 try {
                     result = response.readEntity(WebServiceResult.class);
                 } catch (Exception e2) {
-                    throw new AlmaConnectionException(
-                            "Failed to " + operation + " " + entityMessage + "on '" + currentURI
-                            + "', and failed to parse out out webservice result from ALMA reply",
-                            e);
+                    throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, e);
                 }
                 if (result.isErrorsExist()) {
                     String errorMessage = result.getErrorList()
@@ -278,17 +281,11 @@ public class AlmaRestClient {
                                              .map(error -> error.getErrorCode())
                                              .orElseGet(null);
                     
-                    
-                    throw new AlmaConnectionException(
-                            "Failed to " + operation + " " + entityMessage + "on '" + currentURI
-                            + "' with errormessage '"
-                            + errorMessage
-                            + "' and errorcode '" + errorCode + "'", e);
+                    throw new AlmaKnownException(operation.name(), entityMessage, currentURI, errorMessage, errorCode,
+                                                 e);
                     
                 } else {
-                    throw new AlmaConnectionException(
-                            "Failed to " + operation + " " + entityMessage + "on '" + currentURI + "' with response '"
-                            + response + "'", e);
+                    throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, e);
                 }
             }
             if (useCache) {
@@ -346,11 +343,11 @@ public class AlmaRestClient {
     /**
      * Get a specific batch of requested resources, detailed by limit and offset
      *
-     * @param limit           limit
-     * @param offset          offset
-     * @param libraryID     LibraryID
+     * @param limit               limit
+     * @param offset              offset
+     * @param libraryID           LibraryID
      * @param circulationDeskName guess
-     * @param allOrNothing  If anything fails, do you want the already fetched results or an exception?
+     * @param allOrNothing        If anything fails, do you want the already fetched results or an exception?
      * @return an iterator of the requested resources
      */
     protected Iterator<RequestedResource> getBatchOfRequestedResources(Integer limit,
@@ -377,7 +374,17 @@ public class AlmaRestClient {
         RequestedResources result;
         try {
             result = get(link, RequestedResources.class, false);
+        } catch (AlmaKnownException e) {
+            //Known alma errors, we can be more intelligent here
+            log.error("Failed to retrieve content [{}-{}] for '{}'/'{}' with error {}. Continuing on",
+                      offset,
+                      offset + limit,
+                      libraryID,
+                      circulationDeskName,
+                      e.getMessage());
+            return Collections.emptyIterator();
         } catch (Exception e) {
+            //Something unknowable failed, we're fragged
             if (allOrNothing) {
                 throw new RuntimeException(
                         "Failed to retrieve content [" + offset + "-" + (offset + limit) + "] for '" + libraryID + "'/'"
@@ -404,7 +411,7 @@ public class AlmaRestClient {
     }
     
     protected void invalidateCacheEntry(URI currentURI) {
-        try(AutoClosableLock<URI> ignored = locks.lock(currentURI);){
+        try (AutoClosableLock<URI> ignored = locks.lock(currentURI);) {
             cache.invalidate(currentURI);
         }
     }

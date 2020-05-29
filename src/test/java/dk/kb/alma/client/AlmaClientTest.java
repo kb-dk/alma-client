@@ -1,5 +1,6 @@
 package dk.kb.alma.client;
 
+import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.User;
 import org.junit.jupiter.api.Assertions;

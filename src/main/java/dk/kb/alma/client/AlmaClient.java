@@ -1,6 +1,7 @@
 package dk.kb.alma.client;
 
 import com.google.common.collect.Iterables;
+import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.utils.ParallelUtils;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.Bibs;
