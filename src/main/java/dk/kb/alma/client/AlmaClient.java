@@ -2,6 +2,8 @@ package dk.kb.alma.client;
 
 import com.google.common.collect.Iterables;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
+import dk.kb.alma.client.exceptions.AlmaKnownException;
+import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.utils.ParallelUtils;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.Bibs;
@@ -51,12 +53,15 @@ public class AlmaClient extends AlmaRestClient {
                       long sleepVariation,
                       String lang,
                       int connectTimeout,
-                      int readTimeout) throws AlmaConnectionException {
-        super(almaTarget, alma_apikey, minSleep, sleepVariation, lang, connectTimeout, readTimeout);
+                      int readTimeout,
+                      long cacheTimeout) throws AlmaConnectionException {
+        super(almaTarget, alma_apikey, minSleep, sleepVariation, lang, connectTimeout, readTimeout, cacheTimeout);
         this.batchSize = batchSize;
     }
     
-    public <T> T get(final String link, Class<T> type) throws AlmaConnectionException {
+    public <T> T get(final String link, Class<T> type) throws AlmaConnectionException,
+                                                                      AlmaKnownException,
+                                                                      AlmaUnknownException {
         return get(getWebClient(link), type);
     }
     
@@ -70,7 +75,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Item getItem(String barcode) throws AlmaConnectionException {
+    public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
         return get(constructLink()
                            .path("/items/")
                            .query("item_barcode", barcode),
@@ -78,7 +83,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Bib getBib(String mmsID) throws AlmaConnectionException {
+    public Bib getBib(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
         return get(constructLink()
                            .path("/bibs/")
                            .path(mmsID),
@@ -86,7 +91,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Set<Bib> getBibs(Set<String> bibIDs) {
+    public Set<Bib> getBibs(Set<String> bibIDs) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
         String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
         return StreamSupport.stream(partition.spliterator(), true)
@@ -108,14 +113,14 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public User getUser(String userID) throws AlmaConnectionException {
+    public User getUser(String userID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/users/")
                            .path(userID),
                    User.class);
     }
     
-    public UserRequests getRequests(String mmsID) throws AlmaConnectionException {
+    public UserRequests getRequests(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(mmsID)
@@ -123,7 +128,7 @@ public class AlmaClient extends AlmaRestClient {
                    UserRequests.class);
     }
     
-    public UserRequest getRequest(String userId, String requestId) throws AlmaConnectionException {
+    public UserRequest getRequest(String userId, String requestId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/users/")
                            .path(userId)
@@ -132,7 +137,7 @@ public class AlmaClient extends AlmaRestClient {
                    UserRequest.class);
     }
     
-    public ResourceSharing getResourceSharingRequest(String userId, String requestId) throws AlmaConnectionException {
+    public ResourceSharing getResourceSharingRequest(String userId, String requestId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink().path("/users/")
                                   .path(userId)
                                   .path("/resource-sharing-requests/")
@@ -141,7 +146,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Items getItems(String bibId, String holdingId) throws AlmaConnectionException {
+    public Items getItems(String bibId, String holdingId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         int limit = 100;
         Items items = get(constructLink().path("/bibs/")
                                          .path(bibId)
@@ -161,7 +166,7 @@ public class AlmaClient extends AlmaRestClient {
         return items;
     }
     
-    public Bib.Holdings getBibHoldings(String bibId) throws AlmaConnectionException {
+    public Bib.Holdings getBibHoldings(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(bibId)
@@ -170,7 +175,7 @@ public class AlmaClient extends AlmaRestClient {
         
     }
     
-    public Bib getBibRecord(String bibId) throws AlmaConnectionException {
+    public Bib getBibRecord(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(bibId),
@@ -182,7 +187,7 @@ public class AlmaClient extends AlmaRestClient {
                            String barcode,
                            String description,
                            String pages,
-                           String year) throws AlmaConnectionException {
+                           String year) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/bibs/")
                                         .path(bibId)
                                         .path("/holdings/")
@@ -202,7 +207,7 @@ public class AlmaClient extends AlmaRestClient {
         return post(link, Item.class, item);
     }
     
-    public Item updateItem(Item item) throws AlmaConnectionException {
+    public Item updateItem(Item item) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/bibs/")
                                         .path(item.getBibData().getMmsId())
                                         .path("/holdings/")
@@ -215,7 +220,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Bib updateBibRecord(Bib record) throws AlmaConnectionException {
+    public Bib updateBibRecord(Bib record) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/bibs/")
                                         .path(record.getMmsId());
         
@@ -235,7 +240,7 @@ public class AlmaClient extends AlmaRestClient {
      * @throws AlmaConnectionException if something went wrong
      */
     public boolean cancelRequest(String userId, String requestId, String reasonCode, boolean notifyUser)
-            throws AlmaConnectionException {
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return cancelRequest(userId, requestId, reasonCode, null, notifyUser);
     }
     
@@ -250,7 +255,7 @@ public class AlmaClient extends AlmaRestClient {
      * @return True if the request is cancelled successfully. False if the request was not found.
      */
     public boolean cancelRequest(String userId, String requestId, String reasonCode, String note, boolean notifyUser)
-            throws AlmaConnectionException {
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/users/")
                                         .path(userId)
                                         .path("/requests/")
@@ -286,7 +291,7 @@ public class AlmaClient extends AlmaRestClient {
                                      String holdingId,
                                      String itemId,
                                      String pickupLocationCode,
-                                     XMLGregorianCalendar lastInterestDate) throws AlmaConnectionException {
+                                     XMLGregorianCalendar lastInterestDate) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         WebClient link = constructLink().path("/bibs/")
                                         .path(bibId)
@@ -312,7 +317,7 @@ public class AlmaClient extends AlmaRestClient {
      * @param request The fully populated request
      * @return The request created in Alma
      */
-    public UserRequest createRequest(UserRequest request) throws AlmaConnectionException {
+    public UserRequest createRequest(UserRequest request) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         String userId = request.getUserPrimaryId();
         String mmsId = request.getMmsId();
@@ -334,7 +339,7 @@ public class AlmaClient extends AlmaRestClient {
     
     
     public ResourceSharing createResourceSharingRequest(ResourceSharing request, String userId)
-            throws AlmaConnectionException {
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/users/")
                                         .path(userId)
                                         .path("/resource-sharing-requests/");
@@ -356,11 +361,11 @@ public class AlmaClient extends AlmaRestClient {
         return get(link, UserRequests.class);
     }
     
-    public CodeTable getCodeTable(String codeTableName) throws AlmaConnectionException {
+    public CodeTable getCodeTable(String codeTableName) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return getCodeTable(codeTableName, "da");
     }
     
-    public CodeTable getCodeTable(String codeTableName, String lang) throws AlmaConnectionException {
+    public CodeTable getCodeTable(String codeTableName, String lang) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/conf/code-tables/")
                                         .path(codeTableName)
                                         .replaceQueryParam("lang", lang);

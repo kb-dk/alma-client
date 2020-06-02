@@ -1,6 +1,7 @@
 package dk.kb.alma.client;
 
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
+import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.User;
 import org.junit.jupiter.api.Assertions;
@@ -103,8 +104,8 @@ class AlmaClientTest {
         try {
             almaClient.getBib("fail");
             Assertions.fail("Should have thrown exception");
-        } catch (AlmaConnectionException e){
-            Assertions.assertEquals("Failed to GET on 'https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/fail' with errormessage 'Input parameters mmsId fail is not valid.' and errorcode '402203'",e.getMessage());
+        } catch (AlmaKnownException e){
+            Assertions.assertEquals("Failed with code 402203 / Input parameters mmsId fail is not valid. on GET  https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/fail",e.getMessage());
         }
     }
 

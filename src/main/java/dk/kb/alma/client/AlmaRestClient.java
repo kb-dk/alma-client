@@ -5,13 +5,13 @@ import com.google.common.cache.CacheBuilder;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
+import dk.kb.alma.client.locks.AutoClosableLock;
+import dk.kb.alma.client.locks.AutoClosableLocks;
 import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.General;
 import dk.kb.alma.gen.RequestedResource;
 import dk.kb.alma.gen.RequestedResources;
 import dk.kb.alma.gen.WebServiceResult;
-import dk.kb.alma.client.locks.AutoClosableLock;
-import dk.kb.alma.client.locks.AutoClosableLocks;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -65,8 +65,8 @@ public class AlmaRestClient {
     private final int readTimeout;
     
     public AlmaRestClient(String almaTarget, String alma_apikey, long minSleep, long sleepVariation, String lang)
-            throws AlmaConnectionException {
-        this(almaTarget, alma_apikey, minSleep, sleepVariation, lang, 3000, 3000);
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        this(almaTarget, alma_apikey, minSleep, sleepVariation, lang, 3000, 3000, TimeUnit.HOURS.toMillis(5));
     }
     
     public AlmaRestClient(String almaTarget,
@@ -153,28 +153,33 @@ public class AlmaRestClient {
         POST, PUT, DELETE, GET
     }
     
-    public <T> T get(final WebClient link, Class<T> type) throws AlmaConnectionException {
+    public <T> T get(final WebClient link, Class<T> type)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(link, type, true);
     }
     
-    public <T> T get(final WebClient link, Class<T> type, boolean useCache) throws AlmaConnectionException {
+    public <T> T get(final WebClient link, Class<T> type, boolean useCache)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return invoke(link, type, null, useCache, Operation.GET);
     }
     
-    public <T, E> T put(final WebClient link, Class<T> type, E entity) throws AlmaConnectionException {
+    public <T, E> T put(final WebClient link, Class<T> type, E entity)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return invoke(link, type, entity, false, Operation.PUT);
     }
     
-    public <T, E> T post(final WebClient link, Class<T> type, E entity) throws AlmaConnectionException {
+    public <T, E> T post(final WebClient link, Class<T> type, E entity)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return invoke(link, type, entity, false, Operation.POST);
     }
     
-    public <T> T delete(final WebClient link, Class<T> type) throws AlmaConnectionException {
+    public <T> T delete(final WebClient link, Class<T> type)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return invoke(link, type, null, false, Operation.DELETE);
     }
     
     protected <T, E> T invoke(final WebClient link, Class<T> type, E entity, boolean useCache, Operation operation)
-            throws AlmaConnectionException {
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         //Remove the api key from the query string. This is something we handle here, not something you should set
         link.replaceQueryParam(APIKEY);
