@@ -75,8 +75,9 @@ public class AlmaRestClient {
                           long sleepVariation,
                           String lang,
                           int connectTimeout,
-                          int readTimeout)
-            throws AlmaConnectionException {
+                          int readTimeout,
+                          long cacheTimeMillis)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         this.almaTarget = almaTarget;
         this.alma_apikey = alma_apikey;
         this.minSleepMillis = minSleep;
@@ -88,7 +89,7 @@ public class AlmaRestClient {
         int cacheSize = 1000;
         cache = CacheBuilder.newBuilder()
                             .maximumSize(cacheSize)
-                            .expireAfterAccess(5, TimeUnit.HOURS)
+                            .expireAfterAccess(cacheTimeMillis, TimeUnit.MILLISECONDS)
                             .build();
         
         locks = new AutoClosableLocks<>();
