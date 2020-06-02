@@ -29,4 +29,24 @@ public class AlmaKnownException extends RuntimeException{
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
     }
+    
+    public String getOperation() {
+        return operation;
+    }
+    
+    public String getEntityMessage() {
+        return entityMessage;
+    }
+    
+    public URI getCurrentURI() {
+        return currentURI;
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    public String getErrorCode() {
+        return errorCode;
+    }
 }
