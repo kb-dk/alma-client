@@ -13,7 +13,7 @@
 		</xs:documentation>
 	</xs:annotation>
 
-    <xs:element name="user_request" type="user_request"/>
+	<xs:element name="user_request" type="user_request" />
 
 	<xs:complexType name="user_request">
 		<xs:annotation>
@@ -154,7 +154,7 @@ Should be used in subsequent queries regarding the request.
 						<xs:example>LIBRARY</xs:example>
 					</xs:appinfo>
 					<xs:documentation>The pickup location type.
-					Possible values are: LIBRARY, CIRCULATION_DESK, USER_WORK_ADDRESS, USER_HOME_ADDRESS.
+					The pickup location type. Possible values are: LIBRARY, CIRCULATION_DESK, INSTITUTION, USER_HOME_ADDRESS, USER_WORK_ADDRESS.
 					Relevant and mandatory when request_type = HOLD or BOOKING.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
@@ -180,6 +180,41 @@ see [Get libraries API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/g
 					</xs:appinfo>
 					<xs:documentation>The pickup location circulation desk code.
 						Relevant when request_type = HOLD or BOOKING, if pickup_location_type = CIRCULATION_DESK.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pickup_location_institution" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>01MY_INST</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The pickup location institution code.
+Relevant when request_type = HOLD or BOOKING, if the request is to be picked up in a different institution.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="managed_by_library" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>MAIN_LIB</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The library where the available inventory is located. Output parameter.
+See [Get libraries API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed].
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="managed_by_circulation_desk" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>DEFAULT_CIRC_DESK</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The circulation desk where the available inventory is located. Output parameter.
+					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="target_destination" minOccurs="0" maxOccurs="1">
@@ -362,7 +397,7 @@ Possible values are: In Process, On Hold Shelf, Not Started. Output parameter.
 				<xs:annotation>
 					<xs:appinfo>
 						<xs:tags>api get post put</xs:tags>
-						<xs:example>2017-05-03Z</xs:example>
+						<xs:example>2019-12-13T14:36:48.659Z</xs:example>
 					</xs:appinfo>
 					<xs:documentation>The start date in which the request is needed.
 						Relevant and mandatory when request_type = BOOKING.</xs:documentation>
@@ -373,7 +408,7 @@ Possible values are: In Process, On Hold Shelf, Not Started. Output parameter.
 				<xs:annotation>
 					<xs:appinfo>
 						<xs:tags>api get post put</xs:tags>
-						<xs:example>2020-05-01Z</xs:example>
+						<xs:example>2019-12-18T14:36:48.659Z</xs:example>
 					</xs:appinfo>
 					<xs:documentation>The end date in which the request is needed.
 						Relevant and mandatory when request_type = BOOKING.</xs:documentation>
@@ -384,7 +419,7 @@ Possible values are: In Process, On Hold Shelf, Not Started. Output parameter.
 				<xs:annotation>
 					<xs:appinfo>
 						<xs:tags>api get</xs:tags>
-						<xs:example>2017-05-03Z</xs:example>
+						<xs:example>2019-12-18T14:36:48.659Z</xs:example>
 					</xs:appinfo>
 					<xs:documentation>The actual start date of the request, as calculated by the system.
 Relevant when request_type = BOOKING.
@@ -396,7 +431,7 @@ Output parameter.</xs:documentation>
 				<xs:annotation>
 					<xs:appinfo>
 						<xs:tags>api get</xs:tags>
-						<xs:example>2020-05-01Z</xs:example>
+						<xs:example>2019-12-18T14:36:48.659Z</xs:example>
 					</xs:appinfo>
 					<xs:documentation>The actual end date of the request, as calculated by the system.
 Relevant when request_type = BOOKING.
@@ -591,21 +626,22 @@ Output parameter.</xs:documentation>
 			<xs:element name="to_page" type="xs:string" minOccurs="0" maxOccurs="1"/>
 		</xs:all>
 	</xs:complexType>
-<!--    <xs:simpleType name="request_types">-->
-<!--        <xs:restriction base="xs:string">-->
-<!--            <xs:enumeration value="HOLD"/>-->
-<!--            <xs:enumeration value="BOOKING"/>-->
-<!--            <xs:enumeration value="DIGITIZATION"/>-->
-<!--            <xs:enumeration value="MOVE"/>-->
-<!--            <xs:enumeration value="WORK_ORDER"/>-->
-<!--        </xs:restriction>-->
-<!--    </xs:simpleType>-->
+	<xs:simpleType name="request_types">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="HOLD"/>
+			<xs:enumeration value="BOOKING"/>
+			<xs:enumeration value="DIGITIZATION"/>
+			<xs:enumeration value="MOVE"/>
+			<xs:enumeration value="WORK_ORDER"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:simpleType name="pickup_location_types">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="LIBRARY"/>
 			<xs:enumeration value="CIRCULATION_DESK"/>
 			<xs:enumeration value="USER_WORK_ADDRESS"/>
 			<xs:enumeration value="USER_HOME_ADDRESS"/>
+			<xs:enumeration value="INSTITUTION"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="request_status">
