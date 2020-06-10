@@ -11,14 +11,13 @@ import dk.kb.alma.gen.CodeTable;
 import dk.kb.alma.gen.Item;
 import dk.kb.alma.gen.ItemData;
 import dk.kb.alma.gen.Items;
+import dk.kb.alma.gen.PickupLocationTypes;
+import dk.kb.alma.gen.RequestTypes;
+import dk.kb.alma.gen.RequestedResource;
+import dk.kb.alma.gen.ResourceSharing;
 import dk.kb.alma.gen.User;
-import dk.kb.alma.gen.holdings.Holdings;
-import dk.kb.alma.gen.requested_resource.RequestedResource;
-import dk.kb.alma.gen.user_request.PickupLocationTypes;
-import dk.kb.alma.gen.user_request.RequestTypes;
-import dk.kb.alma.gen.user_request.ResourceSharing;
-import dk.kb.alma.gen.user_request.UserRequest;
-import dk.kb.alma.gen.user_request.UserRequests;
+import dk.kb.alma.gen.UserRequest;
+import dk.kb.alma.gen.UserRequests;
 import org.apache.cxf.jaxrs.client.WebClient;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -78,7 +77,7 @@ public class AlmaClient extends AlmaRestClient {
     
     public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
         return get(constructLink()
-                           .path("/items")
+                           .path("/items/")
                            .query("item_barcode", barcode),
                    Item.class);
     }
@@ -125,7 +124,7 @@ public class AlmaClient extends AlmaRestClient {
         return get(constructLink()
                            .path("/bibs/")
                            .path(mmsID)
-                           .path("/requests"),
+                           .path("/requests/"),
                    UserRequests.class);
     }
     
@@ -153,7 +152,7 @@ public class AlmaClient extends AlmaRestClient {
                                          .path(bibId)
                                          .path("/holdings/")
                                          .path(holdingId)
-                                         .path("/items")
+                                         .path("/items/")
                                          .query("limit", limit),
                           Items.class);
         
@@ -167,12 +166,12 @@ public class AlmaClient extends AlmaRestClient {
         return items;
     }
     
-    public Holdings getBibHoldings(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Bib.Holdings getBibHoldings(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(bibId)
-                           .path("/holdings"),
-                   Holdings.class);
+                           .path("/holdings/"),
+                   Bib.Holdings.class);
         
     }
     
@@ -193,7 +192,7 @@ public class AlmaClient extends AlmaRestClient {
                                         .path(bibId)
                                         .path("/holdings/")
                                         .path(holdingId)
-                                        .path("/items");
+                                        .path("/items/");
         
         
         Item item = new Item();
@@ -300,7 +299,7 @@ public class AlmaClient extends AlmaRestClient {
                                         .path(holdingId)
                                         .path("/items/")
                                         .path(itemId)
-                                        .path("/requests")
+                                        .path("/requests/")
                                         .query("user_id", userId)
                                         .query("user_id_type", "all_unique");
         
@@ -343,7 +342,7 @@ public class AlmaClient extends AlmaRestClient {
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/users/")
                                         .path(userId)
-                                        .path("/resource-sharing-requests");
+                                        .path("/resource-sharing-requests/");
         return post(link, ResourceSharing.class, request);
         
     }
@@ -357,7 +356,7 @@ public class AlmaClient extends AlmaRestClient {
                                         .path(holdingId)
                                         .path("/items/")
                                         .path(itemId)
-                                        .path("/requests");
+                                        .path("/requests/");
         
         return get(link, UserRequests.class);
     }

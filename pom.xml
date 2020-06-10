@@ -215,120 +215,12 @@
                             <sources>
                                 <source>src/main/resources/alma_xsd</source>
                             </sources>
-                            <clearOutputDir>false</clearOutputDir>
+                            <clearOutputDir>true</clearOutputDir>
                             <xjbSources>
                                 <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
                             </xjbSources>
                         </configuration>
                     </execution>
-
-                    <execution>
-                        <id>xjc_rest_holding</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.holdings</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_holdings</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_location</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.locations</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_location</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_rest_requested_resource</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.requested_resource</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_requested_resource</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_rest_user_request</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.user_request</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_user_request</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_alma_sru</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.sru</packageName>
-
-
-                            <xjcSourceExcludeFilters>
-                                <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
-                                <patterns>
-                                    <pattern>\.txt</pattern>
-                                </patterns>
-                                </filter>
-                            </xjcSourceExcludeFilters>
-                            <sources>
-                                <source>src/main/resources/alma_sru/</source>
-
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-
-
-                    </execution>
-
 
                 </executions>
             </plugin>

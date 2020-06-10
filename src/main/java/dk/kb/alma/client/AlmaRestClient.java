@@ -9,9 +9,9 @@ import dk.kb.alma.client.locks.AutoClosableLock;
 import dk.kb.alma.client.locks.AutoClosableLocks;
 import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.General;
+import dk.kb.alma.gen.RequestedResource;
+import dk.kb.alma.gen.RequestedResources;
 import dk.kb.alma.gen.WebServiceResult;
-import dk.kb.alma.gen.requested_resource.RequestedResource;
-import dk.kb.alma.gen.requested_resource.RequestedResources;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -200,7 +200,7 @@ public class AlmaRestClient {
             log.debug("{}ing on {}", operation, currentURI);
             T value;
             try {
-                WebClient webClient = addAPIKey(link);
+                WebClient webClient = link.replaceQueryParam(APIKEY, alma_apikey);
                 value = webClient.invoke(operation.name(), entity, type);
                 log.trace("{}ed on {}", operation, currentURI);
             } catch (Fault | ProcessingException e) {
@@ -301,10 +301,6 @@ public class AlmaRestClient {
         } finally {
             link.close();
         }
-    }
-    
-    private WebClient addAPIKey(WebClient link) {
-        return link.replaceQueryParam(APIKEY, alma_apikey);
     }
     
     private List<Throwable> getCauses(Throwable throwable) {

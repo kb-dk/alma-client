@@ -133,7 +133,7 @@ public class StringListUtils {
     }
     
     public static String orDefault(String value, String default_value) {
-        if (value == null || value.isBlank()) {
+        if (value == null) {
             return default_value;
         } else {
             return value;

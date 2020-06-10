@@ -424,7 +424,7 @@ See [blog|https://developers.exlibrisgroup.com/blog/External-user-data-behavior-
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="requests" minOccurs="0" maxOccurs="1">
+			<xs:element name="UserRequests" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:appinfo>
 						<xs:tags>api get</xs:tags>
@@ -639,7 +639,7 @@ This can be used to fetch copies of the user record (linked accounts in other in
 					<xs:documentation>The user's preferred last name.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="pref_name_suffix" type="string255Length" minOccurs="0"
 				maxOccurs="1">
 				<xs:annotation>

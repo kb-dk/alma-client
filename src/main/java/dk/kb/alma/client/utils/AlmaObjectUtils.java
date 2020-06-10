@@ -4,8 +4,8 @@ import dk.kb.alma.gen.Address;
 import dk.kb.alma.gen.Addresses;
 import dk.kb.alma.gen.ContactInfo;
 import dk.kb.alma.gen.Email;
+import dk.kb.alma.gen.RequestedResource;
 import dk.kb.alma.gen.User;
-import dk.kb.alma.gen.requested_resource.RequestedResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
