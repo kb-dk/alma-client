@@ -194,7 +194,37 @@
 					Note that the default is true which means that the record will NOT be published.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-
+			
+			<xs:element name="suppress_from_external_search" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be found in external search.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sync_with_oclc" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>BIBS</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be found in external search.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sync_with_libraries_australia" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>NONE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be found in external search.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="originating_system" type="xs:string"
 				minOccurs="0" maxOccurs="1">
 				<xs:annotation>
@@ -298,4 +328,3 @@
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>
-
