@@ -1,0 +1,4 @@
+https://www.loc.gov/standards/sru/recordSchemas/zeerex-2.0.xsd
+https://www.loc.gov/standards/sru/xmlFiles/srw-types.xsd
+https://www.loc.gov/standards/sru/xmlFiles/xcql.xsd
+https://www.loc.gov/standards/sru/xmlFiles/diagnostics.xsd
