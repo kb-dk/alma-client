@@ -7,6 +7,8 @@ import dk.kb.alma.gen.sru.Record;
 import dk.kb.alma.gen.sru.SearchRetrieveResponse;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -15,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * https://developers.exlibrisgroup.com/alma/integrations/SRU/
@@ -109,12 +112,17 @@ public class AlmaSRUClient {
         return explain.get();
     }
     
-    public List<Record> retrieveFromPermanentCallNumber(String call_number){
+    public List<Element> retrieveFromPermanentCallNumber(String call_number){
         SearchRetrieveResponse result = searchRetrieve("PermanentCallNumber==" + call_number, 0);
         if (Objects.isNull(result.getRecords()) || Objects.isNull(result.getRecords().getRecords())){
             return Collections.emptyList();
         } else {
-            return result.getRecords().getRecords();
+            return result.getRecords().getRecords().stream()
+                    .flatMap(record -> record.getRecordData().getContent()
+                                             .stream()
+                                             .filter(element -> element instanceof Element)
+                                             .map(element -> (Element)element))
+                    .collect(Collectors.toList());
         }
     }
 }

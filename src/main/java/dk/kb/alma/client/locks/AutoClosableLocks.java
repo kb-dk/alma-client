@@ -3,14 +3,16 @@ package dk.kb.alma.client.locks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AutoClosableLocks<T> {
     protected final static Logger log = LoggerFactory.getLogger(AutoClosableLocks.class);
     
-    private final HashMap<T, Lock> currentLocks = new HashMap<>();
+    private final Map<T, ReentrantLock> currentLocks = Collections.synchronizedMap(new HashMap<>());
     
    
     public AutoClosableLocks() {
@@ -35,7 +37,7 @@ public class AutoClosableLocks<T> {
     }
     
     private synchronized Lock findLock(T key) {
-        Lock logForKey = currentLocks.get(key);
+        ReentrantLock logForKey = currentLocks.get(key);
         if (logForKey == null) {
             logForKey = new ReentrantLock();
             currentLocks.put(key, logForKey);
@@ -44,13 +46,22 @@ public class AutoClosableLocks<T> {
     }
     
     
-    public synchronized void unlock(T key) {
+    public void unlock(T key) {
         //globalLock.lock();
-        Lock lockForKey = currentLocks.get(key);
+        ReentrantLock lockForKey = currentLocks.get(key);
         if (lockForKey != null) {
-            lockForKey.unlock();
-            currentLocks.remove(key);
-            log.debug("Thread {} unlocked lock for {}",Thread.currentThread().getName(),key);
+            if (lockForKey.tryLock()) {
+                try {
+                    currentLocks.remove(key);
+                } finally {
+                    lockForKey.unlock();
+                }
+            } else {
+                log.error("Tried to unlock lock {} for key {}, but we are not the owner...",lockForKey,key);
+            }
+            log.debug("Thread {} unlocked lock for {}", Thread.currentThread().getName(), key);
+        } else {
+            log.error("Attempted to unlock key {}, but the lock was null",key);
         }
     }
 }

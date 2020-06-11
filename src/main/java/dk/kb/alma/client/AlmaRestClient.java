@@ -189,7 +189,7 @@ public class AlmaRestClient {
         
         URI currentURI = link.getCurrentURI();
         
-        try (AutoClosableLock<URI> ignored = locks.lock(currentURI)) {
+        try (final AutoClosableLock<URI> ignored = locks.lock(currentURI)) {
             if (useCache) {
                 Object cacheValue = cache.getIfPresent(currentURI);
                 if (type.isInstance(cacheValue)) {
