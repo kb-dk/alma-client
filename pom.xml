@@ -10,14 +10,14 @@
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.5</version>
+    <version>0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
 
     <scm>
         <connection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</connection>
         <developerConnection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</developerConnection>
-      <tag>alma-client-0.5</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <repositories>
