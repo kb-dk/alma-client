@@ -9,7 +9,7 @@ import java.util.Optional;
 //https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/
 public class SRUtils {
     
-    public static Optional<String> extractBibnr(Record record) {
+    public static Optional<String> extractBibnr(Element record) {
         List<String> ids = getMarcField(record, "035", "a");
         Optional<String> bibnr = ids.stream()
                                     .filter(id -> id.startsWith("(DK-820010)"))
@@ -18,7 +18,7 @@ public class SRUtils {
         return bibnr;
     }
     
-    public static Optional<String> extractMMSid(Record record) {
+    public static Optional<String> extractMMSid(Element record) {
         
         List<String> ids = getMarcField(record, "035", "a");
         
@@ -30,12 +30,7 @@ public class SRUtils {
         return mmsID;
     }
     
-    public static List<String> getMarcField(Record record, String datafield, String subfield) {
-        Element recordXml = record.getRecordData().getContent().stream()
-                                  .filter(element -> element instanceof Element)
-                                  .map(element -> (Element) element)
-                                  .findFirst().get();
-        
+    public static List<String> getMarcField(Element recordXml, String datafield, String subfield) {
         XPathSelector xpath = XpathUtils.createXPathSelector("marc", "http://www.loc.gov/MARC21/slim");
         
         List<String> values = (xpath.selectStringList(recordXml,

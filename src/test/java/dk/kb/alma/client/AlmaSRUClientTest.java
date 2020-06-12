@@ -3,17 +3,14 @@ package dk.kb.alma.client;
 import dk.kb.alma.client.utils.SRUtils;
 import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.sru.Explain;
-import dk.kb.alma.gen.sru.ExplainResponse;
-import dk.kb.alma.gen.sru.Record;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AlmaSRUClientTest {
     
@@ -35,13 +32,13 @@ class AlmaSRUClientTest {
     }
     
     @Test
-    void testRetrieve() throws JAXBException {
+    void testRetrieve() throws TransformerException {
     
         //
         //return result.getRecords().getRecords().stream()
         //             .filter(record -> SRUtils.getMarcField(record,"015","a").contains(call_number))
         //             .findFirst();
-        List<Record> result = client.retrieveFromPermanentCallNumber("121576");
+        List<Element> result = client.retrieveFromPermanentCallNumber("121576");
         String mmsID = SRUtils.extractMMSid(result.get(0)).get();
         String xml = XML.toXml(result.get(0));
         System.out.println(xml);
