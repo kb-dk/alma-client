@@ -1,12 +1,11 @@
 package dk.kb.alma.client;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
-import dk.kb.alma.client.locks.AutoClosableLock;
-import dk.kb.alma.client.locks.AutoClosableLocks;
 import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.General;
 import dk.kb.alma.gen.WebServiceResult;
@@ -31,11 +30,11 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class AlmaRestClient {
     
@@ -51,7 +50,6 @@ public class AlmaRestClient {
     private final String almaTarget;
     
     private final Cache<URI, Object> cache;
-    private final AutoClosableLocks<URI> locks;
     
     
     private final String lang;
@@ -92,7 +90,6 @@ public class AlmaRestClient {
                             .expireAfterAccess(cacheTimeMillis, TimeUnit.MILLISECONDS)
                             .build();
         
-        locks = new AutoClosableLocks<>();
         
         
         log.debug("Getting ALMA general info to determine alma host");
@@ -118,7 +115,10 @@ public class AlmaRestClient {
         URI host = UriBuilder.fromUri(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
         
         
-        WebClient client = WebClient.create(host);
+        final List<?> providers = Arrays.asList(JacksonJaxbJsonProvider.class);
+        WebClient client = WebClient.create(host.toString(), providers);
+        
+        
         HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
         conduit.getClient().setConnectionTimeout(connectTimeout);
         conduit.getClient().setConnectionRequestTimeout(connectTimeout);
@@ -131,10 +131,13 @@ public class AlmaRestClient {
             client = client.replaceQuery(link.getQuery());
         }
         
-        client = client.accept(MediaType.APPLICATION_XML_TYPE).type(MediaType.APPLICATION_XML_TYPE);
+        client = client.accept(MediaType.APPLICATION_XML_TYPE, MediaType.APPLICATION_JSON_TYPE)
+                       .type(MediaType.APPLICATION_XML_TYPE);
         if (lang != null) {
             client = client.replaceQueryParam("lang", lang);
         }
+        
+        
         return client;
     }
     
@@ -161,35 +164,39 @@ public class AlmaRestClient {
     
     public <T> T get(final WebClient link, Class<T> type, boolean useCache)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invoke(link, type, null, useCache, Operation.GET);
+        return invokeCache(link, type, null, useCache, Operation.GET);
     }
     
     public <T, E> T put(final WebClient link, Class<T> type, E entity)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invoke(link, type, entity, false, Operation.PUT);
+        return invokeDirect(link, type, entity, Operation.PUT);
     }
     
     public <T, E> T post(final WebClient link, Class<T> type, E entity)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invoke(link, type, entity, false, Operation.POST);
+        return invokeDirect(link, type, entity, Operation.POST);
     }
     
     public <T> T delete(final WebClient link, Class<T> type)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invoke(link, type, null, false, Operation.DELETE);
+        return invokeDirect(link, type, null, Operation.DELETE);
     }
     
-    protected <T, E> T invoke(final WebClient link, Class<T> type, E entity, boolean useCache, Operation operation)
+    protected <T, E> T invokeCache(final WebClient link,
+                                   Class<T> type,
+                                   E entity,
+                                   boolean useCache,
+                                   Operation operation)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
+        //Only use cache on getRequests
+        useCache &= operation == Operation.GET;
+    
         //Remove the api key from the query string. This is something we handle here, not something you should set
         link.replaceQueryParam(APIKEY);
-        
-        useCache &= operation == Operation.GET;
-        
         URI currentURI = link.getCurrentURI();
-        
-        try (final AutoClosableLock<URI> ignored = locks.lock(currentURI)) {
+    
+        try {
             if (useCache) {
                 Object cacheValue = cache.getIfPresent(currentURI);
                 if (type.isInstance(cacheValue)) {
@@ -197,103 +204,10 @@ public class AlmaRestClient {
                     return (T) cacheValue;
                 }
             }
-            log.debug("{}ing on {}", operation, currentURI);
-            T value;
-            try {
-                WebClient webClient = addAPIKey(link);
-                value = webClient.invoke(operation.name(), entity, type);
-                log.trace("{}ed on {}", operation, currentURI);
-            } catch (Fault | ProcessingException e) {
-                //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
-                // but better safe than sorry
-                
-                //This checks if any exception in the hierachy is a socket timeout exception.
-                List<Throwable> causes = getCauses(e);
-                if (causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
-                    //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
-                    // different levels of the hierachy
-                    //TODO should we run a counter to avoid eternal retries?
-                    log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
-                    sleep("Socket timeout exception for '" + currentURI + "'");
-                    HTTPClientPolicy clientPolicy = WebClient.getConfig(link).getHttpConduit().getClient();
-                    clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
-                    clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
-                    clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
-                    log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
-                              clientPolicy.getConnectionTimeout(),
-                              clientPolicy.getReceiveTimeout(),
-                              operation.name(),
-                              currentURI);
-                    
-                    
-                    return invoke(link, type, entity, useCache, operation);
-                } else {
-                    throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
-                }
-            } catch (RedirectionException e) {
-                URI redirectLocation = e.getLocation();
-                log.debug("Redirecting {} to {}", operation, redirectLocation.getPath());
-                if (redirectLocation.isAbsolute()) {
-                    return invoke(getWebClient(redirectLocation), type, entity, useCache, operation);
-                } else {
-                    WebClient newLink = constructLink();
-                    newLink = newLink.replacePath(redirectLocation.getPath());
-                    String redirectQueryString = redirectLocation.getQuery();
-                    if (redirectQueryString != null) {
-                        String currentQueryString = newLink.getCurrentURI().getQuery();
-                        if (currentQueryString != null) {
-                            newLink = newLink.replaceQuery(currentQueryString + "&" + redirectQueryString);
-                        } else {
-                            newLink = newLink.replaceQuery(redirectQueryString);
-                        }
-                    }
-                    return invoke(newLink, type, entity, useCache, operation);
-                }
-            } catch (WebApplicationException e) {
-                if (rateLimitSleep(e, currentURI)) {
-                    return invoke(link, type, entity, useCache, operation);
-                }
-                
-                String entityMessage = "";
-                if (entity != null) {
-                    try {
-                        entityMessage = "with entity '" + XML.toXml(entity) + "' ";
-                    } catch (JAXBException jaxbException) {
-                        throw new AlmaConnectionException("Failed to parse entity '" + entity + "' as xml",
-                                                          jaxbException);
-                    }
-                }
-                
-                Response response = e.getResponse();
-                //Buffer entity so we can read the response multiple times
-                response.bufferEntity();
-                WebServiceResult result;
-                try {
-                    result = response.readEntity(WebServiceResult.class);
-                } catch (Exception e2) {
-                    throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, e);
-                }
-                if (result.isErrorsExist()) {
-                    String errorMessage = result.getErrorList()
-                                                .getErrors()
-                                                .stream()
-                                                .map(error -> error.getErrorMessage())
-                                                .collect(
-                                                        Collectors.joining(", "));
-                    String errorCode = result.getErrorList()
-                                             .getErrors()
-                                             .stream()
-                                             .findFirst()
-                                             .map(error -> error.getErrorCode())
-                                             .orElseGet(null);
-                    
-                    throw new AlmaKnownException(operation.name(), entityMessage, currentURI, errorMessage, errorCode,
-                                                 e);
-                    
-                } else {
-                    throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, e);
-                }
-            }
+    
+            //It is possible for multiple threads to run here, potentially getting the same URI concurrently
+            T value = invokeDirect(link, type, entity, operation);
+    
             if (useCache) {
                 cache.put(currentURI, value);
             }
@@ -301,6 +215,112 @@ public class AlmaRestClient {
         } finally {
             link.close();
         }
+    }
+    
+    
+    protected <T,E> T invokeDirect(final WebClient link, Class<T> type, E entity, Operation operation) {
+    
+        //Remove the api key from the query string. This is something we handle here, not something you should set
+        link.replaceQueryParam(APIKEY);
+    
+        URI currentURI = link.getCurrentURI();
+        log.debug("{}ing on {}", operation, currentURI);
+        T value;
+        try {
+            WebClient webClient = addAPIKey(link);
+            value = webClient.invoke(operation.name(), entity, type);
+            log.trace("{}ed on {}", operation, currentURI);
+        } catch (Fault | ProcessingException e) {
+            //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
+            // but better safe than sorry
+        
+            //This checks if any exception in the hierachy is a socket timeout exception.
+            List<Throwable> causes = getCauses(e);
+            if (causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
+                //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
+                // different levels of the hierachy
+                //TODO should we run a counter to avoid eternal retries?
+                log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
+                sleep("Socket timeout exception for '" + currentURI + "'");
+                HTTPClientPolicy clientPolicy = WebClient.getConfig(link).getHttpConduit().getClient();
+                clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
+                clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
+                clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
+                log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
+                          clientPolicy.getConnectionTimeout(),
+                          clientPolicy.getReceiveTimeout(),
+                          operation.name(),
+                          currentURI);
+            
+            
+                return invokeDirect(link, type, entity, operation);
+            } else {
+                throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
+            }
+        } catch (RedirectionException e) {
+            URI redirectLocation = e.getLocation();
+            log.debug("Redirecting {} to {}", operation, redirectLocation.getPath());
+            if (redirectLocation.isAbsolute()) {
+                return invokeDirect(getWebClient(redirectLocation), type, entity, operation);
+            } else {
+                WebClient newLink = constructLink();
+                newLink = newLink.replacePath(redirectLocation.getPath());
+                String redirectQueryString = redirectLocation.getQuery();
+                if (redirectQueryString != null) {
+                    String currentQueryString = newLink.getCurrentURI().getQuery();
+                    if (currentQueryString != null) {
+                        newLink = newLink.replaceQuery(currentQueryString + "&" + redirectQueryString);
+                    } else {
+                        newLink = newLink.replaceQuery(redirectQueryString);
+                    }
+                }
+                return invokeDirect(newLink, type, entity, operation);
+            }
+        } catch (WebApplicationException e) {
+            if (rateLimitSleep(e, currentURI)) {
+                return invokeDirect(link, type, entity, operation);
+            }
+        
+            String entityMessage = "";
+            if (entity != null) {
+                try {
+                    entityMessage = "with entity '" + XML.toXml(entity) + "' ";
+                } catch (JAXBException jaxbException) {
+                    throw new AlmaConnectionException(jaxbException+": Failed to parse entity '" + entity + "' as xml, but throwing the original WebApplicationException",
+                                                      e);
+                }
+            }
+        
+            Response response = e.getResponse();
+            //Buffer entity so we can read the response multiple times
+            response.bufferEntity();
+            WebServiceResult result;
+            try {
+                result = response.readEntity(WebServiceResult.class);
+            } catch (Exception e2) {
+                log.error(
+                        "Failed to parse response {} as WebServiceResult, but throwing based on the original exception {}",
+                        response.readEntity(String.class),
+                        e,
+                        e2);
+                throw new AlmaUnknownException(operation.name(),
+                                               entityMessage,
+                                               currentURI,
+                                               response,
+                                               e);
+            }
+            throw new AlmaKnownException(operation.name(),
+                                         entityMessage,
+                                         currentURI,
+                                         response,
+                                         result,
+                                         e);
+        
+        } finally {
+            link.close();
+        }
+        return value;
+    
     }
     
     private WebClient addAPIKey(WebClient link) {
@@ -421,9 +441,7 @@ public class AlmaRestClient {
     }
     
     protected void invalidateCacheEntry(URI currentURI) {
-        try (AutoClosableLock<URI> ignored = locks.lock(currentURI);) {
-            cache.invalidate(currentURI);
-        }
+        cache.invalidate(currentURI);
     }
     
     

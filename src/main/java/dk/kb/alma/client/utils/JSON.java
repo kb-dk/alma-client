@@ -103,7 +103,7 @@ public class JSON implements ContextResolver<ObjectMapper> {
   }
 
 
-  static class RFC3339DateFormat extends ISO8601DateFormat {
+  static class RFC3339DateFormat extends com.fasterxml.jackson.databind.util.StdDateFormat {
 
     private static final long serialVersionUID = -3215326930097719238L;
 

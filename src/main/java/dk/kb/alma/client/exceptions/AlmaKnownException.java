@@ -1,52 +1,65 @@
 package dk.kb.alma.client.exceptions;
 
+import dk.kb.alma.gen.WebServiceResult;
+
+import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.stream.Collectors;
 
 import static dk.kb.alma.client.utils.StringListUtils.notNull;
 
-public class AlmaKnownException extends RuntimeException{
+public class AlmaKnownException extends AlmaClientException {
     
-    private String operation;
     
-    private String entityMessage;
+    private final WebServiceResult result;
     
-    private URI currentURI;
-    
-    private String errorMessage;
-    
-    private String errorCode;
     
     public AlmaKnownException(String operation,
                               String entityMessage,
                               URI currentURI,
-                              String errorMessage,
-                              String errorCode,
+                              Response response,
+                              WebServiceResult result,
                               Exception e) {
-        super("Failed with code "+errorCode+" / "+errorMessage+" on " + operation + " " + notNull(entityMessage) + " " + currentURI, e);
-        this.operation = operation;
-        this.entityMessage = entityMessage;
-        this.currentURI = currentURI;
-        this.errorMessage = errorMessage;
-        this.errorCode = errorCode;
+        super("Failed with code " + getErrorcode(result) + " / " + getErrorMessage(result) + " on " + operation + " "
+              + notNull(entityMessage) + " " + currentURI,
+              operation,
+              entityMessage,
+              currentURI,
+              response,
+              e);
+        this.result = result;
+        
     }
     
-    public String getOperation() {
-        return operation;
+    public WebServiceResult getResult() {
+        return result;
     }
     
-    public String getEntityMessage() {
-        return entityMessage;
+    protected static String getErrorcode(WebServiceResult result) {
+        if (result.isErrorsExist()) {
+            String errorCode = result.getErrorList()
+                                     .getErrors()
+                                     .stream()
+                                     .findFirst()
+                                     .map(error -> error.getErrorCode())
+                                     .orElse("");
+            
+            return errorCode;
+            
+        }
+        return "";
     }
     
-    public URI getCurrentURI() {
-        return currentURI;
-    }
-    
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-    
-    public String getErrorCode() {
-        return errorCode;
+    protected static String getErrorMessage(WebServiceResult result) {
+        if (result.isErrorsExist()) {
+            String errorMessage = result.getErrorList()
+                                        .getErrors()
+                                        .stream()
+                                        .map(error -> error.getErrorMessage())
+                                        .collect(
+                                                Collectors.joining(", "));
+            return errorMessage;
+        }
+        return "";
     }
 }
