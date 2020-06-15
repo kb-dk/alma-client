@@ -7,13 +7,38 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class XML {
+    
+    public static String toXml(Node dom) throws TransformerException {
+        Transformer t = TransformerFactory.newInstance().newTransformer();
+        t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        
+        t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        t.setOutputProperty(OutputKeys.METHOD, "xml");
+        
+        /* Transformer */
+        try (StringWriter sw = new StringWriter();) {
+            t.transform(new DOMSource(dom), new StreamResult(sw));
+            return sw.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    
     public static String toXml(Object object) throws JAXBException {
         //TODO does this work?
         JAXBContext jc = JAXBContext.newInstance(object.getClass());

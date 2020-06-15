@@ -10,7 +10,7 @@
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
 
@@ -308,8 +308,17 @@
                             <failOnNoSchemas>true</failOnNoSchemas>
                             <packageName>dk.kb.alma.gen.sru</packageName>
 
+
+                            <xjcSourceExcludeFilters>
+                                <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
+                                <patterns>
+                                    <pattern>\.txt</pattern>
+                                </patterns>
+                                </filter>
+                            </xjcSourceExcludeFilters>
                             <sources>
                                 <source>src/main/resources/alma_sru/</source>
+
                             </sources>
                             <clearOutputDir>false</clearOutputDir>
                             <xjbSources>

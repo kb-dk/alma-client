@@ -39,13 +39,12 @@
   <xsd:element name="boolean" type="booleanType" nillable="false"/>
   <xsd:complexType name="booleanType">
     <xsd:all>
-      <xsd:element ref="value"/>
+      <xsd:element name="value" type="xsd:string" nillable="false"/>
       <xsd:element ref="modifiers" minOccurs="0"/>
     </xsd:all>
   </xsd:complexType>
   <xsd:element name="leftOperand" type="operandType" nillable="false"/>
   <xsd:element name="rightOperand" type="operandType" nillable="false"/>
-  <xsd:element name="value" type="xsd:string" nillable="false"/>
   <xsd:element name="modifiers" type="modifiersType" nillable="false"/>
   <xsd:complexType name="modifiersType">
     <xsd:sequence>
@@ -58,7 +57,7 @@
       <xsd:element ref="type"/>
       <xsd:sequence minOccurs="0">
         <xsd:element ref="comparison"/>
-        <xsd:element ref="value"/>
+        <xsd:element name="value" type="xsd:string" nillable="false"/>
       </xsd:sequence>
     </xsd:sequence>
   </xsd:complexType>
@@ -76,7 +75,7 @@
   <xsd:element name="relation" type="relationType" nillable="false"/>
   <xsd:complexType name="relationType">
     <xsd:all>
-      <xsd:element ref="value"/>
+      <xsd:element name="value" type="xsd:string" nillable="false"/>
       <xsd:element ref="modifiers" minOccurs="0"/>
     </xsd:all>
   </xsd:complexType>
