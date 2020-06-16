@@ -181,4 +181,65 @@ public class StringListUtils {
                             .filter(string -> !string.isBlank())
                             .collect(Collectors.toList());
     }
+    
+    public static String substring(String string, int startIndex, int endIndex) {
+        string = notNull(string);
+        
+        while (startIndex < 0){
+            if (string.length() > 0) {
+                startIndex = startIndex + string.length();
+            } else {
+                startIndex = string.length();
+            }
+        }
+    
+        while (endIndex < 0){
+            if (string.length() > 0) {
+                endIndex = endIndex + string.length();
+            } else {
+                endIndex = string.length();
+            }
+        }
+    
+        if (startIndex > string.length()){
+            startIndex = string.length();
+        }
+        int endindex = Math.min(endIndex, string.length());
+        
+        return string.substring(startIndex, endindex);
+    }
+    
+    public static String cutMiddle(String string, int maxLength) {
+        
+        string = notNull(string);
+        if (string.length() < maxLength){
+            return string;
+        }
+        String truncateString = "...";
+        maxLength = maxLength - truncateString.length();
+    
+        int startStringLength = maxLength / 2;
+        int endStringLength = Math.floorDiv(maxLength, 2);
+        String startString = substring(string, 0, startStringLength);
+        String endString = substring(string, string.length()-1-endStringLength, string.length());
+    
+        int numberRemovedChars = string.length() - maxLength;
+        return startString + truncateString + endString;
+        
+    }
+    
+    
+    public static String cutEnd(String string, int maxLength) {
+        string = notNull(string);
+        if (string.length() < maxLength){
+            return string;
+        }
+        String truncateString = "...";
+        maxLength = maxLength - truncateString.length();
+        
+        String startString = substring(string, 0, maxLength);
+        
+        return startString + truncateString;
+        
+    }
 }
