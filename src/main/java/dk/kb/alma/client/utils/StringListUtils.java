@@ -1,15 +1,8 @@
 package dk.kb.alma.client.utils;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -140,6 +133,15 @@ public class StringListUtils {
         }
     }
     
+    
+    public static <T> T orDefault(T value, T default_value) {
+        if (value == null) {
+            return default_value;
+        } else {
+            return value;
+        }
+    }
+    
     /**
      * If the string contains /, return the part BEFORE the last /. Otherwise return the entire string
      *
@@ -162,5 +164,21 @@ public class StringListUtils {
         } else {
             return Arrays.asList(strings);
         }
+    }
+    
+    /**
+     * Trims all the strings in the list and filters out any blank strings and nulls.
+     * @param listOfStrings the strings to be cleaned. If null, returns empty list
+     * @return the resulting list.
+     */
+    public static List<String> cleanList(List<String> listOfStrings) {
+        if (listOfStrings == null) {
+            return Collections.emptyList();
+        }
+        return listOfStrings.stream()
+                            .filter(Objects::nonNull)
+                            .map(string -> string.trim())
+                            .filter(string -> !string.isBlank())
+                            .collect(Collectors.toList());
     }
 }
