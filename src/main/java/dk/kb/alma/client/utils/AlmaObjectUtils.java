@@ -4,6 +4,7 @@ import dk.kb.alma.gen.Address;
 import dk.kb.alma.gen.Addresses;
 import dk.kb.alma.gen.ContactInfo;
 import dk.kb.alma.gen.Email;
+import dk.kb.alma.gen.Item;
 import dk.kb.alma.gen.User;
 import dk.kb.alma.gen.requested_resource.RequestedResource;
 import org.slf4j.Logger;
@@ -26,6 +27,13 @@ import java.util.stream.Stream;
 public class AlmaObjectUtils {
     
     protected static final Logger log = LoggerFactory.getLogger(AlmaObjectUtils.class);
+    
+    public static String getCallNumber(Item item){
+        String call_number = StringListUtils.orDefault(
+                item.getItemData().getAlternativeCallNumber(),
+                item.getHoldingData().getCallNumber());
+        return call_number;
+    }
     
     
     public static String extractUserPrimaryID(RequestedResource RestRequestedResource, String userLink) {

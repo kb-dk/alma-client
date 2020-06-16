@@ -1,22 +1,28 @@
 package dk.kb.alma.client;
 
 import dk.kb.alma.client.utils.SRUtils;
+import dk.kb.alma.gen.requested_resource.RequestedResource;
 import dk.kb.alma.gen.sru.Explain;
 import dk.kb.alma.gen.sru.ExplainResponse;
 import dk.kb.alma.gen.sru.Record;
 import dk.kb.alma.gen.sru.SearchRetrieveResponse;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +30,7 @@ import java.util.stream.Collectors;
  */
 public class AlmaSRUClient {
     
+    private Logger logger = LoggerFactory.getLogger(AlmaSRUClient.class);
     
     /**
      * The URL for the Alma SRU service.
@@ -76,15 +83,18 @@ public class AlmaSRUClient {
      */
     public SearchRetrieveResponse searchRetrieve(String query, int startPos) {
         
-        
         WebClient client = getWebClient(almaSruUrl)
-                                   .query("startRecord", startPos)
-                                   .query("maximumRecords", almaSruRequestCount)
+                                   //Mandatory arguments
                                    .query("version", "1.2")
                                    .query("operation", "searchRetrieve")
-                                   .query("query",
-                                          query);
-        System.out.println(client.getCurrentURI());
+                                   .query("query", query)
+                                   //Optionals
+                                   .query("startRecord", startPos)
+                                   .query("maximumRecords", almaSruRequestCount)
+                                   .query("recordSchema", "marcxml");
+        
+        
+        logger.debug("SRU Search with {}", client.getCurrentURI());
         SearchRetrieveResponse value = client.invoke("GET", null, SearchRetrieveResponse.class);
         return value;
         
@@ -112,17 +122,29 @@ public class AlmaSRUClient {
         return explain.get();
     }
     
-    public List<Element> retrieveFromPermanentCallNumber(String call_number){
-        SearchRetrieveResponse result = searchRetrieve("PermanentCallNumber==" + call_number, 0);
-        if (Objects.isNull(result.getRecords()) || Objects.isNull(result.getRecords().getRecords())){
-            return Collections.emptyList();
+    public Iterator<Element> searchOnPermanentCallNumber(String call_number, int offset) {
+        SearchRetrieveResponse result = searchRetrieve(
+                "PermanentCallNumber all \"" + call_number.trim() + "\"",
+                offset);
+        if (Objects.isNull(result.getRecords()) || Objects.isNull(result.getRecords().getRecords())) {
+            return Collections.emptyIterator();
         } else {
+            if (offset > result.getNumberOfRecords().intValueExact()) {
+                return Collections.emptyIterator();
+            }
             return result.getRecords().getRecords().stream()
-                    .flatMap(record -> record.getRecordData().getContent()
-                                             .stream()
-                                             .filter(element -> element instanceof Element)
-                                             .map(element -> (Element)element))
-                    .collect(Collectors.toList());
+                         .flatMap(record -> record.getRecordData().getContent()
+                                                  .stream()
+                                                  .filter(element -> element instanceof Element)
+                                                  .map(element -> (Element) element))
+                         .collect(Collectors.toList()).iterator();
         }
+    }
+    
+    public Iterator<Element> searchOnPermanentCallNumber(String call_number) {
+        Function<Integer, Iterator<Element>> nextIteratorFunction =
+                offset -> searchOnPermanentCallNumber(call_number, offset+1);
+        
+        return new AutochainingIterator<>(nextIteratorFunction);
     }
 }

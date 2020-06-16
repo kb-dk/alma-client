@@ -1,0 +1,79 @@
+<record xmlns="http://www.loc.gov/MARC21/slim">
+    <leader>02286nam a22001810 4500</leader>
+    <controlfield tag="001">99123222669705763</controlfield>
+    <controlfield tag="005">20191216171630.0</controlfield>
+    <controlfield tag="008">000000s2019 dk ||||e 00| 0 dan d</controlfield>
+    <datafield ind1=" " ind2=" " tag="035">
+        <subfield code="a">(EXLNZ-45KBDK_NETWORK)996109310005761</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="084">
+        <subfield code="a">38.79</subfield>
+        <subfield code="2">z</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="084">
+        <subfield code="a">34.51</subfield>
+        <subfield code="2">z</subfield>
+    </datafield>
+    <datafield ind1="0" ind2="0" tag="245">
+        <subfield code="a">Værktøjskassen :</subfield>
+        <subfield code="b">støtte til et liv med demens.</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="260">
+        <subfield code="a">[Kbh.] :</subfield>
+        <subfield code="b">Nationalt Videnscenter for Demens,</subfield>
+        <subfield code="c">2019.</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="300">
+        <subfield code="a">1 æske ;</subfield>
+        <subfield code="c">6,5×24×35cm.</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="500">
+        <subfield code="a">På æsken: Til fagpersoner.</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="500">
+        <subfield code="a">Bøgerne "Når kommunikationen svigter", "Livet med demens i plejebolig", "Livet med demens i
+            eget hjem", "Når du skal handle på en anden persons vegne", "Min bog", "Når hukommelsen svigter",
+            "Psykologiske udfordringer og reaktioner" også udgivet separat.
+        </subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="500">
+        <subfield code="a">1. oplag. 2019.</subfield>
+    </datafield>
+    <datafield ind1="0" ind2="0" tag="505">
+        <subfield code="a">Vejledning til hjælpekort : samtalehjulet - version demens (27 sider) Psykologiske
+            udfordringer og reaktioner : til pårørende til mennesker med demens (43 sider) Når kommunikationen svigter :
+            inspiration og gode råd til pårørende til mennesker med demens (23 sider) Livet med demens i eget hjem : en
+            guide til pårørende om love, regler og muligheder for støtte og hjælp (47 sider) Livet med demens i
+            plejebolig : en guide til pårørende om love, regler og muligheder for støtte (39 sider) Når du skal handle
+            på en anden persons vegne : en guide til pårørende til mennesker med demens (31 sider) Når hukommelsen
+            svigter : redskaber og gode råd til kommunikation og aktiviteter i hverdagen med demens (27 sider) Min bog :
+            om hverdagen med demens (53 sider) Pårørendekursus om livet med demens i plejebolig  (27 sider ; 30 cm)
+            Pårørendekursus om livet med demens i eget hjem  (31 sider ; 30 cm) Livet med demens : kursus for mennesker
+            med demens og deres pårørende (30 sider ; 30 cm) Diagnosen og tiden efter : foredragsrække for mennesker med
+            demens og deres pårørende (19 sider ; 30 cm) Tiden efter diagnosen : samtalegruppe for mennesker med let til
+            moderat demens (35 sider ; 30 cm) Mit liv som pårørende : samtalegrupper for pårørende til mennesker med
+            demens (35 sider ; 30 cm) Samtalehjulet - version demens : værktøj til samtale med mennesker med demens (23
+            sider ; 30 cm). - 1 samtalehjul -- - 1 betydningsark -- - 53 samtalekort -- - 49 hjælpekort
+        </subfield>
+    </datafield>
+    <datafield ind1="2" ind2=" " tag="710">
+        <subfield code="a">Nationalt Videnscenter for Demens.</subfield>
+    </datafield>
+    <datafield ind1=" " ind2=" " tag="AVA">
+        <subfield code="0">99123222669705763</subfield> <!--mmsid-->
+        <subfield code="8">222097792420005763</subfield> <!--holdingID-->
+        <subfield code="a">45KBDK_KGL</subfield>
+        <subfield code="b">SBMAG</subfield>
+        <subfield code="c">Magasin,pligtafl. mat.</subfield>
+        <subfield code="d">BA12-1576</subfield>
+        <subfield code="e">available</subfield>
+        <subfield code="f">1</subfield>
+        <subfield code="g">0</subfield>
+        <subfield code="i">ÅRH</subfield>
+        <subfield code="j">SMAGP</subfield>
+        <subfield code="k">8</subfield>
+        <subfield code="p">1</subfield>
+        <subfield code="q">KB Victor Albecks Vej, Aarhus</subfield>
+    </datafield>
+</record>
+
