@@ -20,7 +20,7 @@ public class AlmaKnownException extends AlmaClientException {
                               Response response,
                               WebServiceResult result,
                               Exception e) {
-        super("Failed with code " + getErrorcode(result) + " / " + getErrorMessage(result) + " on " + operation + " "
+        super("Failed with code " + parseErrorCode(result) + " / " + parseErrorMessage(result) + " on " + operation + " "
               + notNull(entityMessage) + " " + currentURI,
               operation,
               entityMessage,
@@ -35,7 +35,7 @@ public class AlmaKnownException extends AlmaClientException {
         return result;
     }
     
-    protected static String getErrorcode(WebServiceResult result) {
+    protected static String parseErrorCode(WebServiceResult result) {
         if (result.isErrorsExist()) {
             String errorCode = result.getErrorList()
                                      .getErrors()
@@ -50,7 +50,7 @@ public class AlmaKnownException extends AlmaClientException {
         return "";
     }
     
-    protected static String getErrorMessage(WebServiceResult result) {
+    protected static String parseErrorMessage(WebServiceResult result) {
         if (result.isErrorsExist()) {
             String errorMessage = result.getErrorList()
                                         .getErrors()
