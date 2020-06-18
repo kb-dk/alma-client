@@ -348,11 +348,11 @@ public class AlmaClient extends AlmaRestClient {
         
     }
     
-    public UserRequests getItemRequests(String recordId, String holdingId, String itemId)
+    public UserRequests getItemRequests(String mmsId, String holdingId, String itemId)
             throws AlmaConnectionException {
         
         WebClient link = constructLink().path("/bibs/")
-                                        .path(recordId)
+                                        .path(mmsId)
                                         .path("/holdings/")
                                         .path(holdingId)
                                         .path("/items/")
