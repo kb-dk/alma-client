@@ -64,8 +64,10 @@ public class StringListUtils {
     }
     
     public static List<String> removeEmpties(List<String> list) {
+        if (list == null) {
+            return Collections.emptyList();
+        }
         return list.stream()
-                   .parallel()
                    .filter(Objects::nonNull)
                    .filter(number -> !number.trim().isEmpty())
                    .distinct()
