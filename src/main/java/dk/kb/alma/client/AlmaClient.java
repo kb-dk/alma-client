@@ -374,4 +374,17 @@ public class AlmaClient extends AlmaRestClient {
         return get(link, CodeTable.class);
     }
     
+    public UserRequest getItemRequest(String mmsId, String holdingId, String itemId, String request_id) {
+    
+        WebClient link = constructLink().path("/bibs/")
+                                        .path(mmsId)
+                                        .path("/holdings/")
+                                        .path(holdingId)
+                                        .path("/items/")
+                                        .path(itemId)
+                                        .path("/requests/")
+                .path(request_id);
+    
+        return get(link, UserRequest.class);
+    }
 }
