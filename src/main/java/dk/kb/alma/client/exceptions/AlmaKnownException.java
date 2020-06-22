@@ -12,6 +12,8 @@ public class AlmaKnownException extends AlmaClientException {
     
     
     private final WebServiceResult result;
+    private final String errorCode;
+    private final String errorMessage;
     
     
     public AlmaKnownException(String operation,
@@ -27,6 +29,8 @@ public class AlmaKnownException extends AlmaClientException {
               currentURI,
               response,
               e);
+        errorCode = parseErrorCode(result);
+        errorMessage= parseErrorMessage(result);
         this.result = result;
         
     }
@@ -61,5 +65,13 @@ public class AlmaKnownException extends AlmaClientException {
             return errorMessage;
         }
         return "";
+    }
+    
+    public String getErrorCode() {
+        return errorCode;
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
     }
 }
