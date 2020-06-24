@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Spliterator;
@@ -36,11 +37,7 @@ public class StringListUtils {
      * @return same or "" if null
      */
     public static String notNull(String string) {
-        if (string == null) {
-            return "";
-        }
-        return string;
-        
+        return Optional.ofNullable(string).orElse("");
     }
     
     public static String firstOf(List<String> list, String defaultValue) {
@@ -137,11 +134,7 @@ public class StringListUtils {
     
     
     public static <T> T orDefault(T value, T default_value) {
-        if (value == null) {
-            return default_value;
-        } else {
-            return value;
-        }
+        return Optional.ofNullable(value).orElse(default_value);
     }
     
     /**
