@@ -39,7 +39,7 @@ public class XML {
     }
     
     
-    public static String toXml(Object object) throws JAXBException {
+    public static <T> String toXml(T object) throws JAXBException {
         //TODO does this work?
         JAXBContext jc = JAXBContext.newInstance(object.getClass());
         

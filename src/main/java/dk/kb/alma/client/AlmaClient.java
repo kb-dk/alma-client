@@ -167,6 +167,20 @@ public class AlmaClient extends AlmaRestClient {
         return items;
     }
     
+    public Item getItem(String bibId, String holdingId, String itemId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        
+        Item item = get(constructLink().path("/bibs/")
+                                         .path(bibId)
+                                         .path("/holdings/")
+                                         .path(holdingId)
+                                         .path("/items/")
+                                         .path(itemId),
+                          Item.class);
+        
+        
+        return item;
+    }
+    
     public Holdings getBibHoldings(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
