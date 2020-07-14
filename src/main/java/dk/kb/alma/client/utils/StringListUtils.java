@@ -12,11 +12,18 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class StringListUtils {
+    
+    
+    public static final Predicate<String> notNull = Predicate.not(Objects::isNull);
+    public static final Predicate<String> notEmptyString = Predicate.not(String::isEmpty);
+    public static final Predicate<String> isNotEmpty = notNull.and(notEmptyString);
+    
     /**
      * Turn an iterator into a stream
      *
