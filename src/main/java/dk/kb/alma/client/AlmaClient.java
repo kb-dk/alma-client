@@ -4,6 +4,8 @@ import com.google.common.collect.Iterables;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
+import dk.kb.alma.client.exceptions.MarcXmlException;
+import dk.kb.alma.client.utils.MarcRecordHelper;
 import dk.kb.alma.client.utils.ParallelUtils;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.Bibs;
@@ -11,6 +13,8 @@ import dk.kb.alma.gen.CodeTable;
 import dk.kb.alma.gen.Item;
 import dk.kb.alma.gen.ItemData;
 import dk.kb.alma.gen.Items;
+import dk.kb.alma.gen.LinkingDetails;
+import dk.kb.alma.gen.Portfolio;
 import dk.kb.alma.gen.User;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.requested_resource.RequestedResource;
@@ -89,6 +93,17 @@ public class AlmaClient extends AlmaRestClient {
                            .path("/bibs/")
                            .path(mmsID),
                    Bib.class);
+    }
+    
+    
+   
+    
+    public Bib updateBib(Bib record) throws AlmaConnectionException {
+        WebClient link = constructLink().path("/bibs/")
+                                        .path(record.getMmsId());
+        
+        
+        return put(link, Bib.class, record);
     }
     
     
@@ -401,4 +416,147 @@ public class AlmaClient extends AlmaRestClient {
     
         return get(link, UserRequest.class);
     }
+    
+    
+    
+    public Portfolio getBibPortfolios(String bibId) throws AlmaConnectionException {
+        return get(constructLink()
+                           .path("/bibs/")
+                           .path(bibId)
+                           .path("/portfolios/"),
+                   Portfolio.class);
+        
+    }
+    
+    
+    //TODO do not use hardcoded values, use parameters
+    public Portfolio createPortfolio(String bibId, String multiVolume, String pdfLink, String publicNote) throws AlmaConnectionException {
+        WebClient link = constructLink().path("/bibs/")
+                                        .path(bibId)
+                                        .path("/portfolios/");
+        
+        Portfolio portfolio = new Portfolio();
+        if (multiVolume.equalsIgnoreCase("yes")){
+            portfolio.setIsStandalone(false);
+        }
+        
+        LinkingDetails ld = new LinkingDetails();
+        ld.setUrl(pdfLink);
+        portfolio.setLinkingDetails(ld);
+        
+        Portfolio.Availability avail = new Portfolio.Availability();
+        avail.setDesc("Available");
+        avail.setValue("11");
+        portfolio.setAvailability(avail);
+        
+        portfolio.setPublicNote(publicNote);
+        
+        Portfolio.MaterialType materialType = new Portfolio.MaterialType();
+        materialType.setValue("BOOK");
+        materialType.setDesc("Book");
+        portfolio.setMaterialType(materialType);
+        
+        return post(link, Portfolio.class, portfolio);
+    }
+    
+    public Portfolio getPortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+        return get(constructLink()
+                           .path("/bibs/")
+                           .path(bibId)
+                           .path("/portfolios/")
+                           .path(portfolioId),
+                   Portfolio.class);
+        
+    }
+    
+    public Portfolio updatePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+        Portfolio pf = getPortfolio(bibId, portfolioId);
+        
+        WebClient link = constructLink()
+                                 .path("/bibs/")
+                                 .path(bibId)
+                                 .path("/portfolios/")
+                                 .path(portfolioId);
+        
+        return put(link, Portfolio.class, pf);
+    }
+    
+    
+    public Portfolio deletePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+        WebClient link = constructLink().path("/bibs/")
+                                        .path(bibId)
+                                        .path("/portfolios/")
+                                        .path(portfolioId);
+        
+        return delete(link, Portfolio.class);
+    }
+    
+    
+    /**
+     * Create a new basic Bib record with only 'Title' set (NewTitle). The record should be updated
+     * {@link #updateBib(Bib)} with relevant values after creation, e.g. Leader, ControlFields and relevant
+     * DataFields
+     *
+     * @return The newly created record
+     */
+    public Bib createBib() throws AlmaConnectionException {
+        Bib bib = new Bib();
+        MarcRecordHelper.createRecordWithTitle(bib);
+        WebClient link = constructLink().path("/bibs/");
+        
+        return post(link, Bib.class, bib);
+        
+    }
+    
+    public Bib deleteBib(String bibId) throws AlmaConnectionException {
+        WebClient link = constructLink().path("/bibs/")
+                                        .path(bibId);
+        
+        return delete(link, Bib.class);
+    }
+    
+    
+    
+  
+    
+    /**
+     * Set whether the record should be published to Primo or not.
+     * "true" as suppressValue means that the record will NOT be published.
+     * The subfield 'u' of datafield 096 will be set to: "Kan ikke hjemlånes"
+     *
+     * @param bibId         The record Id of the record to suppress
+     * @param suppressValue String value "true" means to suppress and "false" not to suppress
+     * @return the Bib record
+     */
+    public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException{
+        Bib record = getBib(bibId);
+        try {
+            org.marc4j.marc.Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(record);
+            String suppress;
+            if (suppressValue.equalsIgnoreCase("true")) {
+                suppress = "true";
+            } else if (suppressValue.equalsIgnoreCase("false")) {
+                suppress = "false";
+            } else {
+                suppress = "false";
+                log.warn("Suppress value must be 'true' or 'false'. It was: {}. Default set to 'false'", suppressValue);
+            }
+            
+            record.setSuppressFromPublishing(suppress);
+            
+            if (suppress.equals("true")) {
+                if (MarcRecordHelper.isSubfieldPresent(marcRecord, "DF096_TAG", 'u')) {
+                    MarcRecordHelper.addSubfield(marcRecord, "DF096_TAG", 'u', "Kan ikke hjemlånes");
+                }
+            }
+            MarcRecordHelper.saveMarcRecordOnAlmaRecord(record, marcRecord);
+        } catch (MarcXmlException e) {
+            log.info("Set supress failed ", e);
+        }
+        return updateBib(record);
+    }
+    
+    
+    
+    
 }

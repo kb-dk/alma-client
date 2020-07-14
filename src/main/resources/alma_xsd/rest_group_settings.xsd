@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:documentation> </xs:documentation>
+    </xs:annotation>
+    <xs:element name="group_settings" type="group_settings"/>
+    <xs:complexType name="group_settings">
+        <xs:annotation>
+            <xs:documentation>List of access restrictions based on locations.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="group_setting" type="group_setting" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                    </xs:appinfo>
+                    <xs:documentation>Access restrictions based on location. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="group_setting">
+        <xs:annotation>
+            <xs:documentation>Access restrictions based on location.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="group" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example/>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        Group name. Must be a valid [Inventory Management Group|http://knowledge.exlibrisgroup.com/Alma/Product_Documentation/Alma_Online_Help_(English)/Resource_Management/080Configuring_Resource_Management/160Configuring_Inventory_Management_Groups]. The "desc" attribute contains the group description.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="proxy_enabled" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:codeTable>GroupProxyEnabled</xs:codeTable>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>0</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        Whether to enable a proxy. Possible code are listed in GroupProxyEnabled [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API]. In the PUT action, proxy_enabled can be modified for all collections.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="desc" type="xs:string"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="proxy" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example>LAW_PROXY</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        A proxy profile code. This must be a valid code of an integration profile of "Resolver proxy" type. In the PUT action, proxy can be modified for all collections.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="public_name" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example/>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        The name to display in the discovery search results. Mandatory. In the PUT action, public_name can be modified only for local collections.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="authentication_note" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example/>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        A note related to authentication (to display in the discovery system). In the PUT action, authentication_note can be modified for all collections.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="public_note" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get post put</xs:tags>
+                        <xs:example/>
+                    </xs:appinfo>
+                    <xs:documentation>
+                        Information about the service (to display in the discovery system.) In the PUT action, public_note can be modified for all collections.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
