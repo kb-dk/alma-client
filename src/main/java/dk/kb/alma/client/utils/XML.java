@@ -29,12 +29,13 @@ import java.util.List;
 
 public class XML {
     
-    public static String toXml(Node dom) throws TransformerException {
+    public static String toXmlString(Node dom) throws TransformerException {
         Transformer t = TransformerFactory.newInstance().newTransformer();
         t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         
         t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         t.setOutputProperty(OutputKeys.METHOD, "xml");
+        t.setOutputProperty(OutputKeys.INDENT, "yes");
         
         /* Transformer */
         try (StringWriter sw = new StringWriter();) {
@@ -46,7 +47,7 @@ public class XML {
     }
     
     
-    public static <T> String toXml(T object) throws JAXBException {
+    public static <T> String toXmlString(T object) throws JAXBException {
         //TODO does this work?
         JAXBContext jc = JAXBContext.newInstance(object.getClass());
         
@@ -94,8 +95,8 @@ public class XML {
      *                       XML namespaces declared in the document
      * @return The document in a DOM or {@code null} on errors.
      */
-    public static Document stringToDOM(String xmlString,
-                                       boolean namespaceAware)
+    public static Document fromXML(String xmlString,
+                                   boolean namespaceAware)
             throws ParserConfigurationException, IOException, SAXException {
         
         InputSource in = new InputSource();
@@ -117,8 +118,8 @@ public class XML {
      *                       the namespaces declared in the XML document
      * @return The document in a DOM or {@code null} in case of errors
      */
-    public static Document streamToDOM(InputStream xmlStream,
-                                       boolean namespaceAware)
+    public static Document fromXML(InputStream xmlStream,
+                                   boolean namespaceAware)
             throws ParserConfigurationException, IOException, SAXException {
         
         DocumentBuilderFactory dbFact = DocumentBuilderFactory.newInstance();

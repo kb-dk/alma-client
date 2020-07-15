@@ -284,7 +284,7 @@ public class AlmaRestClient {
             String entityMessage = "";
             if (entity != null) {
                 try {
-                    entityMessage = "with entity '" + XML.toXml(entity) + "' ";
+                    entityMessage = "with entity '" + XML.toXmlString(entity) + "' ";
                 } catch (JAXBException jaxbException) {
                     throw new AlmaConnectionException(jaxbException+": Failed to parse entity '" + entity + "' as xml, but throwing the original WebApplicationException",
                                                       e);

@@ -30,7 +30,7 @@ class AlmaSRUClientTest {
     
         Explain explain = client.explain();
     
-        System.out.println(XML.toXml(explain));
+        System.out.println(XML.toXmlString(explain));
         
     }
     
@@ -46,7 +46,7 @@ class AlmaSRUClientTest {
         Element first = resultList.get(0);
         
         String mmsID = SRUtils.extractMMSid(first).get();
-        String xml = XML.toXml(first);
+        String xml = XML.toXmlString(first);
         System.out.println(xml);
     }
 }

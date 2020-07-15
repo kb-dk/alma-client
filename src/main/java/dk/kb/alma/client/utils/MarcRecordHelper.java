@@ -77,7 +77,7 @@ public class MarcRecordHelper {
                 " was found on Alma record with id: " + almaRecord.getMmsId());
         }
 
-        try (InputStream marcXmlStream =  IOUtils.toInputStream(XML.toXml(marcXmlNode))) {
+        try (InputStream marcXmlStream =  IOUtils.toInputStream(XML.toXmlString(marcXmlNode))) {
             MarcXmlReader marcXmlReader = new MarcXmlReader(marcXmlStream);
             Record marcRecord;
             if (marcXmlReader.hasNext()) {
@@ -101,7 +101,7 @@ public class MarcRecordHelper {
             marcXmlWriter.write(marcRecord);
             marcXmlWriter.close();
             String marcXmlString = out.toString(String.valueOf(Charsets.UTF_8));
-            Element marcElement = XML.stringToDOM(marcXmlString, false).getDocumentElement();
+            Element marcElement = XML.fromXML(marcXmlString, false).getDocumentElement();
 
             almaRecord.getAnies().clear();
             almaRecord.getAnies().add(marcElement);
