@@ -76,7 +76,7 @@ public class AlmaClientException extends RuntimeException {
     
     @Override
     public String toString() {
-        return "AlmaClientException{" +
+        return this.getClass().getName() +"{" +
                "operation='" + operation + '\'' +
                ", entityMessage='" + entityMessage + '\'' +
                ", currentURI=" + currentURI +

@@ -1,12 +1,15 @@
 package dk.kb.alma.client;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
+import dk.kb.alma.client.exceptions.AlmaNotFoundException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.utils.XML;
+import dk.kb.alma.gen.Error;
 import dk.kb.alma.gen.General;
 import dk.kb.alma.gen.WebServiceResult;
 import dk.kb.alma.gen.requested_resource.RequestedResource;
@@ -115,7 +118,12 @@ public class AlmaRestClient {
         URI host = UriBuilder.fromUri(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
         
         
-        final List<?> providers = Arrays.asList(JacksonJaxbJsonProvider.class);
+        JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
+        jacksonJaxbJsonProvider.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+        jacksonJaxbJsonProvider.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        
+        
+        final List<?> providers = Arrays.asList(jacksonJaxbJsonProvider);
         WebClient client = WebClient.create(host.toString(), providers);
         
         
@@ -308,6 +316,23 @@ public class AlmaRestClient {
                                                currentURI,
                                                response,
                                                e);
+            }
+            Error error = null;
+            try {
+                error = result.getErrorList().getErrors().get(0);
+            } catch (RuntimeException noErrorInErrorlist) {
+                //ignore, just contiune
+            }
+            if (error != null) {
+                switch (error.getErrorCode()) {
+                    case "NOT_FOUND":
+                        throw new AlmaNotFoundException(operation.name(),
+                                                        entityMessage,
+                                                        currentURI,
+                                                        response,
+                                                        result,
+                                                        e);
+                }
             }
             throw new AlmaKnownException(operation.name(),
                                          entityMessage,
