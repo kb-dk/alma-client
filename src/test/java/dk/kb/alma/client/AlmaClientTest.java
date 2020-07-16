@@ -472,7 +472,7 @@ class AlmaClientTest {
     public void testCreatePortfolio() throws IOException, AlmaConnectionException {
         AlmaClient almaClient = getAlmaClient();
         String bibIdDigi = "99123319235105763"; // 99123315968505763
-        Portfolio portfolio = almaClient.createPortfolio(bibIdDigi, "no", "thePdfLink", "public note");
+        Portfolio portfolio = almaClient.createPortfolio(bibIdDigi, false, "thePdfLink", "public note");
         
         almaClient.deletePortfolio(bibIdDigi, portfolio.getId());
     }
