@@ -430,13 +430,13 @@ public class AlmaClient extends AlmaRestClient {
     
     
     //TODO do not use hardcoded values, use parameters
-    public Portfolio createPortfolio(String bibId, String multiVolume, String pdfLink, String publicNote) throws AlmaConnectionException {
+    public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote) throws AlmaConnectionException {
         WebClient link = constructLink().path("/bibs/")
                                         .path(bibId)
                                         .path("/portfolios/");
         
         Portfolio portfolio = new Portfolio();
-        if (multiVolume.equalsIgnoreCase("yes")){
+        if (multiVolume){
             portfolio.setIsStandalone(false);
         }
         
