@@ -13,6 +13,7 @@ import dk.kb.alma.gen.CodeTable;
 import dk.kb.alma.gen.Item;
 import dk.kb.alma.gen.ItemData;
 import dk.kb.alma.gen.Items;
+import dk.kb.alma.gen.Libraries;
 import dk.kb.alma.gen.LinkingDetails;
 import dk.kb.alma.gen.Portfolio;
 import dk.kb.alma.gen.User;
@@ -556,6 +557,12 @@ public class AlmaClient extends AlmaRestClient {
         return updateBib(record);
     }
     
+    
+    public Libraries getLibraries(){
+        return get(constructLink()
+                           .path("/conf/libraries"),
+                   Libraries.class);
+    }
     
     
     
