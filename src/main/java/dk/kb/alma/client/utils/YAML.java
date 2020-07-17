@@ -30,7 +30,8 @@ public class YAML implements ContextResolver<ObjectMapper> {
 
     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-
+      mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     mapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
 
