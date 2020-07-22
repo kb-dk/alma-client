@@ -25,6 +25,8 @@ import dk.kb.alma.gen.user_request.ResourceSharing;
 import dk.kb.alma.gen.user_request.UserRequest;
 import dk.kb.alma.gen.user_request.UserRequests;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.net.URI;
@@ -38,6 +40,7 @@ import java.util.stream.StreamSupport;
 
 public class AlmaClient extends AlmaRestClient {
     
+    private final Logger log = LoggerFactory.getLogger(AlmaClient.class);
     
     private final int batchSize;
     
@@ -81,7 +84,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
+    public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/items")
                            .query("item_barcode", barcode),
@@ -89,15 +92,13 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Bib getBib(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
+    public Bib getBib(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(mmsID),
                    Bib.class);
     }
     
-    
-   
     
     public Bib updateBib(Bib record) throws AlmaConnectionException {
         WebClient link = constructLink().path("/bibs/")
@@ -108,7 +109,8 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Set<Bib> getBibs(Set<String> bibIDs) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException{
+    public Set<Bib> getBibs(Set<String> bibIDs)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
         return StreamSupport.stream(partition.spliterator(), true)
@@ -122,7 +124,8 @@ public class AlmaClient extends AlmaRestClient {
                                                            .query("expand", "None"),
                                                    Bibs.class);
                                     },
-                                    partion -> threadName+"->"+"Bibs-from-" + partion.get(0) + "-to-" + partion.get(partion.size() - 1)))
+                                    partion -> threadName + "->" + "Bibs-from-" + partion.get(0) + "-to-" + partion.get(
+                                            partion.size() - 1)))
                             .filter(Objects::nonNull)
                             .filter(bibs -> bibs.getBibs() != null)
                             .flatMap(bibs -> bibs.getBibs().stream())
@@ -137,7 +140,8 @@ public class AlmaClient extends AlmaRestClient {
                    User.class);
     }
     
-    public UserRequests getRequests(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public UserRequests getRequests(String mmsID)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(mmsID)
@@ -145,7 +149,8 @@ public class AlmaClient extends AlmaRestClient {
                    UserRequests.class);
     }
     
-    public UserRequest getRequest(String userId, String requestId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public UserRequest getRequest(String userId, String requestId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/users/")
                            .path(userId)
@@ -154,7 +159,8 @@ public class AlmaClient extends AlmaRestClient {
                    UserRequest.class);
     }
     
-    public ResourceSharing getResourceSharingRequest(String userId, String requestId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public ResourceSharing getResourceSharingRequest(String userId, String requestId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink().path("/users/")
                                   .path(userId)
                                   .path("/resource-sharing-requests/")
@@ -163,41 +169,52 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Items getItems(String bibId, String holdingId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Items getItems(String bibId, String holdingId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        Items result = new Items();
+        
         int limit = 100;
-        Items items = get(constructLink().path("/bibs/")
-                                         .path(bibId)
-                                         .path("/holdings/")
-                                         .path(holdingId)
-                                         .path("/items")
-                                         .query("limit", limit),
-                          Items.class);
-        
-        
-        if (items != null && items.getItems().size() == limit) {
-            log.warn("Retrieved max number of items ({}) for record '{}', holding '{}'. There might be more..",
-                     limit,
-                     bibId,
-                     holdingId);
-        }
-        return items;
-    }
+        int offset = 0;
+        int hitCount = 1;
+        while (true) {
+            Items items = get(constructLink().path("/bibs/")
+                                             .path(bibId)
+                                             .path("/holdings/")
+                                             .path(holdingId)
+                                             .path("/items")
+                                             .query("limit", limit)
+                                             .query("offset", offset),
+            
+                              Items.class);
+            result.getItems().addAll(items.getItems());
+            offset += items.getItems().size();
     
-    public Item getItem(String bibId, String holdingId, String itemId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+            if (items.getItems().size() != limit || offset >= items.getTotalRecordCount()) {
+                break;
+            }
+        }
+        result.setTotalRecordCount(result.getItems().size());
+        
+        return result;
+    }
+   
+    public Item getItem(String bibId, String holdingId, String itemId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         Item item = get(constructLink().path("/bibs/")
-                                         .path(bibId)
-                                         .path("/holdings/")
-                                         .path(holdingId)
-                                         .path("/items/")
-                                         .path(itemId),
-                          Item.class);
+                                       .path(bibId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId),
+                        Item.class);
         
         
         return item;
     }
     
-    public Holdings getBibHoldings(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Holdings getBibHoldings(String bibId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink()
                            .path("/bibs/")
                            .path(bibId)
@@ -322,7 +339,8 @@ public class AlmaClient extends AlmaRestClient {
                                      String holdingId,
                                      String itemId,
                                      String pickupLocationCode,
-                                     XMLGregorianCalendar lastInterestDate) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+                                     XMLGregorianCalendar lastInterestDate)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         WebClient link = constructLink().path("/bibs/")
                                         .path(bibId)
@@ -348,7 +366,8 @@ public class AlmaClient extends AlmaRestClient {
      * @param request The fully populated request
      * @return The request created in Alma
      */
-    public UserRequest createRequest(UserRequest request) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public UserRequest createRequest(UserRequest request)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         String userId = request.getUserPrimaryId();
         String mmsId = request.getMmsId();
@@ -392,11 +411,13 @@ public class AlmaClient extends AlmaRestClient {
         return get(link, UserRequests.class);
     }
     
-    public CodeTable getCodeTable(String codeTableName) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public CodeTable getCodeTable(String codeTableName)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return getCodeTable(codeTableName, "da");
     }
     
-    public CodeTable getCodeTable(String codeTableName, String lang) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public CodeTable getCodeTable(String codeTableName, String lang)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/conf/code-tables/")
                                         .path(codeTableName)
                                         .replaceQueryParam("lang", lang);
@@ -405,7 +426,7 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     public UserRequest getItemRequest(String mmsId, String holdingId, String itemId, String request_id) {
-    
+        
         WebClient link = constructLink().path("/bibs/")
                                         .path(mmsId)
                                         .path("/holdings/")
@@ -413,11 +434,10 @@ public class AlmaClient extends AlmaRestClient {
                                         .path("/items/")
                                         .path(itemId)
                                         .path("/requests/")
-                .path(request_id);
-    
+                                        .path(request_id);
+        
         return get(link, UserRequest.class);
     }
-    
     
     
     public Portfolio getBibPortfolios(String bibId) throws AlmaConnectionException {
@@ -431,13 +451,14 @@ public class AlmaClient extends AlmaRestClient {
     
     
     //TODO do not use hardcoded values, use parameters
-    public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote) throws AlmaConnectionException {
+    public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote)
+            throws AlmaConnectionException {
         WebClient link = constructLink().path("/bibs/")
                                         .path(bibId)
                                         .path("/portfolios/");
         
         Portfolio portfolio = new Portfolio();
-        if (multiVolume){
+        if (multiVolume) {
             portfolio.setIsStandalone(false);
         }
         
@@ -494,9 +515,8 @@ public class AlmaClient extends AlmaRestClient {
     
     
     /**
-     * Create a new basic Bib record with only 'Title' set (NewTitle). The record should be updated
-     * {@link #updateBib(Bib)} with relevant values after creation, e.g. Leader, ControlFields and relevant
-     * DataFields
+     * Create a new basic Bib record with only 'Title' set (NewTitle). The record should be updated {@link
+     * #updateBib(Bib)} with relevant values after creation, e.g. Leader, ControlFields and relevant DataFields
      *
      * @return The newly created record
      */
@@ -517,19 +537,15 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    
-  
-    
     /**
-     * Set whether the record should be published to Primo or not.
-     * "true" as suppressValue means that the record will NOT be published.
-     * The subfield 'u' of datafield 096 will be set to: "Kan ikke hjemlånes"
+     * Set whether the record should be published to Primo or not. "true" as suppressValue means that the record will
+     * NOT be published. The subfield 'u' of datafield 096 will be set to: "Kan ikke hjemlånes"
      *
      * @param bibId         The record Id of the record to suppress
      * @param suppressValue String value "true" means to suppress and "false" not to suppress
      * @return the Bib record
      */
-    public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException{
+    public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException {
         Bib record = getBib(bibId);
         try {
             org.marc4j.marc.Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(record);
@@ -558,12 +574,11 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public Libraries getLibraries(){
+    public Libraries getLibraries() {
         return get(constructLink()
                            .path("/conf/libraries"),
                    Libraries.class);
     }
-    
     
     
 }
