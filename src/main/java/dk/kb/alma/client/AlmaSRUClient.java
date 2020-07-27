@@ -1,9 +1,7 @@
 package dk.kb.alma.client;
 
-import com.google.common.collect.Streams;
-import dk.kb.alma.client.utils.SRUtils;
-import dk.kb.alma.client.utils.StringListUtils;
-import dk.kb.alma.gen.requested_resource.RequestedResource;
+import dk.kb.alma.client.sru.Query;
+import dk.kb.alma.client.sru.Restriction;
 import dk.kb.alma.gen.sru.Explain;
 import dk.kb.alma.gen.sru.ExplainResponse;
 import dk.kb.alma.gen.sru.Record;
@@ -13,25 +11,17 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
-import java.math.BigInteger;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static java.lang.Math.max;
 
@@ -91,14 +81,14 @@ public class AlmaSRUClient {
      * @param query    The search query.
      * @param startPos The starting position for the interval of search.
      */
-    public SearchRetrieveResponse searchRetrieve(String query, int startPos, int numHits) {
+    public SearchRetrieveResponse searchRetrieve(Query query, int startPos, int numHits) {
         
         numHits = Math.min(almaSruRequestCount,max(0,numHits));
         WebClient client = getWebClient(almaSruUrl)
                                    //Mandatory arguments
                                    .query("version", "1.2")
                                    .query("operation", "searchRetrieve")
-                                   .query("query", query)
+                                   .query("query", query.build())
                                    //Optionals
                                    .query("startRecord", startPos)
                                    .query("maximumRecords", numHits)
@@ -133,9 +123,8 @@ public class AlmaSRUClient {
         return explain.get();
     }
     
-    public Iterator<Element> searchOnPermanentCallNumber2(String call_number) {
-        final String query = "PermanentCallNumber all \"" + call_number.trim() + "\"";
-        //First query for the number of hits, returninng only a low number of hits
+    public Iterator<Element> search(Query query) {
+        
         SearchRetrieveResponse result = searchRetrieve(query,0,10);
         
         int numHits = result.getNumberOfRecords().intValueExact();
@@ -171,43 +160,6 @@ public class AlmaSRUClient {
         
     }
     
-    public Iterator<Element> searchOnMMSid(String mms) {
-        final String query = "mms_id==\"" + mms + "\"";
-        //First query for the number of hits, returninng only a low number of hits
-        SearchRetrieveResponse result = searchRetrieve(query,0,10);
-        
-        int numHits = result.getNumberOfRecords().intValueExact();
-        if (result.getRecords() != null &&
-            result.getRecords().getRecords() != null &&
-            numHits == result.getRecords().getRecords().size()){ //If we got all the hits in the first go, just return them
-            return result.getRecords().getRecords().stream()
-                         .flatMap(record -> getElementStream(record))
-                         .collect(Collectors.toList())
-                         .iterator();
-        }
-        //else, get all the batches in parallel
-        List<Element> elements = IntStream.range(0, Math.min(numHits,10000))//The results are limited to the first 10k objects
-                                          .filter(x -> x % almaSruRequestCount == 0)
-                                          .parallel()
-                                          .mapToObj(offset -> searchRetrieve(query,
-                                                                             offset,
-                                                                             almaSruRequestCount))
-                                          .flatMap(searchResult -> {
-                                              final Records records = searchResult.getRecords();
-                                              if (records == null){
-                                                  return Stream.empty();
-                                              }
-                                              final List<Record> records2 = records.getRecords();
-                                              if (records2 == null){
-                                                  return Stream.empty();
-                                              }
-                                              return records2.stream();
-                                          })
-                                          .flatMap((Record record) -> getElementStream(record))
-                                          .collect(Collectors.toList());
-        return elements.iterator();
-        
-    }
     
     private Stream<Element> getElementStream(Record record) {
         return record.getRecordData()
@@ -217,12 +169,4 @@ public class AlmaSRUClient {
                                       .map(element -> (Element) element);
     }
     
-    public Iterator<Element> searchOnPermanentCallNumber(String call_number) {
-        
-        return searchOnPermanentCallNumber2(call_number);
-        //Function<Integer, Iterator<Element>> nextIteratorFunction =
-        //        offset -> searchOnPermanentCallNumber(call_number, offset+1);
-        //
-        //return new AutochainingIterator<>(nextIteratorFunction);
-    }
 }

@@ -1,5 +1,6 @@
 package dk.kb.alma.client;
 
+import dk.kb.alma.client.sru.Query;
 import dk.kb.alma.client.utils.SRUtils;
 import dk.kb.alma.client.utils.StringListUtils;
 import dk.kb.alma.client.utils.XML;
@@ -41,7 +42,12 @@ class AlmaSRUClientTest {
         //return result.getRecords().getRecords().stream()
         //             .filter(record -> SRUtils.getMarcField(record,"015","a").contains(call_number))
         //             .findFirst();
-        Iterator<Element> result = client.searchOnPermanentCallNumber("121576");
+    
+        //Function<Integer, Iterator<Element>> nextIteratorFunction =
+        //        offset -> searchOnPermanentCallNumber(call_number, offset+1);
+        //
+        //return new AutochainingIterator<>(nextIteratorFunction);
+        Iterator<Element> result = client.search(Query.containsWords(Query.PermanentCallNumber, "121576"));
         List<Element> resultList = StringListUtils.asStream(result).collect(Collectors.toList());
         Element first = resultList.get(0);
         
