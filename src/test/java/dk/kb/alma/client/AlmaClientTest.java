@@ -1,5 +1,6 @@
 package dk.kb.alma.client;
 
+import dk.kb.alma.client.analytics.Report;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.MarcXmlException;
@@ -12,9 +13,11 @@ import dk.kb.alma.gen.Rows;
 import dk.kb.alma.gen.User;
 import dk.kb.alma.gen.holdings.Holdings;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.marc4j.marc.Record;
 
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 import static dk.kb.alma.client.TestUtils.getAlmaClient;
@@ -98,6 +101,22 @@ class AlmaClientTest {
 //        assertTrue(holdings.getHolding().size() >= 3);
 //    }
 //
+    
+    
+    @Test
+    @Disabled
+    public void testGetReport() throws AlmaConnectionException, IOException, TransformerException {
+        AlmaClient almaClient = getAlmaClient();
+    
+        Report report = almaClient.startReport(
+                "/shared/Royal Danish Library 45KBDK_KGL/Færdige rapporter/Digital kulturarv_DKM/Digitalt materiale i fysisk form/dvd-opstilling-bibnr-location\\/llo",
+                null,
+                null,
+                true);
+    
+        System.out.println(report);
+    }
+    
     @Test
     public void testGetBibRecord() throws AlmaConnectionException, IOException {
         AlmaClient almaClient = getAlmaClient();
@@ -125,7 +144,7 @@ class AlmaClientTest {
         AlmaClient almaClient = getAlmaClient();
 
         User user = almaClient.getUser("thl");
-
+        
         assertEquals("Thomas", user.getFirstName().trim());
     }
 

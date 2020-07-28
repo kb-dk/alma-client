@@ -361,6 +361,24 @@
 
 
                     </execution>
+                    <execution>
+                        <id>xjc_analytics</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <failOnNoSchemas>true</failOnNoSchemas>
+                            <packageName>dk.kb.alma.gen.analytics</packageName>
+                            <sources>
+                                <source>src/main/resources/analytics</source>
+                            </sources>
+                            <clearOutputDir>false</clearOutputDir>
+                            <xjbSources>
+                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
+                            </xjbSources>
+                        </configuration>
+                    </execution>
 
 
                 </executions>
