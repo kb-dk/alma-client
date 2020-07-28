@@ -13,7 +13,11 @@ public class Or extends Query {
     
     @Override
     public String build() {
-        return "(" + queries.stream().map(query -> query.build()).collect(Collectors.joining(" OR ")) + ")";
+        if (queries.size() > 1) {
+            return "("+queries.stream().map(query -> query.build()).collect(Collectors.joining(" OR "))+")";
+        } else {
+            return queries.stream().map(query -> query.build()).collect(Collectors.joining(" OR "));
+        }
     }
     
 }

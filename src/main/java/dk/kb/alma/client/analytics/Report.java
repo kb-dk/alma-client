@@ -17,15 +17,24 @@ import java.util.Optional;
 public class Report {
     
     private final String token;
+    private final boolean finished;
     
     private final List<Map<String, String>> rows;
     
-    public Report(String token, List<Map<String, String>> rows) {
+    private final Map<String, String> columns;
+    
+    
+    public Report(String token,
+                  boolean finished,
+                  List<Map<String, String>> rows,
+                  Map<String, String> columns) {
         this.token = token;
+        this.finished = finished;
         this.rows = rows;
+        this.columns = columns;
     }
     
-    public static Report parseFromAlmaReport(dk.kb.alma.gen.analytics.Report almaReport) {
+    public static Report parseFromAlmaReport(dk.kb.alma.gen.analytics.Report almaReport, Report old_report) {
         Element doc = almaReport.getAnies().get(0);
         
         final XPathSelector xPathSelector = XpathUtils.createXPathSelector("rowset",
@@ -35,20 +44,29 @@ public class Report {
                                                                            "xsd",
                                                                            "http://www.w3.org/2001/XMLSchema");
         String token = xPathSelector.selectString(doc, "/QueryResult/ResumptionToken");
+        if (token == null || token.isBlank()){
+            token = old_report.getToken();
+        }
+        boolean isFinished = Boolean.parseBoolean(xPathSelector.selectString(doc, "/QueryResult/IsFinished"));
         
-        Map<String, String> columns = new LinkedHashMap<>();
         List<Node> columnNodes =
                 xPathSelector.selectNodeList(doc,
                                              "/QueryResult/ResultXml/rowset:rowset/xsd:schema/xsd:complexType/xsd:sequence/xsd:element");
-        
-        for (Node columnNode : columnNodes) {
-            NamedNodeMap attributes = columnNode.getAttributes();
-            String columnId = attributes.getNamedItem("name").getTextContent();
-            String type = attributes.getNamedItem("type").getTextContent();
-            String name = Optional.ofNullable(attributes.getNamedItemNS("urn:saw-sql", "columnHeading"))
-                                  .map(columnHeading -> columnHeading.getTextContent())
-                                  .orElse(columnId);
-            columns.put(columnId, name);
+    
+        Map<String, String> columns;
+        if (columnNodes.isEmpty()){
+            columns = old_report.getColumns();
+        } else {
+            columns = new LinkedHashMap<>();
+            for (Node columnNode : columnNodes) {
+                NamedNodeMap attributes = columnNode.getAttributes();
+                String columnId = attributes.getNamedItem("name").getTextContent();
+                String type = attributes.getNamedItem("type").getTextContent();
+                String name = Optional.ofNullable(attributes.getNamedItemNS("urn:saw-sql", "columnHeading"))
+                                      .map(columnHeading -> columnHeading.getTextContent())
+                                      .orElse(columnId).trim();
+                columns.put(columnId, name);
+            }
         }
         
         
@@ -67,7 +85,7 @@ public class Report {
             rows.add(Collections.unmodifiableMap(row));
         }
         //TODO type
-        return new Report(token, rows);
+        return new Report(token, isFinished, rows, columns);
     }
     
     public String getToken() {
@@ -78,11 +96,20 @@ public class Report {
         return Collections.unmodifiableList(rows);
     }
     
+    public boolean isFinished() {
+        return finished;
+    }
+    
+    
+    public Map<String, String> getColumns() {
+        return columns;
+    }
     
     @Override
     public String toString() {
         return "Report{" +
                "token='" + token + '\'' +
+               ", finished=" + finished +
                ", rows=" + rows +
                '}';
     }
