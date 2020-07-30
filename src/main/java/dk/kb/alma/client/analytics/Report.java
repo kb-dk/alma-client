@@ -1,11 +1,13 @@
 package dk.kb.alma.client.analytics;
 
+import com.sun.istack.Nullable;
 import dk.kb.alma.client.utils.XPathSelector;
 import dk.kb.alma.client.utils.XpathUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,24 +19,21 @@ import java.util.Optional;
 public class Report {
     
     private final String token;
-    private final boolean finished;
     
     private final List<Map<String, String>> rows;
-    
     private final Map<String, String> columns;
     
-    
     public Report(String token,
-                  boolean finished,
                   List<Map<String, String>> rows,
                   Map<String, String> columns) {
         this.token = token;
-        this.finished = finished;
         this.rows = rows;
         this.columns = columns;
     }
     
-    public static Report parseFromAlmaReport(dk.kb.alma.gen.analytics.Report almaReport, Report old_report) {
+    public static Report parseFromAlmaReport(@Nonnull dk.kb.alma.gen.analytics.Report almaReport,
+                                             @Nullable Report previousReport) {
+   
         Element doc = almaReport.getAnies().get(0);
         
         final XPathSelector xPathSelector = XpathUtils.createXPathSelector("rowset",
@@ -44,29 +43,26 @@ public class Report {
                                                                            "xsd",
                                                                            "http://www.w3.org/2001/XMLSchema");
         String token = xPathSelector.selectString(doc, "/QueryResult/ResumptionToken");
-        if (token == null || token.isBlank()){
-            token = old_report.getToken();
-        }
-        boolean isFinished = Boolean.parseBoolean(xPathSelector.selectString(doc, "/QueryResult/IsFinished"));
-        
-        List<Node> columnNodes =
-                xPathSelector.selectNodeList(doc,
-                                             "/QueryResult/ResultXml/rowset:rowset/xsd:schema/xsd:complexType/xsd:sequence/xsd:element");
     
+        //TODO isFinished...
         Map<String, String> columns;
-        if (columnNodes.isEmpty()){
-            columns = old_report.getColumns();
-        } else {
+        if (previousReport == null) {
             columns = new LinkedHashMap<>();
+            List<Node> columnNodes =
+                    xPathSelector.selectNodeList(doc,
+                                                 "/QueryResult/ResultXml/rowset:rowset/xsd:schema/xsd:complexType/xsd:sequence/xsd:element");
+    
             for (Node columnNode : columnNodes) {
                 NamedNodeMap attributes = columnNode.getAttributes();
                 String columnId = attributes.getNamedItem("name").getTextContent();
                 String type = attributes.getNamedItem("type").getTextContent();
                 String name = Optional.ofNullable(attributes.getNamedItemNS("urn:saw-sql", "columnHeading"))
                                       .map(columnHeading -> columnHeading.getTextContent())
-                                      .orElse(columnId).trim();
+                                      .orElse(columnId);
                 columns.put(columnId, name);
             }
+        } else {
+            columns = previousReport.getColumns();
         }
         
         
@@ -84,8 +80,7 @@ public class Report {
             }
             rows.add(Collections.unmodifiableMap(row));
         }
-        //TODO type
-        return new Report(token, isFinished, rows, columns);
+        return new Report(token, rows, columns);
     }
     
     public String getToken() {
@@ -96,12 +91,7 @@ public class Report {
         return Collections.unmodifiableList(rows);
     }
     
-    public boolean isFinished() {
-        return finished;
-    }
-    
-    
-    public Map<String, String> getColumns() {
+    protected Map<String, String> getColumns() {
         return columns;
     }
     
@@ -109,7 +99,6 @@ public class Report {
     public String toString() {
         return "Report{" +
                "token='" + token + '\'' +
-               ", finished=" + finished +
                ", rows=" + rows +
                '}';
     }
