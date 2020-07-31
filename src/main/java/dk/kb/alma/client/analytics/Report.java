@@ -116,6 +116,8 @@ public class Report {
         return "Report{" +
                "token='" + token + '\'' +
                ", rows=" + rows +
+               ", columns=" + columns +
+               ", finished=" + finished +
                '}';
     }
 }

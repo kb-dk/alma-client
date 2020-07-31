@@ -147,6 +147,23 @@ class AlmaClientTest {
         
         assertEquals("Thomas", user.getFirstName().trim());
     }
+    
+    
+    @Test
+    public void testRestrictLimit(){
+        assertEquals(25,AlmaClient.restrictLimit(25));
+    
+        assertEquals(125,AlmaClient.restrictLimit(105));
+        assertEquals(100,AlmaClient.restrictLimit(98));
+    
+        assertEquals(0,AlmaClient.restrictLimit(-25));
+    
+        assertEquals(1000,AlmaClient.restrictLimit(Integer.MAX_VALUE));
+    
+        assertEquals(0,AlmaClient.restrictLimit(Integer.MIN_VALUE));
+    
+        assertEquals(1000,AlmaClient.restrictLimit(2002));
+    }
 
 //    @Ignore
 //    @Test

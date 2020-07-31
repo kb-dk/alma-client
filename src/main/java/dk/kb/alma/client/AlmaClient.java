@@ -585,7 +585,7 @@ public class AlmaClient extends AlmaRestClient {
     
     /**
      * @param reportPath Full path to the report
-     * @param filter     Optional.	An XML representation of a filter in OBI format
+     * @param filter     Optional.	An XML representation of a filter in OBI format ???
      * @param limit      Optional. Default: 25	Maximum number of results to return - between 25 and 1000 (multiples of
      *                   25)
      * @param col_names  Optional. Default: true	Include column heading information. Default: true. To ensure consistent
@@ -611,7 +611,6 @@ public class AlmaClient extends AlmaRestClient {
                     Report.class,
                     false),
                 null);
-        
     }
     
     
@@ -630,13 +629,28 @@ public class AlmaClient extends AlmaRestClient {
                             .path("/analytics/reports")
                             .query("token", report.getToken()),
                     Report.class,
-                    false),
+                    false), //Important that cache is not used, as this is the same url being requested each time
                 report);
     }
     
-    private Integer restrictLimit(@Nullable Integer limit) {
-        final double a = Math.ceil(Math.min(1000, Math.max(0, limit == null ? 25 : limit) / 25.0));
-        limit = (int) (a * 25);
+    /**
+     * Transforms the input integer to be
+     *  * positive
+     *  * between 25 and 1000
+     *  * A multiple of 25
+     * @param limit
+     * @return
+     */
+    protected static Integer restrictLimit(@Nullable Integer limit) {
+        
+        limit = (limit == null ? 25 : limit); //if null, set to 25
+    
+        limit = Math.max(0, limit); //Make positive
+    
+        final double multipleOf25 = Math.ceil(limit / 25.0); //Find the multiple of 25
+        final long multipliedBack = (long) multipleOf25 * 25;
+        limit = (int)Math.min(1000L, multipliedBack);
+        
         return limit;
     }
     
