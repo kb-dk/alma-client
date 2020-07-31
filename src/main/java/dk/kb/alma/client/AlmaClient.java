@@ -608,19 +608,29 @@ public class AlmaClient extends AlmaRestClient {
                             .query("filter", filter)
                             .query("limit", limit)
                             .query("col_names", col_names),
-                    Report.class),
+                    Report.class,
+                    false),
                 null);
         
     }
     
     
-    public dk.kb.alma.client.analytics.Report continueReport(dk.kb.alma.client.analytics.Report report) {
-        
+    /**
+     *
+     * @param report
+     * @return
+     * @throws IllegalArgumentException when you try to continue a report that is already finished
+     */
+    public dk.kb.alma.client.analytics.Report continueReport(dk.kb.alma.client.analytics.Report report) throws IllegalArgumentException{
+        if (report.isFinished()){
+            throw new IllegalArgumentException("The report is finished, there is no more to get here");
+        }
         return dk.kb.alma.client.analytics.Report.parseFromAlmaReport(
                 get(constructLink()
                             .path("/analytics/reports")
                             .query("token", report.getToken()),
-                    Report.class),
+                    Report.class,
+                    false),
                 report);
     }
     
