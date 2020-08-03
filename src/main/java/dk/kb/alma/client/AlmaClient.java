@@ -594,9 +594,9 @@ public class AlmaClient extends AlmaRestClient {
      */
     public dk.kb.alma.client.analytics.Report startReport(
             @Nonnull String reportPath,
-                                                          @Nullable String filter,
-                                                          @Nullable Integer limit,
-                                                          @Nullable Boolean col_names) {
+            @Nullable String filter,
+            @Nullable Integer limit,
+            @Nullable Boolean col_names) {
         filter = filter == null ? "" : filter;
         limit = restrictLimit(limit);
         col_names = col_names == null ? true : col_names;
@@ -615,41 +615,49 @@ public class AlmaClient extends AlmaRestClient {
     
     
     /**
-     *
      * @param report
      * @return
      * @throws IllegalArgumentException when you try to continue a report that is already finished
      */
-    public dk.kb.alma.client.analytics.Report continueReport(dk.kb.alma.client.analytics.Report report) throws IllegalArgumentException{
-        if (report.isFinished()){
+    public dk.kb.alma.client.analytics.Report continueReport(dk.kb.alma.client.analytics.Report report)
+            throws IllegalArgumentException {
+        if (report.isFinished()) {
             throw new IllegalArgumentException("The report is finished, there is no more to get here");
         }
+        final Report rawReport;
+        try {
+            rawReport = get(constructLink().path("/analytics/reports")
+                                           .query("token", report.getToken()),
+                            Report.class,
+                            false);
+        } catch (AlmaKnownException e) {
+            //TODO This is a hack, but it seems that sometimes we miss isFinished...?
+            if (e.getErrorCode().equals("420033") && e.getErrorMessage().equals("No more rows to fetch")) {
+                throw new IllegalArgumentException("The report is finished, there is no more to get here, but somehow we did not see the finished flag???", e);
+            } else {
+                throw e;
+            }
+        }
         return dk.kb.alma.client.analytics.Report.parseFromAlmaReport(
-                get(constructLink()
-                            .path("/analytics/reports")
-                            .query("token", report.getToken()),
-                    Report.class,
-                    false), //Important that cache is not used, as this is the same url being requested each time
+                rawReport, //Important that cache is not used, as this is the same url being requested each time
                 report);
     }
     
     /**
-     * Transforms the input integer to be
-     *  * positive
-     *  * between 25 and 1000
-     *  * A multiple of 25
+     * Transforms the input integer to be * positive * between 25 and 1000 * A multiple of 25
+     *
      * @param limit
      * @return
      */
     protected static Integer restrictLimit(@Nullable Integer limit) {
         
         limit = (limit == null ? 25 : limit); //if null, set to 25
-    
+        
         limit = Math.max(0, limit); //Make positive
-    
+        
         final double multipleOf25 = Math.ceil(limit / 25.0); //Find the multiple of 25
         final long multipliedBack = (long) multipleOf25 * 25;
-        limit = (int)Math.min(1000L, multipliedBack);
+        limit = (int) Math.min(1000L, multipliedBack);
         
         return limit;
     }

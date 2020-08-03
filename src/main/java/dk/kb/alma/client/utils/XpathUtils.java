@@ -42,28 +42,29 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Helpers for doing DOM parsing and manipulations. The methods are thread-safe
- * and allows for parallel execution of the same xpath.
+ * Helpers for doing DOM parsing and manipulations. The methods are thread-safe and allows for parallel execution of the
+ * same xpath.
  */
 public class XpathUtils {
     private static Logger log = LoggerFactory.getLogger(XpathUtils.class);
     
     /**
-     * Importatnt: All access to the xpathCompiler should be synchronized on it
-     * since it is not thread safe!
+     * Importatnt: All access to the xpathCompiler should be synchronized on it since it is not thread safe!
      */
     private static final XPath xpathCompiler =
             XPathFactory.newInstance().newXPath();
     
     
-    
-  
     public static XPathSelector createXPathSelector(String... nsContextStrings) {
         return new XPathSelector() {
+            
+            private NamespaceContext nsContext = new DefaultNamespaceContext(null, nsContextStrings);
+            
+            private LRUCache<String, XPathExpression> cache  = new LRUCache<String, XPathExpression>(50, true);
     
-            private NamespaceContext nsContext = new DefaultNamespaceContext(null,nsContextStrings);
     
     
+            
             @Override
             public Integer selectInteger(Node node, String xpath, Integer defaultValue) {
                 String strVal = selectString(node, xpath);
@@ -104,7 +105,7 @@ public class XpathUtils {
             
             @Override
             public Boolean selectBoolean(Node node, String xpath) {
-                return selectBoolean(node, xpath, false);
+                return selectBoolean(node, xpath, null);
             }
             
             @Override
@@ -132,18 +133,18 @@ public class XpathUtils {
             
             @Override
             public List<Node> selectNodeList(Node dom, String xpath) {
-                return  XML.nodeList((NodeList)selectObject(dom, xpath, XPathConstants.NODESET));
+                return XML.nodeList((NodeList) selectObject(dom, xpath, XPathConstants.NODESET));
             }
-    
+            
             @Override
             public List<String> selectStringList(Node dom, String xpath) {
-                return  XML.nodeList((NodeList)selectObject(dom, xpath, XPathConstants.NODESET))
-                           .stream()
-                           .map(node -> node.getNodeValue())
-                        .collect(Collectors.toList());
+                return XML.nodeList((NodeList) selectObject(dom, xpath, XPathConstants.NODESET))
+                          .stream()
+                          .map(node -> node.getNodeValue())
+                          .collect(Collectors.toList());
             }
-    
-    
+            
+            
             @Override
             public Node selectNode(Node dom, String xpath) {
                 return (Node) selectObject(dom, xpath, XPathConstants.NODE);
@@ -170,11 +171,20 @@ public class XpathUtils {
                 return retval;
             }
             
+            
             private XPathExpression getXPathExpression(String xpath) throws XPathExpressionException {
-                XPathExpression exp;
-                synchronized (xpathCompiler) {
-                    xpathCompiler.setNamespaceContext(nsContext);
-                    exp = xpathCompiler.compile(xpath);
+                // Get the compiled xpath from the cache or compile and
+                // cache it if we don't have it
+                
+                XPathExpression exp = cache.get(xpath);
+                if (exp == null) {
+                    synchronized (xpathCompiler) {
+                        if (nsContext != null) {
+                            xpathCompiler.setNamespaceContext(nsContext);
+                        }
+                        exp = xpathCompiler.compile(xpath);
+                        cache.put(xpath, exp);
+                    }
                 }
                 return exp;
             }
@@ -195,8 +205,7 @@ public class XpathUtils {
         /**
          * Constructs a NamespaceContext with no default namespace.
          * <p>
-         * Beware that the default namespace can only be set during
-         * construction.
+         * Beware that the default namespace can only be set during construction.
          */
         public DefaultNamespaceContext() {
             this(null);
@@ -242,16 +251,14 @@ public class XpathUtils {
         /**
          * Set or add a namespace to the context and associated it with a prefix.
          * <p>
-         * A given prefix can only be associated with one namespace in the context.
-         * A namespace can have multiple prefixes.
+         * A given prefix can only be associated with one namespace in the context. A namespace can have multiple
+         * prefixes.
          * <p>
-         * The prefixes: {@code xml}, and {@code xmlns} are reserved and
-         * predefined in any context.
+         * The prefixes: {@code xml}, and {@code xmlns} are reserved and predefined in any context.
          *
          * @param namespaceURL the namespace uri
          * @param prefix       the prifix to registere with the uri
-         * @throws IllegalArgumentException thrown when trying to assign a
-         *                                  namespace to a reserved prefix
+         * @throws IllegalArgumentException thrown when trying to assign a namespace to a reserved prefix
          */
         public void setNameSpace(String namespaceURL, String prefix)
                 throws IllegalArgumentException {
@@ -331,8 +338,7 @@ public class XpathUtils {
         }
         
         /**
-         * This Iterator wraps any Iterator and makes the remove() method
-         * unsupported.<br>
+         * This Iterator wraps any Iterator and makes the remove() method unsupported.<br>
          *
          * @author Hans Lund, State and University Library, Aarhus Denamrk.
          * @version $Id: DefaultNamespaceContext.java,v 1.5 2007/10/04 13:28:21 te Exp $
@@ -347,9 +353,8 @@ public class XpathUtils {
             }
             
             /**
-             * Returns <tt>true</tt> if the iteration has more elements. (In other
-             * words, returns <tt>true</tt> if <tt>next</tt> would return an element
-             * rather than throwing an exception.)
+             * Returns <tt>true</tt> if the iteration has more elements. (In other words, returns <tt>true</tt> if
+             * <tt>next</tt> would return an element rather than throwing an exception.)
              *
              * @return <tt>true</tt> if the iterator has more elements.
              */
@@ -358,9 +363,8 @@ public class XpathUtils {
             }
             
             /**
-             * Returns the next element in the iteration.  Calling this method
-             * repeatedly until the {@link #hasNext()} method returns false will
-             * return each element in the underlying collection exactly once.
+             * Returns the next element in the iteration.  Calling this method repeatedly until the {@link #hasNext()}
+             * method returns false will return each element in the underlying collection exactly once.
              *
              * @return the next element in the iteration.
              * @throws java.util.NoSuchElementException iteration has no more elements.
@@ -374,8 +378,8 @@ public class XpathUtils {
              * <p>
              * Allways throws UnsupportedOperationException {@link javax.xml.namespace.NamespaceContext#getPrefixes(String)}
              *
-             * @throws UnsupportedOperationException if the <tt>remove</tt>
-             *                                       operation is not supported by this Iterator.
+             * @throws UnsupportedOperationException if the <tt>remove</tt> operation is not supported by this
+             *                                       Iterator.
              */
             public void remove() {
                 throw new UnsupportedOperationException("Conform to XML API please");

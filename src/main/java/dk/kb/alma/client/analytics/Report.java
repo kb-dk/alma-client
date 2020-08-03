@@ -45,7 +45,7 @@ public class Report {
                                                                            "urn:saw-sql",
                                                                            "xsd",
                                                                            "http://www.w3.org/2001/XMLSchema");
-        Boolean isFinished = xPathSelector.selectBoolean(doc, "/QueryResult/IsFinished");
+        Boolean isFinished = xPathSelector.selectBoolean(doc, "/QueryResult/IsFinished", null);
     
     
         
