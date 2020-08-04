@@ -159,12 +159,17 @@ public class StringListUtils {
         return string;
     }
     
+    /**
+     * Return the elements as a MODIFIABLE list
+     * @param strings the elements
+     * @param <T> the type of elements
+     * @return the elements as a ArrayList
+     */
     public static <T> List<T> toList(T... strings) {
         if (strings == null) {
             return new ArrayList<>();
-            //Important that this is not a unmodifiable list
         } else {
-            return Arrays.asList(strings);
+            return new ArrayList<>(Arrays.asList(strings));
         }
     }
     
