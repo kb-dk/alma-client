@@ -1,6 +1,5 @@
 package dk.kb.alma.client.utils;
 
-import dk.kb.alma.gen.sru.Record;
 import org.w3c.dom.Element;
 
 import java.util.List;
