@@ -539,6 +539,20 @@ public class AlmaClient extends AlmaRestClient {
         return delete(link, Bib.class);
     }
     
+    public Item deleteItem(Item item, boolean force, boolean cleanEmptyHolding) {
+        WebClient link = constructLink().path("/bibs/")
+                .path(item.getBibData().getMmsId())
+                .path("/holdings/")
+                .path(item.getHoldingData().getHoldingId())
+                .path("/items/")
+                .path(item.getItemData().getPid())
+                .query("override",force)
+                .query("holdings",cleanEmptyHolding);
+    
+        return delete(link,Item.class);
+    }
+    
+    
     
     /**
      * Set whether the record should be published to Primo or not. "true" as suppressValue means that the record will
