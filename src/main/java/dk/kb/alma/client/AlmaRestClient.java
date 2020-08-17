@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -405,12 +404,14 @@ public class AlmaRestClient {
      * @param allOrNothing        If anything fails, do you want the already fetched results or an exception?
      * @return an iterator of the requested resources
      */
-    protected Iterator<RequestedResource> getBatchOfRequestedResources(Integer limit,
+    protected List<RequestedResource> getBatchOfRequestedResources(Integer limit,
                                                                        Integer offset,
                                                                        String libraryID,
                                                                        String circulationDeskName,
                                                                        boolean allOrNothing) {
-        
+        //if (Objects.isNull(offset)){
+        //    offset = 0;
+        //}
         //This does not use getLinkValue, as we do NOT want these things cached
         WebClient link = constructLink()
                                  .path("task-lists")
@@ -437,7 +438,7 @@ public class AlmaRestClient {
                       libraryID,
                       circulationDeskName,
                       e.getMessage());
-            return Collections.emptyIterator();
+            return Collections.emptyList();
         } catch (Exception e) {
             //Something unknowable failed, we're fragged
             if (allOrNothing) {
@@ -448,7 +449,7 @@ public class AlmaRestClient {
                 log.error(
                         "Failed to retrieve content [" + offset + "-" + (offset + limit) + "] for '" + libraryID + "'/'"
                         + circulationDeskName + "' but continuing on", e);
-                return Collections.emptyIterator();
+                return Collections.emptyList();
             }
         }
         log.debug("Completed fetching requests {}-{} for '{}'/'{}'",
@@ -459,9 +460,9 @@ public class AlmaRestClient {
         
         Integer total_records = result.getTotalRecordCount();
         if (offset >= total_records || result.getRequestedResources() == null) {
-            return Collections.emptyIterator();
+            return Collections.emptyList();
         } else {
-            return result.getRequestedResources().iterator();
+            return result.getRequestedResources();
         }
     }
     

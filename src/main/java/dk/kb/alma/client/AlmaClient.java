@@ -80,9 +80,19 @@ public class AlmaClient extends AlmaRestClient {
     
     public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId, String circulationDeskName,
                                                                     boolean allOrNothing) {
-        
-        Function<Integer, Iterator<RequestedResource>> nextIteratorFunction =
-                offset -> getBatchOfRequestedResources(batchSize, offset, libraryId, circulationDeskName, allOrNothing);
+        Function<Integer, IteratorOffset<Integer, Iterator<RequestedResource>>> nextIteratorFunction
+                = offset -> {
+            if (offset == null){
+                offset = 0;
+            }
+            List<RequestedResource> batchOfRequestedResources = getBatchOfRequestedResources(batchSize,
+                                                                                                 offset,
+                                                                                                 libraryId,
+                                                                                                 circulationDeskName,
+                                                                                                 allOrNothing);
+            return IteratorOffset.of(offset + batchOfRequestedResources.size(),
+                                     batchOfRequestedResources.iterator());
+        };
         
         return new AutochainingIterator<>(nextIteratorFunction);
     }

@@ -24,46 +24,45 @@ import java.util.function.Function;
  *
  * @param <T> the type of object iterated over
  */
-public class AutochainingIterator<T> implements Iterator<T> {
+public class AutochainingIterator<K, T> implements Iterator<T> {
     
     //Offset into the overall stream
-    private int offset = 0;
-
+    private K offset;
+    
     //The current iterator
     private Iterator<T> current;
     
     /**
-     * The function to generate iterators
-     * Takes an integer as input, which is the offset
+     * The function to generate iterators Takes an integer as input, which is the offset
+     *
      * @see #offset
-      */
-    private Function<Integer, Iterator<T>> iteratorGenerator;
-   
+     */
+    private final Function<K, IteratorOffset<K, Iterator<T>>> iteratorGenerator;
+    
     /**
      * The next item to return
      */
     private T currentItem;
     
     /**
-     * Turn a iterator-generator into an iterator.
-     * When the previous iterator runs out, it automatically requests the next one
-     *
-     * This continues until either the generator returns an empty iterator or null
-     *
+     * Turn a iterator-generator into an iterator. When the previous iterator runs out, it automatically requests the
+     * next one This continues until either the generator returns an empty iterator or null
      *
      * @param iteratorGenerator the function to generate the next iterator. Takes the overall offset as input
      */
-    public AutochainingIterator(Function<Integer, Iterator<T>> iteratorGenerator) {
+    public AutochainingIterator(Function<K, IteratorOffset<K, Iterator<T>>> iteratorGenerator) {
         this.iteratorGenerator = iteratorGenerator;
         init();
     }
     
     
     private void init() {
-        current = nextIterator(0);
+        IteratorOffset<K, Iterator<T>> pair = iteratorGenerator.apply(null);
+        this.current = pair.getValue();
+        this.offset = pair.getKey();
         
-        if (current.hasNext()) {
-            currentItem = current.next();
+        if (this.current.hasNext()) {
+            currentItem = this.current.next();
         } else {
             currentItem = null;
         }
@@ -77,35 +76,54 @@ public class AutochainingIterator<T> implements Iterator<T> {
     
     @Override
     public T next() {
-        try {
-            if (currentItem == null){
-                throw new NoSuchElementException("No next");
-            }
-            T result = currentItem;
-
-            if (current.hasNext()) {
-                //prepare next item and return the current
-                currentItem = current.next();
-                return result;
+        if (currentItem == null) {
+            throw new NoSuchElementException("No next");
+        }
+        T result = currentItem;
+        
+        if (current.hasNext()) {
+            //prepare next item and return the current
+            currentItem = current.next();
+        } else {
+            //get next iterator
+            IteratorOffset<K, Iterator<T>> pair = iteratorGenerator.apply(offset);
+            current = pair.getValue();
+            if (offset.equals(pair.getKey())) {
+                currentItem = null;
             } else {
-                //get next iterator
-                current = nextIterator(offset +1 );
-                
+                offset = pair.getKey();
                 if (current != null && current.hasNext()) {
-                    currentItem =  current.next();
+                    currentItem = current.next();
                 } else {
                     currentItem = null;
                 }
-                return result;
             }
-        } finally {
-            offset += 1;
+            
         }
-        
+        return result;
     }
     
-    private Iterator<T> nextIterator(int offset) {
-        return iteratorGenerator.apply(offset);
+    public static class IteratorOffset<K, I extends Iterator<?>> {
+        private final K key;
+        private final I value;
+        
+        public IteratorOffset(K key, I value) {
+            this.key = key;
+            this.value = value;
+        }
+        
+        public K getKey() {
+            return key;
+        }
+        
+        public I getValue() {
+            return value;
+        }
+        
+        public static <K, I extends Iterator<?>> IteratorOffset<K, I> of(K key, I value) {
+            return new IteratorOffset<>(key, value);
+        }
     }
+    
 }
 
