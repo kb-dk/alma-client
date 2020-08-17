@@ -1,12 +1,13 @@
 package dk.kb.alma.client;
 
 import com.google.common.collect.Iterables;
+import dk.kb.alma.client.AutochainingIterator.IteratorOffset;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
-import dk.kb.alma.client.utils.ParallelUtils;
+import dk.kb.alma.client.utils.NamedThread;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.Bibs;
 import dk.kb.alma.gen.CodeTable;
@@ -117,7 +118,7 @@ public class AlmaClient extends AlmaRestClient {
         String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
         return StreamSupport.stream(partition.spliterator(), true)
-                            .map(ParallelUtils.namedThread(
+                            .map(NamedThread.namedThread(
                                     (List<String> partion) -> {
                                         String partionBibIDs = String.join(",", partion);
                                         return get(constructLink()
