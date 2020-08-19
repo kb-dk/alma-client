@@ -2,9 +2,9 @@ package dk.kb.alma.client;
 
 import dk.kb.alma.client.sru.Query;
 import dk.kb.alma.client.utils.SRUtils;
-import dk.kb.alma.client.utils.StringListUtils;
-import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.sru.Explain;
+import dk.kb.util.other.StringListUtils;
+import dk.kb.util.xml.XML;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -31,7 +31,7 @@ class AlmaSRUClientTest {
     
         Explain explain = client.explain();
     
-        System.out.println(XML.toXmlString(explain));
+        System.out.println(XML.marshall(explain));
         
     }
     
@@ -52,7 +52,7 @@ class AlmaSRUClientTest {
         Element first = resultList.get(0);
         
         String mmsID = SRUtils.extractMMSid(first).get();
-        String xml = XML.toXmlString(first);
+        String xml = XML.domToString(first);
         System.out.println(xml);
     }
 }

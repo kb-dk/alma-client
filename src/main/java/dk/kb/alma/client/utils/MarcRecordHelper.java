@@ -3,6 +3,7 @@ package dk.kb.alma.client.utils;
 import com.google.common.base.Charsets;
 import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.gen.Bib;
+import dk.kb.util.xml.XML;
 import org.apache.commons.io.IOUtils;
 import org.marc4j.MarcXmlReader;
 import org.marc4j.MarcXmlWriter;
@@ -79,7 +80,7 @@ public class MarcRecordHelper {
                                        " was found on Alma record with id: " + almaRecord.getMmsId());
         }
         
-        try (InputStream marcXmlStream = IOUtils.toInputStream(XML.toXmlString(marcXmlNode))) {
+        try (InputStream marcXmlStream = IOUtils.toInputStream(XML.domToString(marcXmlNode))) {
             MarcXmlReader marcXmlReader = new MarcXmlReader(marcXmlStream);
             Record marcRecord;
             if (marcXmlReader.hasNext()) {

@@ -8,12 +8,12 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaNotFoundException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
-import dk.kb.alma.client.utils.XML;
 import dk.kb.alma.gen.Error;
 import dk.kb.alma.gen.General;
 import dk.kb.alma.gen.WebServiceResult;
 import dk.kb.alma.gen.requested_resource.RequestedResource;
 import dk.kb.alma.gen.requested_resource.RequestedResources;
+import dk.kb.util.xml.XML;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -291,7 +291,7 @@ public class AlmaRestClient {
             String entityMessage = "";
             if (entity != null) {
                 try {
-                    entityMessage = "with entity '" + XML.toXmlString(entity) + "' ";
+                    entityMessage = "with entity '" + XML.marshall(entity) + "' ";
                 } catch (JAXBException jaxbException) {
                     throw new AlmaConnectionException(jaxbException+": Failed to parse entity '" + entity + "' as xml, but throwing the original WebApplicationException",
                                                       e);

@@ -1,5 +1,7 @@
 package dk.kb.alma.client.utils;
 
+import dk.kb.util.xml.XPathSelector;
+import dk.kb.util.xml.XpathUtils;
 import org.w3c.dom.Element;
 
 import java.util.List;

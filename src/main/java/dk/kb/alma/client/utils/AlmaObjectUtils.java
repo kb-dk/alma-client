@@ -7,6 +7,7 @@ import dk.kb.alma.gen.Email;
 import dk.kb.alma.gen.Item;
 import dk.kb.alma.gen.User;
 import dk.kb.alma.gen.requested_resource.RequestedResource;
+import dk.kb.util.other.StringListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class AlmaObjectUtils {
     protected static final Logger log = LoggerFactory.getLogger(AlmaObjectUtils.class);
     
     public static String getCallNumber(Item item){
-        String call_number = StringListUtils.orDefault(
+        String call_number = StringListUtils.useDefaultIfNullOrEmpty(
                 item.getItemData().getAlternativeCallNumber(),
                 item.getHoldingData().getCallNumber());
         return call_number;

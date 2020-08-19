@@ -1,6 +1,5 @@
 package dk.kb.alma.client.exceptions;
 
-import dk.kb.alma.client.utils.StringListUtils;
 
 import javax.ws.rs.core.Response;
 import java.net.URI;

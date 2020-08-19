@@ -1,8 +1,9 @@
 package dk.kb.alma.client.analytics;
 
 import com.sun.istack.Nullable;
-import dk.kb.alma.client.utils.XPathSelector;
-import dk.kb.alma.client.utils.XpathUtils;
+
+import dk.kb.util.xml.XPathSelector;
+import dk.kb.util.xml.XpathUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

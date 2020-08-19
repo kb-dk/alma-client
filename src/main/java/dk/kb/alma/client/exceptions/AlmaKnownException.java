@@ -6,7 +6,8 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.stream.Collectors;
 
-import static dk.kb.alma.client.utils.StringListUtils.notNull;
+import static dk.kb.util.other.StringListUtils.notNull;
+
 
 public class AlmaKnownException extends AlmaClientException {
     

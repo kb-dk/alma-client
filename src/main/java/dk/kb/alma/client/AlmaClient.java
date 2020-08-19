@@ -7,7 +7,6 @@ import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
-import dk.kb.alma.client.utils.NamedThread;
 import dk.kb.alma.gen.Bib;
 import dk.kb.alma.gen.Bibs;
 import dk.kb.alma.gen.CodeTable;
@@ -26,6 +25,7 @@ import dk.kb.alma.gen.user_request.RequestTypes;
 import dk.kb.alma.gen.user_request.ResourceSharing;
 import dk.kb.alma.gen.user_request.UserRequest;
 import dk.kb.alma.gen.user_request.UserRequests;
+import dk.kb.util.other.NamedThread;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +128,7 @@ public class AlmaClient extends AlmaRestClient {
         String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
         return StreamSupport.stream(partition.spliterator(), true)
-                            .map(NamedThread.namedThread(
+                            .map(NamedThread.function(
                                     (List<String> partion) -> {
                                         String partionBibIDs = String.join(",", partion);
                                         return get(constructLink()
