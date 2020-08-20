@@ -238,101 +238,6 @@
                 </dependencies>
                 <executions>
                     <execution>
-                        <id>xjc</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen</packageName>
-                            <sources>
-                                <source>src/main/resources/alma_xsd</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_rest_holding</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.holdings</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_holdings</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_location</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.locations</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_location</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_rest_requested_resource</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.requested_resource</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_requested_resource</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>xjc_rest_user_request</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.user_request</packageName>
-                            <sources>
-                                <source>src/main/resources/rest_user_request</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
                         <id>xjc_alma_sru</id>
                         <goals>
                             <goal>xjc</goal>
@@ -359,32 +264,180 @@
                                 <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
                             </xjbSources>
                         </configuration>
-
-
                     </execution>
-                    <execution>
-                        <id>xjc_analytics</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.analytics</packageName>
-                            <sources>
-                                <source>src/main/resources/analytics</source>
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
-                        </configuration>
-                    </execution>
-
-
                 </executions>
             </plugin>
 
+
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.14.0</version>
+                <configuration>
+                    <cleanPackageDirectories>false</cleanPackageDirectories>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_libraries.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/web_service_result.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_general.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_code_table.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_bibs.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_items.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_users.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_portfolio.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_user_resource_sharing_request.xsd</url>
+                                </schema>
+                            </schemas>
+                            <generatePackage>dk.kb.alma.gen</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-gen/</generateDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest-holdings</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_holdings.xsd</url>
+                                </schema>
+                            </schemas>
+                            <!--These schemas clashes with the other schemas so they need to be located in a different package-->
+                            <generatePackage>dk.kb.alma.gen.holdings</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-holdings/</generateDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest-requested_resource</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_requested_resources.xsd</url>
+                                </schema>
+                            </schemas>
+                            <!--These schemas clashes with the other schemas so they need to be located in a different package-->
+                            <generatePackage>dk.kb.alma.gen.requested_resource</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-requested_resource/</generateDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest-user_request</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_user_requests.xsd</url>
+                                </schema>
+                            </schemas>
+                            <!--These schemas clashes with the other schemas so they need to be located in a different package-->
+                            <generatePackage>dk.kb.alma.gen.user_request</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-user_request/</generateDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest-location</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_locations.xsd</url>
+                                </schema>
+                            </schemas>
+                            <!--These schemas clashes with the other schemas so they need to be located in a different package-->
+                            <generatePackage>dk.kb.alma.gen.location</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-location/</generateDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest-analytics</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_analyt_report.xsd</url>
+                                </schema>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_analyt_paths.xsd</url>
+                                </schema>
+                            </schemas>
+                            <!--These schemas clashes with the other schemas so they need to be located in a different package-->
+                            <generatePackage>dk.kb.alma.gen.analytics</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-analytics/</generateDirectory>
+                        </configuration>
+                    </execution>
+<!--                    <execution>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <id>alma-rest-webhooks</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <cleanPackageDirectories>false</cleanPackageDirectories>-->
+<!--                            <schemaLanguage>XMLSCHEMA</schemaLanguage>-->
+<!--                            <schemas>-->
+<!--                                <schema>-->
+<!--                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/webhook.xsd</url>-->
+<!--                                </schema>-->
+<!--                            </schemas>-->
+<!--                            &lt;!&ndash;These schemas clashes with the other schemas so they need to be located in a different package&ndash;&gt;-->
+<!--                            <generatePackage>dk.kb.alma.gen.webhooks</generatePackage>-->
+<!--                            <generateDirectory>target/generated-sources/jaxb2-alma-webhooks/</generateDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
