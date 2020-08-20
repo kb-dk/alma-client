@@ -418,25 +418,25 @@
                             <generateDirectory>target/generated-sources/jaxb2-alma-analytics/</generateDirectory>
                         </configuration>
                     </execution>
-<!--                    <execution>-->
-<!--                        <phase>generate-resources</phase>-->
-<!--                        <id>alma-rest-webhooks</id>-->
-<!--                        <goals>-->
-<!--                            <goal>generate</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <cleanPackageDirectories>false</cleanPackageDirectories>-->
-<!--                            <schemaLanguage>XMLSCHEMA</schemaLanguage>-->
-<!--                            <schemas>-->
-<!--                                <schema>-->
-<!--                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/webhook.xsd</url>-->
-<!--                                </schema>-->
-<!--                            </schemas>-->
-<!--                            &lt;!&ndash;These schemas clashes with the other schemas so they need to be located in a different package&ndash;&gt;-->
-<!--                            <generatePackage>dk.kb.alma.gen.webhooks</generatePackage>-->
-<!--                            <generateDirectory>target/generated-sources/jaxb2-alma-webhooks/</generateDirectory>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>alma-rest-webhooks</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <cleanPackageDirectories>false</cleanPackageDirectories>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/webhook.xsd</url>
+                                </schema>
+                            </schemas>
+                            <!--These schemas clashes with the other schemas so they need to be located in a different package-->
+                            <generatePackage>dk.kb.alma.gen.webhooks</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-webhooks/</generateDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
