@@ -17,6 +17,7 @@ import dk.kb.alma.gen.Libraries;
 import dk.kb.alma.gen.LinkingDetails;
 import dk.kb.alma.gen.Portfolio;
 import dk.kb.alma.gen.User;
+import dk.kb.alma.gen.UserResourceSharingRequest;
 import dk.kb.alma.gen.analytics.Report;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.requested_resource.RequestedResource;
@@ -173,13 +174,13 @@ public class AlmaClient extends AlmaRestClient {
                    UserRequest.class);
     }
     
-    public ResourceSharing getResourceSharingRequest(String userId, String requestId)
+    public UserResourceSharingRequest getResourceSharingRequest(String userId, String requestId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return get(constructLink().path("/users/")
                                   .path(userId)
                                   .path("/resource-sharing-requests/")
                                   .path(requestId),
-                   ResourceSharing.class);
+                   UserResourceSharingRequest.class);
     }
     
     
@@ -402,12 +403,12 @@ public class AlmaClient extends AlmaRestClient {
     }
     
     
-    public ResourceSharing createResourceSharingRequest(ResourceSharing request, String userId)
+    public UserResourceSharingRequest createResourceSharingRequest(UserResourceSharingRequest request, String userId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = constructLink().path("/users/")
                                         .path(userId)
                                         .path("/resource-sharing-requests");
-        return post(link, ResourceSharing.class, request);
+        return post(link, UserResourceSharingRequest.class, request);
         
     }
     
