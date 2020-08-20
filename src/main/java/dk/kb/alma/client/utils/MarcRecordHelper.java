@@ -2,7 +2,7 @@ package dk.kb.alma.client.utils;
 
 import com.google.common.base.Charsets;
 import dk.kb.alma.client.exceptions.MarcXmlException;
-import dk.kb.alma.gen.Bib;
+import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.util.xml.XML;
 import org.apache.commons.io.IOUtils;
 import org.marc4j.MarcXmlReader;

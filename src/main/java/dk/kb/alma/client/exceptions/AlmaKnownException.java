@@ -1,6 +1,6 @@
 package dk.kb.alma.client.exceptions;
 
-import dk.kb.alma.gen.WebServiceResult;
+import dk.kb.alma.gen.web_service_result.WebServiceResult;
 
 import javax.ws.rs.core.Response;
 import java.net.URI;

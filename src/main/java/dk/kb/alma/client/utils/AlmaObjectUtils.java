@@ -1,12 +1,12 @@
 package dk.kb.alma.client.utils;
 
-import dk.kb.alma.gen.Address;
-import dk.kb.alma.gen.Addresses;
-import dk.kb.alma.gen.ContactInfo;
-import dk.kb.alma.gen.Email;
-import dk.kb.alma.gen.Item;
-import dk.kb.alma.gen.User;
-import dk.kb.alma.gen.requested_resource.RequestedResource;
+import dk.kb.alma.gen.users.Address;
+import dk.kb.alma.gen.users.Addresses;
+import dk.kb.alma.gen.users.ContactInfo;
+import dk.kb.alma.gen.users.Email;
+import dk.kb.alma.gen.items.Item;
+import dk.kb.alma.gen.users.User;
+import dk.kb.alma.gen.requested_resources.RequestedResource;
 import dk.kb.util.other.StringListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
