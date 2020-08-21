@@ -4,9 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>dk.kb.alma</groupId>
-        <artifactId>sidesystemer</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <groupId>dk.statsbiblioteket.sbprojects</groupId>
+        <artifactId>sbprojects-parent</artifactId>
+        <version>22</version>
+        <relativePath></relativePath><!-- override default parentpath of ../pom.xml-->
     </parent>
 
     <groupId>dk.kb.alma</groupId>
