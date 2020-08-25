@@ -7,25 +7,24 @@ import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
+import dk.kb.alma.gen.analytics.Report;
 import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.bibs.Bibs;
 import dk.kb.alma.gen.code_table.CodeTable;
+import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.ItemData;
 import dk.kb.alma.gen.items.Items;
 import dk.kb.alma.gen.libraries.Libraries;
 import dk.kb.alma.gen.portfolios.LinkingDetails;
 import dk.kb.alma.gen.portfolios.Portfolio;
-import dk.kb.alma.gen.users.User;
-import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
-import dk.kb.alma.gen.analytics.Report;
-import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.requested_resources.RequestedResource;
 import dk.kb.alma.gen.user_requests.PickupLocationTypes;
 import dk.kb.alma.gen.user_requests.RequestTypes;
-import dk.kb.alma.gen.user_requests.ResourceSharing;
 import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
+import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
+import dk.kb.alma.gen.users.User;
 import dk.kb.util.other.NamedThread;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
@@ -400,6 +399,25 @@ public class AlmaClient extends AlmaRestClient {
             link = link.query("item_pid", itemId);
         }
         return post(link, UserRequest.class, request);
+    }
+
+    /**
+     * Update request in alma
+     *
+     * @param request The fully populated request
+     * @return The request updated in Alma
+     */
+    public UserRequest updateRequest(UserRequest request)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+
+        String userId = request.getUserPrimaryId();
+
+        WebClient link = constructLink().path("/users/")
+                                        .path(userId)
+                                        .path("/requests")
+                                        .path(request.getRequestId());
+
+        return put(link, UserRequest.class, request);
     }
     
     

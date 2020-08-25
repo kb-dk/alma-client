@@ -10,6 +10,7 @@ import dk.kb.alma.gen.code_table.CodeTable;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.portfolios.Portfolio;
 import dk.kb.alma.gen.code_table.Rows;
+import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.users.User;
 import dk.kb.alma.gen.holdings.Holdings;
 import org.junit.jupiter.api.Assertions;
@@ -252,7 +253,38 @@ class AlmaClientTest {
             almaClient.deletePortfolio(bib.getMmsId(), portfolio.getId());
             almaClient.deleteBib(bib.getMmsId());
         }
-        
+
+    }
+
+    @Test
+    public void testCreateUpdateAndCancelRequest() throws AlmaConnectionException, IOException {
+        AlmaClient almaClient = getAlmaClient();
+
+        UserRequest request = almaClient.createRequest("thl", "99122652604305763", "221882066210005763", "231882066200005763", "SBL", null);
+
+        assertTrue(request.getTitle().startsWith("Ja!"));
+
+        String newComment = "integration test comment";
+        request.setComment(newComment);
+        UserRequest updatedRequest = almaClient.updateRequest(request);
+
+        assertEquals(newComment, updatedRequest.getComment());
+
+        boolean success = almaClient.cancelRequest("thl", request.getRequestId(), "PatronNotInterested", false);
+
+        assertTrue(success);
+    }
+
+    @Test
+    public void testUpdateRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
+        AlmaClient almaClient = getAlmaClient();
+
+        UserRequest request = almaClient.getRequest("thl", "19899886630005763");
+
+        request.setRequestId("00000000000000");
+        Assertions.assertThrows(AlmaKnownException.class, () -> {
+            almaClient.updateRequest(request);
+        });
     }
     
     
