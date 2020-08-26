@@ -16,6 +16,7 @@ import dk.kb.alma.gen.requested_resources.RequestedResources;
 import dk.kb.util.xml.XML;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.jaxrs.impl.UriBuilderImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
@@ -114,7 +115,7 @@ public class AlmaRestClient {
     }
     
     public WebClient getWebClient(URI link) {
-        URI host = UriBuilder.fromUri(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
+        URI host = new UriBuilderImpl(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
         
         
         JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
