@@ -90,6 +90,7 @@ public class AlmaClient extends AlmaRestClient {
                                                                                                  libraryId,
                                                                                                  circulationDeskName,
                                                                                                  allOrNothing);
+            log.info("Retrieved requests {} to {} for (libraryID={},circulationDesk={})",offset,offset+batchOfRequestedResources.size(),libraryId, circulationDeskName);
             return IteratorOffset.of(offset + batchOfRequestedResources.size(),
                                      batchOfRequestedResources.iterator());
         };
