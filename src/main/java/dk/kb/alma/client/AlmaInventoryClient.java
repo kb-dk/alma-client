@@ -45,6 +45,10 @@ public class AlmaInventoryClient {
         this.batchSize = batchSize;
     }
     
+    public AlmaRestClient getAlmaRestClient() {
+        return almaRestClient;
+    }
+    
     public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/items")

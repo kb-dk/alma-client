@@ -20,6 +20,9 @@ public class AlmaTasksClient {
         this.batchSize = batchSize;
     }
     
+    public AlmaRestClient getAlmaRestClient() {
+        return almaRestClient;
+    }
     
     public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId, String circulationDeskName,
                                                                     boolean allOrNothing) {

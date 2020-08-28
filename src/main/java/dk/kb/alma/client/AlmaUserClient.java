@@ -21,6 +21,10 @@ public class AlmaUserClient {
         this.almaRestClient = almaRestClient;
     }
     
+    public AlmaRestClient getAlmaRestClient() {
+        return almaRestClient;
+    }
+    
     public User getUser(String userID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/users/")

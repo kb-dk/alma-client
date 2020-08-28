@@ -20,23 +20,8 @@ public class AlmaAnalyticsClient {
         this.almaRestClient = almaRestClient;
     }
     
-    public WebClient constructLink() {
-        return almaRestClient.constructLink();
-    }
-    
-    public <T> T get(WebClient link, Class<T> type)
-            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.get(link, type);
-    }
-    
-    public <T> T get(WebClient link, Class<T> type, boolean useCache)
-            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.get(link, type, useCache);
-    }
-    
-    public <T, E> T put(WebClient link, Class<T> type, E entity)
-            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.put(link, type, entity);
+    public AlmaRestClient getAlmaRestClient() {
+        return almaRestClient;
     }
     
     /**
@@ -56,16 +41,14 @@ public class AlmaAnalyticsClient {
         filter = filter == null ? "" : filter;
         limit = restrictLimit(limit);
         col_names = col_names == null ? true : col_names;
-        
+    
         return dk.kb.alma.client.analytics.Report.parseFromAlmaReport(
-                get(constructLink()
-                            .path("/analytics/reports")
-                            .query("path", reportPath)
-                            .query("filter", filter)
-                            .query("limit", limit)
-                            .query("col_names", col_names),
-                    Report.class,
-                    false),
+                almaRestClient.get(almaRestClient.constructLink()
+                                                 .path("/analytics/reports")
+                                                 .query("path", reportPath)
+                                                 .query("filter", filter)
+                                                 .query("limit", limit)
+                                                 .query("col_names", col_names), Report.class, false),
                 null);
     }
     
@@ -82,10 +65,8 @@ public class AlmaAnalyticsClient {
         }
         final Report rawReport;
         try {
-            rawReport = get(constructLink().path("/analytics/reports")
-                                           .query("token", report.getToken()),
-                            Report.class,
-                            false);
+            rawReport = almaRestClient.get(almaRestClient.constructLink().path("/analytics/reports")
+                                                         .query("token", report.getToken()), Report.class, false);
         } catch (AlmaKnownException e) {
             //TODO This is a hack, but it seems that sometimes we miss isFinished...?
             if (e.getErrorCode().equals("420033") && e.getErrorMessage().equals("No more rows to fetch")) {
