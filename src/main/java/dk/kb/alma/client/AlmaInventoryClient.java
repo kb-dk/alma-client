@@ -284,7 +284,26 @@ public class AlmaInventoryClient {
     }
     
     
-    //TODO do not use hardcoded values, use parameters
+    public Portfolio createPortfolio(String bibId, Portfolio portfolio) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                        .path(bibId)
+                                        .path("/portfolios/");
+        
+        return almaRestClient.post(link, Portfolio.class, portfolio);
+    }
+    
+    /**
+     * @see #createPortfolio(String, Portfolio)
+     * Use linked method instead
+     * @deprecated
+     * @param bibId
+     * @param multiVolume
+     * @param pdfLink
+     * @param publicNote
+     * @return
+     * @throws AlmaConnectionException
+     */
+    @Deprecated()
     public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote)
             throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
@@ -324,18 +343,16 @@ public class AlmaInventoryClient {
         
     }
     
-    public Portfolio updatePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
-        Portfolio pf = getPortfolio(bibId, portfolioId);
-        
+    
+    public Portfolio updatePortfolio(String bibId, Portfolio pf) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink()
-                                       .path("/bibs/")
-                                       .path(bibId)
-                                       .path("/portfolios/")
-                                       .path(portfolioId);
+                                 .path("/bibs/")
+                                 .path(bibId)
+                                 .path("/portfolios/")
+                                 .path(pf.getId());
         
         return almaRestClient.put(link, Portfolio.class, pf);
     }
-    
     
     public Portfolio deletePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")

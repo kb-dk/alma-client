@@ -57,7 +57,7 @@ class AlmaInventoryClientTest {
         Portfolio portfolio = almaClient.getPortfolio(bibId, portfolioId);
         portfolio.setIsStandalone(false);
         
-        Portfolio pf = almaClient.updatePortfolio(bibId, portfolioId);
+        Portfolio pf = almaClient.updatePortfolio(bibId, portfolio);
 //        // TODO: Alma API does not work
 //        assertFalse(pf.isIsStandalone());
     }
