@@ -64,7 +64,20 @@ public class AlmaRestClient {
     
     private final int connectTimeout;
     private final int readTimeout;
-    
+
+    private boolean cachingEnabled = true;
+
+    public AlmaRestClient(String almaTarget, String alma_apikey)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        this(almaTarget, alma_apikey,
+                2000,
+                3000,
+                "da",
+                30000,
+                30000,
+                TimeUnit.HOURS.toMillis(1));
+    }
+
     public AlmaRestClient(String almaTarget, String alma_apikey, long minSleep, long sleepVariation, String lang)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         this(almaTarget, alma_apikey, minSleep, sleepVariation, lang, 3000, 3000, TimeUnit.HOURS.toMillis(5));
@@ -167,7 +180,7 @@ public class AlmaRestClient {
     
     public <T> T get(final WebClient link, Class<T> type)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return get(link, type, true);
+        return get(link, type, cachingEnabled);
     }
     
     public <T> T get(final WebClient link, Class<T> type, boolean useCache)
@@ -470,6 +483,13 @@ public class AlmaRestClient {
     protected void invalidateCacheEntry(URI currentURI) {
         cache.invalidate(currentURI);
     }
-    
-    
+
+
+    public boolean isCachingEnabled() {
+        return cachingEnabled;
+    }
+
+    public void setCachingEnabled(boolean cachingEnabled) {
+        this.cachingEnabled = cachingEnabled;
+    }
 }

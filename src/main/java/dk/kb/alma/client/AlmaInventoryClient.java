@@ -38,8 +38,11 @@ public class AlmaInventoryClient {
     
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
-    
-    
+
+    public AlmaInventoryClient(AlmaRestClient almaRestClient) {
+        this(almaRestClient, 100);
+    }
+
     public AlmaInventoryClient(AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;

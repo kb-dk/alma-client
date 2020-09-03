@@ -14,7 +14,11 @@ public class AlmaTasksClient {
     
     private final AlmaRestClient almaRestClient;
     private final Integer batchSize;
-    
+
+    public AlmaTasksClient(AlmaRestClient almaRestClient) {
+        this(almaRestClient, 100);
+    }
+
     public AlmaTasksClient(AlmaRestClient almaRestClient, Integer batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;
