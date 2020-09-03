@@ -38,11 +38,11 @@ public class AlmaInventoryClient {
     
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
-
+    
     public AlmaInventoryClient(AlmaRestClient almaRestClient) {
         this(almaRestClient, 100);
     }
-
+    
     public AlmaInventoryClient(AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;
@@ -52,18 +52,16 @@ public class AlmaInventoryClient {
         return almaRestClient;
     }
     
-    public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/items")
-                                                .query("item_barcode", barcode), Item.class);
-    }
     
+    /*CATALOG*/
+    
+    
+    /*BIBS*/
     public Bib getBib(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(mmsID), Bib.class);
     }
-    
     
     public Bib updateBib(Bib record) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
@@ -73,6 +71,42 @@ public class AlmaInventoryClient {
         return almaRestClient.put(link, Bib.class, record);
     }
     
+    /**
+     * Create a new basic Bib record with only 'Title' set (NewTitle). The record should be updated {@link
+     * #updateBib(Bib)} with relevant values after creation, e.g. Leader, ControlFields and relevant DataFields
+     *
+     * @return The newly created record
+     */
+    public Bib createBib() throws AlmaConnectionException {
+        Bib bib = new Bib();
+        MarcRecordHelper.createRecordWithTitle(bib);
+        WebClient link = almaRestClient.constructLink().path("/bibs/");
+        
+        return almaRestClient.post(link, Bib.class, bib);
+        
+    }
+    
+    public Bib deleteBib(String bibId) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(bibId);
+        
+        return almaRestClient.delete(link, Bib.class);
+    }
+    
+    
+    public Bib getBibRecord(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/bibs/")
+                                                .path(bibId), Bib.class);
+    }
+    
+    public Bib updateBibRecord(Bib record) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(record.getMmsId());
+        
+        
+        return almaRestClient.put(link, Bib.class, record);
+    }
     
     public Set<Bib> getBibs(Set<String> bibIDs)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
@@ -98,14 +132,56 @@ public class AlmaInventoryClient {
     }
     
     
-    public UserRequests getRequests(String mmsID)
+    /**
+     * Set whether the record should be published to Primo or not. "true" as suppressValue means that the record will
+     * NOT be published. The subfield 'u' of datafield 096 will be set to: "Kan ikke hjemlånes"
+     *
+     * @param bibId         The record Id of the record to suppress
+     * @param suppressValue String value "true" means to suppress and "false" not to suppress
+     * @return the Bib record
+     */
+    public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException {
+        Bib record = getBib(bibId);
+        try {
+            org.marc4j.marc.Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(record);
+            String suppress;
+            if (suppressValue.equalsIgnoreCase("true")) {
+                suppress = "true";
+            } else if (suppressValue.equalsIgnoreCase("false")) {
+                suppress = "false";
+            } else {
+                suppress = "false";
+                log.warn("Suppress value must be 'true' or 'false'. It was: {}. Default set to 'false'", suppressValue);
+            }
+            
+            record.setSuppressFromPublishing(suppress);
+            
+            if (suppress.equals("true")) {
+                if (MarcRecordHelper.isSubfieldPresent(marcRecord, "DF096_TAG", 'u')) {
+                    MarcRecordHelper.addSubfield(marcRecord, "DF096_TAG", 'u', "Kan ikke hjemlånes");
+                }
+            }
+            MarcRecordHelper.saveMarcRecordOnAlmaRecord(record, marcRecord);
+        } catch (MarcXmlException e) {
+            log.info("Set supress failed ", e);
+        }
+        return updateBib(record);
+    }
+    
+    
+    /*HOLDINGS*/
+
+    public Holdings getBibHoldings(String bibId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
-                                                .path(mmsID)
-                                                .path("/requests"), UserRequests.class);
+                                                .path(bibId)
+                                                .path("/holdings"), Holdings.class);
+        
     }
+
     
+    /*ITEMS*/
     
     public Items getItems(String bibId, String holdingId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
@@ -134,6 +210,7 @@ public class AlmaInventoryClient {
         return result;
     }
     
+    
     public Item getItem(String bibId, String holdingId, String itemId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
@@ -148,19 +225,10 @@ public class AlmaInventoryClient {
         return item;
     }
     
-    public Holdings getBibHoldings(String bibId)
-            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/bibs/")
-                                                .path(bibId)
-                                                .path("/holdings"), Holdings.class);
-        
-    }
-    
-    public Bib getBibRecord(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/bibs/")
-                                                .path(bibId), Bib.class);
+                                                .path("/items")
+                                                .query("item_barcode", barcode), Item.class);
     }
     
     public Item createItem(String bibId,
@@ -200,15 +268,147 @@ public class AlmaInventoryClient {
         
     }
     
-    
-    public Bib updateBibRecord(Bib record) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Item deleteItem(Item item, boolean force, boolean cleanEmptyHolding) {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(record.getMmsId());
+                                       .path(item.getBibData().getMmsId())
+                                       .path("/holdings/")
+                                       .path(item.getHoldingData().getHoldingId())
+                                       .path("/items/")
+                                       .path(item.getItemData().getPid())
+                                       .query("override", force)
+                                       .query("holdings", cleanEmptyHolding);
         
-        
-        return almaRestClient.put(link, Bib.class, record);
+        return almaRestClient.delete(link, Item.class);
     }
     
+    
+    /*PORTFOLIOS*/
+    
+    public Portfolio getBibPortfolios(String bibId) throws AlmaConnectionException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/bibs/")
+                                                .path(bibId)
+                                                .path("/portfolios/"), Portfolio.class);
+        
+    }
+    
+    public Portfolio getPortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/bibs/")
+                                                .path(bibId)
+                                                .path("/portfolios/")
+                                                .path(portfolioId), Portfolio.class);
+        
+    }
+    
+    public Portfolio createPortfolio(String bibId, Portfolio portfolio) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(bibId)
+                                       .path("/portfolios/");
+        
+        return almaRestClient.post(link, Portfolio.class, portfolio);
+    }
+    
+    /**
+     * @param bibId
+     * @param multiVolume
+     * @param pdfLink
+     * @param publicNote
+     * @return
+     * @throws AlmaConnectionException
+     * @see #createPortfolio(String, Portfolio) Use linked method instead
+     * @deprecated
+     */
+    @Deprecated()
+    public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote)
+            throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(bibId)
+                                       .path("/portfolios/");
+        
+        Portfolio portfolio = new Portfolio();
+        if (multiVolume) {
+            portfolio.setIsStandalone(false);
+        }
+        
+        LinkingDetails ld = new LinkingDetails();
+        ld.setUrl(pdfLink);
+        portfolio.setLinkingDetails(ld);
+        
+        Portfolio.Availability avail = new Portfolio.Availability();
+        avail.setDesc("Available");
+        avail.setValue("11");
+        portfolio.setAvailability(avail);
+        
+        portfolio.setPublicNote(publicNote);
+        
+        Portfolio.MaterialType materialType = new Portfolio.MaterialType();
+        materialType.setValue("BOOK");
+        materialType.setDesc("Book");
+        portfolio.setMaterialType(materialType);
+        
+        return almaRestClient.post(link, Portfolio.class, portfolio);
+    }
+    
+    
+    public Portfolio updatePortfolio(String bibId, Portfolio pf) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/bibs/")
+                                       .path(bibId)
+                                       .path("/portfolios/")
+                                       .path(pf.getId());
+        
+        return almaRestClient.put(link, Portfolio.class, pf);
+    }
+    
+    public Portfolio deletePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(bibId)
+                                       .path("/portfolios/")
+                                       .path(portfolioId);
+        
+        return almaRestClient.delete(link, Portfolio.class);
+    }
+    
+
+    /*REQUESTS*/
+    
+    public UserRequests getRequests(String mmsID)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/bibs/")
+                                                .path(mmsID)
+                                                .path("/requests"), UserRequests.class);
+    }
+    
+    public UserRequests getItemRequests(String mmsId, String holdingId, String itemId)
+            throws AlmaConnectionException {
+        
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(mmsId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId)
+                                       .path("/requests");
+        
+        return almaRestClient.get(link, UserRequests.class);
+    }
+    
+    
+    public UserRequest getItemRequest(String mmsId, String holdingId, String itemId, String request_id) {
+        
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(mmsId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId)
+                                       .path("/requests/")
+                                       .path(request_id);
+        
+        return almaRestClient.get(link, UserRequest.class);
+    }
     
     /**
      * Create request for an item in alma
@@ -245,198 +445,6 @@ public class AlmaInventoryClient {
         userRequest.setPickupLocationLibrary(pickupLocationCode);
         userRequest.setLastInterestDate(lastInterestDate);
         return almaRestClient.post(link, UserRequest.class, userRequest);
-    }
-    
-    
-    public UserRequests getItemRequests(String mmsId, String holdingId, String itemId)
-            throws AlmaConnectionException {
-        
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(mmsId)
-                                       .path("/holdings/")
-                                       .path(holdingId)
-                                       .path("/items/")
-                                       .path(itemId)
-                                       .path("/requests");
-        
-        return almaRestClient.get(link, UserRequests.class);
-    }
-    
-    
-    public UserRequest getItemRequest(String mmsId, String holdingId, String itemId, String request_id) {
-        
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(mmsId)
-                                       .path("/holdings/")
-                                       .path(holdingId)
-                                       .path("/items/")
-                                       .path(itemId)
-                                       .path("/requests/")
-                                       .path(request_id);
-        
-        return almaRestClient.get(link, UserRequest.class);
-    }
-    
-    
-    public Portfolio getBibPortfolios(String bibId) throws AlmaConnectionException {
-        return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/bibs/")
-                                                .path(bibId)
-                                                .path("/portfolios/"), Portfolio.class);
-        
-    }
-    
-    
-    public Portfolio createPortfolio(String bibId, Portfolio portfolio) throws AlmaConnectionException {
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                        .path(bibId)
-                                        .path("/portfolios/");
-        
-        return almaRestClient.post(link, Portfolio.class, portfolio);
-    }
-    
-    /**
-     * @see #createPortfolio(String, Portfolio)
-     * Use linked method instead
-     * @deprecated
-     * @param bibId
-     * @param multiVolume
-     * @param pdfLink
-     * @param publicNote
-     * @return
-     * @throws AlmaConnectionException
-     */
-    @Deprecated()
-    public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote)
-            throws AlmaConnectionException {
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(bibId)
-                                       .path("/portfolios/");
-        
-        Portfolio portfolio = new Portfolio();
-        if (multiVolume) {
-            portfolio.setIsStandalone(false);
-        }
-        
-        LinkingDetails ld = new LinkingDetails();
-        ld.setUrl(pdfLink);
-        portfolio.setLinkingDetails(ld);
-        
-        Portfolio.Availability avail = new Portfolio.Availability();
-        avail.setDesc("Available");
-        avail.setValue("11");
-        portfolio.setAvailability(avail);
-        
-        portfolio.setPublicNote(publicNote);
-        
-        Portfolio.MaterialType materialType = new Portfolio.MaterialType();
-        materialType.setValue("BOOK");
-        materialType.setDesc("Book");
-        portfolio.setMaterialType(materialType);
-        
-        return almaRestClient.post(link, Portfolio.class, portfolio);
-    }
-    
-    public Portfolio getPortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
-        return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/bibs/")
-                                                .path(bibId)
-                                                .path("/portfolios/")
-                                                .path(portfolioId), Portfolio.class);
-        
-    }
-    
-    
-    public Portfolio updatePortfolio(String bibId, Portfolio pf) throws AlmaConnectionException {
-        WebClient link = almaRestClient.constructLink()
-                                 .path("/bibs/")
-                                 .path(bibId)
-                                 .path("/portfolios/")
-                                 .path(pf.getId());
-        
-        return almaRestClient.put(link, Portfolio.class, pf);
-    }
-    
-    public Portfolio deletePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(bibId)
-                                       .path("/portfolios/")
-                                       .path(portfolioId);
-        
-        return almaRestClient.delete(link, Portfolio.class);
-    }
-    
-    
-    /**
-     * Create a new basic Bib record with only 'Title' set (NewTitle). The record should be updated {@link
-     * #updateBib(Bib)} with relevant values after creation, e.g. Leader, ControlFields and relevant DataFields
-     *
-     * @return The newly created record
-     */
-    public Bib createBib() throws AlmaConnectionException {
-        Bib bib = new Bib();
-        MarcRecordHelper.createRecordWithTitle(bib);
-        WebClient link = almaRestClient.constructLink().path("/bibs/");
-        
-        return almaRestClient.post(link, Bib.class, bib);
-        
-    }
-    
-    public Bib deleteBib(String bibId) throws AlmaConnectionException {
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(bibId);
-        
-        return almaRestClient.delete(link, Bib.class);
-    }
-    
-    public Item deleteItem(Item item, boolean force, boolean cleanEmptyHolding) {
-        WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(item.getBibData().getMmsId())
-                                       .path("/holdings/")
-                                       .path(item.getHoldingData().getHoldingId())
-                                       .path("/items/")
-                                       .path(item.getItemData().getPid())
-                                       .query("override", force)
-                                       .query("holdings", cleanEmptyHolding);
-        
-        return almaRestClient.delete(link, Item.class);
-    }
-    
-    
-    /**
-     * Set whether the record should be published to Primo or not. "true" as suppressValue means that the record will
-     * NOT be published. The subfield 'u' of datafield 096 will be set to: "Kan ikke hjemlånes"
-     *
-     * @param bibId         The record Id of the record to suppress
-     * @param suppressValue String value "true" means to suppress and "false" not to suppress
-     * @return the Bib record
-     */
-    public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException {
-        Bib record = getBib(bibId);
-        try {
-            org.marc4j.marc.Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(record);
-            String suppress;
-            if (suppressValue.equalsIgnoreCase("true")) {
-                suppress = "true";
-            } else if (suppressValue.equalsIgnoreCase("false")) {
-                suppress = "false";
-            } else {
-                suppress = "false";
-                log.warn("Suppress value must be 'true' or 'false'. It was: {}. Default set to 'false'", suppressValue);
-            }
-            
-            record.setSuppressFromPublishing(suppress);
-            
-            if (suppress.equals("true")) {
-                if (MarcRecordHelper.isSubfieldPresent(marcRecord, "DF096_TAG", 'u')) {
-                    MarcRecordHelper.addSubfield(marcRecord, "DF096_TAG", 'u', "Kan ikke hjemlånes");
-                }
-            }
-            MarcRecordHelper.saveMarcRecordOnAlmaRecord(record, marcRecord);
-        } catch (MarcXmlException e) {
-            log.info("Set supress failed ", e);
-        }
-        return updateBib(record);
     }
     
     

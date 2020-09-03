@@ -25,12 +25,18 @@ public class AlmaUserClient {
         return almaRestClient;
     }
     
+    /*USERS*/
+    
     public User getUser(String userID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/users/")
                                                 .path(userID), User.class);
     }
     
+    /*LOANS*/
+    
+    /*REQUESTS*/
+
     public UserRequest getRequest(String userId, String requestId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
@@ -39,16 +45,6 @@ public class AlmaUserClient {
                                                 .path("/requests/")
                                                 .path(requestId), UserRequest.class);
     }
-    
-    public UserResourceSharingRequest getResourceSharingRequest(String userId, String requestId)
-            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.get(almaRestClient.constructLink().path("/users/")
-                                                .path(userId)
-                                                .path("/resource-sharing-requests/")
-                                                .path(requestId), UserResourceSharingRequest.class);
-    }
-    
-    
     
     /**
      * Cancel request in Alma
@@ -140,6 +136,18 @@ public class AlmaUserClient {
                                        .path(request.getRequestId());
     
         return almaRestClient.put(link, UserRequest.class, request);
+    }
+    
+    
+    
+    /*Resource sharing requests*/
+    
+    public UserResourceSharingRequest getResourceSharingRequest(String userId, String requestId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return almaRestClient.get(almaRestClient.constructLink().path("/users/")
+                                                .path(userId)
+                                                .path("/resource-sharing-requests/")
+                                                .path(requestId), UserResourceSharingRequest.class);
     }
     
     

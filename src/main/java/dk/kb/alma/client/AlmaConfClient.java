@@ -4,7 +4,11 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.code_table.CodeTable;
+import dk.kb.alma.gen.general.General;
 import dk.kb.alma.gen.libraries.Libraries;
+import dk.kb.alma.gen.libraries.Library;
+import dk.kb.alma.gen.locations.Location;
+import dk.kb.alma.gen.locations.Locations;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +25,7 @@ public class AlmaConfClient {
         this.almaRestClient = almaRestClient;
     }
     
+    /*ORG UNITS*/
     
     public Libraries getLibraries() {
         return almaRestClient.get(almaRestClient.constructLink()
@@ -28,6 +33,31 @@ public class AlmaConfClient {
                                   Libraries.class);
     }
     
+    public Library getLibrary(String libraryCode) {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/conf/libraries/")
+                                                .path(libraryCode),
+                                  Library.class);
+    }
+    
+    public Locations getLibraryLocations(String libraryCode) {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/conf/libraries/")
+                                                .path(libraryCode)
+                                                .path("/locations"),
+                                  Locations.class);
+    }
+    
+    public Location getLibraryLocation(String libraryCode, String locationCode) {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/conf/libraries/")
+                                                .path(libraryCode)
+                                                .path("/locations/")
+                                                .path(locationCode),
+                                  Location.class);
+    }
+    
+    /*GENERAL*/
     
     public CodeTable getCodeTable(String codeTableName)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
@@ -42,4 +72,12 @@ public class AlmaConfClient {
         
         return almaRestClient.get(link, CodeTable.class);
     }
+    
+    public General getGeneralConf() {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/conf/general"),
+                                  General.class);
+    }
+    
+    
 }

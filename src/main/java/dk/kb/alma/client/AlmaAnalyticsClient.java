@@ -24,6 +24,8 @@ public class AlmaAnalyticsClient {
         return almaRestClient;
     }
     
+    /*Reports*/
+    
     /**
      * @param reportPath Full path to the report
      * @param filter     Optional.	An XML representation of a filter in OBI format ???
