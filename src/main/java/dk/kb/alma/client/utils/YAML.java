@@ -30,12 +30,11 @@ public class YAML implements ContextResolver<ObjectMapper> {
 
     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-      mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     mapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
     
-    mapper.setDateFormat(new RFC3339DateFormat());
     mapper.registerModule(new JavaTimeModule());
   }
   
@@ -102,17 +101,4 @@ public class YAML implements ContextResolver<ObjectMapper> {
   }
 
 
-  static class RFC3339DateFormat extends com.fasterxml.jackson.databind.util.StdDateFormat {
-
-    private static final long serialVersionUID = -3215326930097719238L;
-
-    // Same as ISO8601DateFormat but serializing milliseconds.
-    @Override
-    public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
-      String value = ISO8601Utils.format(date, true);
-      toAppendTo.append(value);
-      return toAppendTo;
-    }
-
-  }
 }

@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -80,7 +81,7 @@ public class MarcRecordHelper {
                                        " was found on Alma record with id: " + almaRecord.getMmsId());
         }
         
-        try (InputStream marcXmlStream = IOUtils.toInputStream(XML.domToString(marcXmlNode))) {
+        try (InputStream marcXmlStream = IOUtils.toInputStream(XML.domToString(marcXmlNode), StandardCharsets.UTF_8)) {
             MarcXmlReader marcXmlReader = new MarcXmlReader(marcXmlStream);
             Record marcRecord;
             if (marcXmlReader.hasNext()) {
@@ -392,6 +393,35 @@ public class MarcRecordHelper {
 //            }
 //            return periodicalType;
 //        }
-
+    
+    
+    
+    /**
+     * Get all occurrences with the specified tag
+     *
+     * @param fromMarcRecord The (Alma) Marcrecord to retrieve data from
+     * @param toMarcRecord The (Marc) record to copy data to
+     * @param tag        The tag to copy from
+     */
+    public static void copyVariableFields(Record fromMarcRecord, Record toMarcRecord, String tag) {
+        List<VariableField> variableFields = fromMarcRecord.getVariableFields(tag);
+        for (VariableField vf : variableFields) {
+            try {
+                toMarcRecord.addVariableField(vf);
+            } catch (NullPointerException e) {
+                log.info("DataField {} was not found", tag);
+            }
+        }
+    }
+    
+    public static void replaceVariableField(Record fromMarcRecord, Record toMarcRecord, String tag){
+        try {
+            toMarcRecord.removeVariableField(toMarcRecord.getVariableField(tag));
+            toMarcRecord.addVariableField(fromMarcRecord.getVariableField(tag));
+        } catch (NullPointerException e) {
+            log.warn("Replacing Variable Field {} failed", tag);
+        }
+    }
+    
 }
 
