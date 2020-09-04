@@ -17,13 +17,13 @@ public class AlmaTasksClient {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     private final AlmaRestClient almaRestClient;
-    private final Integer batchSize;
+    private final int batchSize;
 
     public AlmaTasksClient(AlmaRestClient almaRestClient) {
         this(almaRestClient, 100);
     }
 
-    public AlmaTasksClient(AlmaRestClient almaRestClient, Integer batchSize) {
+    public AlmaTasksClient(AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;
     }
