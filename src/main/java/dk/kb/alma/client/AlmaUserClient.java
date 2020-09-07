@@ -32,6 +32,13 @@ public class AlmaUserClient {
                                                 .path("/users/")
                                                 .path(userID), User.class);
     }
+
+    public User getUser(String userID, String userIDType) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/users/")
+                                                .path(userID)
+                                                .query("user_id_type", userIDType), User.class);
+    }
     
     /*LOANS*/
     
