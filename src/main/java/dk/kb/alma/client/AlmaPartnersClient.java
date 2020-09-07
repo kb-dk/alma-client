@@ -27,6 +27,10 @@ public class AlmaPartnersClient {
     
     
     public UserResourceSharingRequest getResourceSharingRequest(String lendingRequestID){
+        return getResourceSharingRequest(partnerCode, lendingRequestID);
+    }
+    
+    public UserResourceSharingRequest getResourceSharingRequest(String partnerCode, String lendingRequestID){
         WebClient link = almaRestClient.constructLink()
                                        .path("partners")
                                        .path(partnerCode)
@@ -34,5 +38,4 @@ public class AlmaPartnersClient {
                                        .path(lendingRequestID);
         return almaRestClient.get(link, UserResourceSharingRequest.class);
     }
-    
 }
