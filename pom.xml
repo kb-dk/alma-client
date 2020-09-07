@@ -11,7 +11,7 @@
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.18-SNAPSHOT</version>
+    <version>0.19-SNAPSHOT</version>
     <packaging>jar</packaging>
 
 
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>dk.kb.util</groupId>
             <artifactId>kb-util</artifactId>
-            <version>1.2.1-SNAPSHOT</version>
+            <version>1.3.0</version>
         </dependency>
 
 
