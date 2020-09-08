@@ -166,5 +166,15 @@ public class AlmaUserClient {
         return almaRestClient.post(link, UserResourceSharingRequest.class, request);
         
     }
+
+
+    public UserResourceSharingRequest createResourceSharingRequest(UserResourceSharingRequest request, String userId, boolean overrideBlocks)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        WebClient link = almaRestClient.constructLink().path("/users/")
+                                       .path(userId)
+                                       .path("/resource-sharing-requests").query("override_blocks", String.valueOf(overrideBlocks));
+        return almaRestClient.post(link, UserResourceSharingRequest.class, request);
+
+    }
     
 }
