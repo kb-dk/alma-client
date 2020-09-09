@@ -11,7 +11,7 @@
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.19-SNAPSHOT</version>
+    <version>0.19</version>
     <packaging>jar</packaging>
 
 
@@ -19,7 +19,7 @@
         <connection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</connection>
         <developerConnection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git
         </developerConnection>
-        <tag>alma-client-0.17</tag>
+        <tag>alma-client-0.19</tag>
     </scm>
 
     <repositories>
