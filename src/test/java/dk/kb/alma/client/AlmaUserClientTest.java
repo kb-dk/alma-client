@@ -14,19 +14,19 @@ import dk.kb.alma.gen.users.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static dk.kb.alma.client.TestUtils.getAlmaClient;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AlmaUserClientTest {
+public class AlmaUserClientTest {
     
     
     @Test
-    public void testGetUser() throws AlmaConnectionException, IOException {
+    public synchronized void testGetUser() throws AlmaConnectionException, IOException {
         AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
         
         User user = almaClient.getUser("thl");
@@ -36,7 +36,7 @@ class AlmaUserClientTest {
     
     
     @Test
-    public void testCreateUpdateAndCancelRequest() throws AlmaConnectionException, IOException {
+    public synchronized void testCreateUpdateAndCancelRequest() throws AlmaConnectionException, IOException {
         AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(getAlmaClient());
 
         AlmaUserClient almaUserClient = new AlmaUserClient(getAlmaClient());
@@ -105,7 +105,7 @@ class AlmaUserClientTest {
     }
 
     @Test
-    public void testUpdateRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
+    public synchronized void testUpdateRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
         AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
         
         UserRequest request = almaClient.getRequest("thl", "22097291510005763");
@@ -117,7 +117,7 @@ class AlmaUserClientTest {
     }
 
     @Test
-    public void testCreateAndCancelRSRequest() throws IOException {
+    public synchronized void testCreateAndCancelRSRequest() throws IOException {
         AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
         String requester = "thl";
         UserResourceSharingRequest resourceSharingRequest = createResourceSharingRequest();
