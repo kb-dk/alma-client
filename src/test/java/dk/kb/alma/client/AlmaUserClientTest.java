@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static dk.kb.alma.client.TestUtils.getAlmaClient;
@@ -120,14 +122,27 @@ public class AlmaUserClientTest {
     public synchronized void testCreateAndCancelRSRequest() throws IOException {
         AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
         String requester = "thl";
+        
         UserResourceSharingRequest resourceSharingRequest = createResourceSharingRequest();
+        Iterator<UserRequest> requests = almaClient.getRequests(requester, null, null);
+        while (requests.hasNext()) {
+            UserRequest request = requests.next();
+            if (request.getTitle().equals(resourceSharingRequest.getTitle())){
+                almaClient.cancelRequest(requester,
+                                         request.getRequestId(),
+                                         "reason",
+                                         false);
+            }
+        }
+        
+        
         UserResourceSharingRequest createdRequest = almaClient.createResourceSharingRequest(resourceSharingRequest, requester);
 
         createdRequest = almaClient.getResourceSharingRequest(requester, createdRequest.getRequestId());
 
         String userRequestId = getUserRequestIdFromRSRequest(createdRequest);
 
-        boolean cancelled = almaClient.cancelRequest(requester, userRequestId, "PatronNotInterested", false);
+        boolean cancelled = almaClient.cancelRequest(requester, userRequestId, "AnotherReason", false);
 
         assertTrue(cancelled);
 
@@ -135,7 +150,7 @@ public class AlmaUserClientTest {
 
     private UserResourceSharingRequest createResourceSharingRequest() {
         UserResourceSharingRequest request = new UserResourceSharingRequest();
-        request.setTitle("AlmaUserClient integration test");
+        request.setTitle("AlmaUserClient integration test-" + new Random().nextInt());
         UserResourceSharingRequest.Format format = new UserResourceSharingRequest.Format();
         format.setValue("PHYSICAL");
         request.setFormat(format);
