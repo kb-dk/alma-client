@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
-import java.net.URI;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,9 +20,8 @@ class AlmaSRUClientTest {
     
     AlmaSRUClient client;
     @BeforeEach
-    void setUp() {
-        client = new AlmaSRUClient(URI.create(
-                "https://kbdk-kgl-psb.alma.exlibrisgroup.com/view/sru/45KBDK_KGL"), null, 10);
+    void setUp() throws IOException {
+        client = TestUtils.getAlmaSruClient();
     }
     
     //material_type=dvd and (current_Location=SMAG or current_Location=SMAGG or current_Location=SMAGK or current_Location=SMAGP)
