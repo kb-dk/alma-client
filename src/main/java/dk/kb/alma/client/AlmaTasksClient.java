@@ -133,8 +133,31 @@ public class AlmaTasksClient {
     /*Lending requests*/
 
     /**
+     * Get Lending Requests.
+     * Optional parameters may be null.
+     * @param library The resource sharing library from which lending requests should be retrieved. Mandatory.
+     * @param status The status of lending requests to retrieve. Optional.
+     * @param printed The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.
+     * @param reported The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.
+     * @param partner The partner value. Optional.
+     * @param requestedFormat Requested format of the resource. Optional.
+     * @param suppliedFormat Supplied Format of the resource. Optional.
+     */
+    public UserResourceSharingRequests getLendingRequests(String library, String status, String printed, String reported, String partner, String requestedFormat, String suppliedFormat) {
+        WebClient link = almaRestClient.constructLink().path("task-lists/rs/lending-requests");
+        link = tryAddQueryParameter(link, "library", library);
+        link = tryAddQueryParameter(link, "status", status);
+        link = tryAddQueryParameter(link, "printed", printed);
+        link = tryAddQueryParameter(link, "reported", reported);
+        link = tryAddQueryParameter(link, "partner", partner);
+        link = tryAddQueryParameter(link, "requested_format", requestedFormat);
+        link = tryAddQueryParameter(link, "supplied_format", suppliedFormat);
+        return almaRestClient.get(link, UserResourceSharingRequests.class);
+    }
+
+    /**
      * Currently the only supported action is 'mark_reported'.
-     * Optional parameter may be null.
+     * Optional parameters may be null.
      * @param library The resource sharing library from which lending requests should be retrieved. Mandatory.
      * @param status The status of lending requests to retrieve. Optional.
      * @param printed The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.
