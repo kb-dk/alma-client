@@ -313,7 +313,7 @@
                             <schemas>
                                 <schema>
                                     <url>
-                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_user_resource_sharing_request.xsd
+                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_user_resource_sharing_requests.xsd
                                     </url>
                                 </schema>
                             </schemas>
