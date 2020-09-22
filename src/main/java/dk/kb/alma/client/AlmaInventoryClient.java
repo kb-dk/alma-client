@@ -8,6 +8,7 @@ import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
 import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.bibs.Bibs;
+import dk.kb.alma.gen.holding.Holding;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.ItemData;
@@ -179,7 +180,25 @@ public class AlmaInventoryClient {
                                                 .path("/holdings"), Holdings.class);
         
     }
-
+    
+    public Holding getHolding(String bibId, String holdingId) throws AlmaConnectionException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/bibs/")
+                                                .path(bibId)
+                                                .path("/holdings/")
+                                                .path(holdingId), Holding.class);
+        
+    }
+    
+    public Holding updateHolding(String bibId, Holding holding) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/bibs/")
+                                       .path(bibId)
+                                       .path("/holdings/")
+                                       .path(holding.getHoldingId());
+        
+        return almaRestClient.put(link, Holding.class, holding);
+    }
     
     /*ITEMS*/
     
