@@ -231,7 +231,8 @@ public class MarcRecordHelper {
             return null;
         }
     }
-    
+
+    @Deprecated
     public static void setControlField008(Record almaMarcRecord, Record marcRecord, String digiYear) {
         String tag = "008";
         try {

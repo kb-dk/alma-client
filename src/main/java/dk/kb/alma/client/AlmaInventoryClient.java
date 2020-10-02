@@ -63,7 +63,12 @@ public class AlmaInventoryClient {
                                                 .path("/bibs/")
                                                 .path(mmsID), Bib.class);
     }
-    
+    public Bib getBibs(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return almaRestClient.get(almaRestClient.constructLink()
+                                                .path("/bibs/")
+                                                .query("nz_mms_id", mmsID), Bib.class);
+    }
+
     public Bib updateBib(Bib record) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(record.getMmsId());
@@ -85,6 +90,13 @@ public class AlmaInventoryClient {
         
         return almaRestClient.post(link, Bib.class, bib);
         
+    }
+
+    public Bib createBibFromNZ(Bib bib, String mmsID) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                                       .query("from_nz_mms_id", mmsID);
+
+        return almaRestClient.post(link, Bib.class, bib);
     }
     
     public Bib deleteBib(String bibId) throws AlmaConnectionException {
@@ -135,7 +147,7 @@ public class AlmaInventoryClient {
     
     /**
      * Set whether the record should be published to Primo or not. "true" as suppressValue means that the record will
-     * NOT be published. The subfield 'u' of datafield 096 will be set to: "Kan ikke hjemlånes"
+     * NOT be published.
      *
      * @param bibId         The record Id of the record to suppress
      * @param suppressValue String value "true" means to suppress and "false" not to suppress
@@ -143,30 +155,19 @@ public class AlmaInventoryClient {
      */
     public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException {
         Bib record = getBib(bibId);
-        try {
-            org.marc4j.marc.Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(record);
-            String suppress;
-            if (suppressValue.equalsIgnoreCase("true")) {
-                suppress = "true";
-            } else if (suppressValue.equalsIgnoreCase("false")) {
-                suppress = "false";
-            } else {
-                suppress = "false";
-                log.warn("Suppress value must be 'true' or 'false'. It was: {}. Default set to 'false'", suppressValue);
-            }
-            
-            record.setSuppressFromPublishing(suppress);
-            
-            if (suppress.equals("true")) {
-                if (MarcRecordHelper.isSubfieldPresent(marcRecord, "DF096_TAG", 'u')) {
-                    MarcRecordHelper.addSubfield(marcRecord, "DF096_TAG", 'u', "Kan ikke hjemlånes");
-                }
-            }
-            MarcRecordHelper.saveMarcRecordOnAlmaRecord(record, marcRecord);
-        } catch (MarcXmlException e) {
-            log.info("Set supress failed ", e);
+        String suppress;
+        if (suppressValue.equalsIgnoreCase("true")) {
+            suppress = "true";
+        } else if (suppressValue.equalsIgnoreCase("false")) {
+            suppress = "false";
+        } else {
+            suppress = "false";
+            log.warn("Suppress value must be 'true' or 'false'. It was: {}. Default set to 'false'", suppressValue);
         }
-        return updateBib(record);
+
+        record.setSuppressFromPublishing(suppress);
+
+        return record;
     }
     
     
