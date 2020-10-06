@@ -63,11 +63,6 @@ public class AlmaInventoryClient {
                                                 .path("/bibs/")
                                                 .path(mmsID), Bib.class);
     }
-    public Bib getBibs(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/bibs/")
-                                                .query("nz_mms_id", mmsID), Bib.class);
-    }
 
     public Bib updateBib(Bib record) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
