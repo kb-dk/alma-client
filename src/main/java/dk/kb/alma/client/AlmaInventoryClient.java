@@ -323,6 +323,16 @@ public class AlmaInventoryClient {
         
         return almaRestClient.post(link, Portfolio.class, portfolio);
     }
+
+    public Portfolio createPortfolioECollection(String collectionId, String serviceId, Portfolio portfolio) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/electronic/e-collections/")
+                                       .path(collectionId)
+                                       .path("/e-services/")
+                                       .path(serviceId)
+                                       .path("/portfolios/");
+
+        return almaRestClient.post(link, Portfolio.class, portfolio);
+    }
     
     /**
      * @param bibId
@@ -375,7 +385,18 @@ public class AlmaInventoryClient {
         
         return almaRestClient.put(link, Portfolio.class, pf);
     }
-    
+
+    public Portfolio updatePortfolioECollection(String collectionId, String serviceId, Portfolio portfolio) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/electronic/e-collections/")
+                                       .path(collectionId)
+                                       .path("/e-services/")
+                                       .path(serviceId)
+                                       .path("/portfolios/")
+                                       .path(portfolio.getId());
+
+        return almaRestClient.put(link, Portfolio.class, portfolio);
+    }
+
     public Portfolio deletePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId)
