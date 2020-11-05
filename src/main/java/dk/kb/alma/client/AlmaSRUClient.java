@@ -69,7 +69,7 @@ public class AlmaSRUClient extends HttpClient {
         
         
         logger.debug("SRU Search with {}", client.getCurrentURI());
-        SearchRetrieveResponse value = client.invoke("GET", null, SearchRetrieveResponse.class);
+        SearchRetrieveResponse value = invokeDirect(client,SearchRetrieveResponse.class,null, Operation.GET);
         return value;
         
     }
@@ -83,8 +83,7 @@ public class AlmaSRUClient extends HttpClient {
         WebClient client = constructLink()
                                    .query("operation", "explain");
         
-        
-        ExplainResponse value = client.invoke("GET", null, ExplainResponse.class);
+        ExplainResponse value = invokeDirect(client,ExplainResponse.class,null, Operation.GET);
         Optional<Explain> explain = value.getRecord()
                                          .getRecordData()
                                          .getContent()
@@ -146,12 +145,12 @@ public class AlmaSRUClient extends HttpClient {
     }
     
     @Override
-    protected WebClient removeAuth(WebClient link) {
-        return link;
+    protected WebClient removeAuth(WebClient uri) {
+        return uri;
     }
     
     @Override
-    protected WebClient addAuth(WebClient link) {
-        return link;
+    protected WebClient addAuth(WebClient uri) {
+        return uri;
     }
 }
