@@ -214,10 +214,10 @@ public abstract class HttpClient {
         } catch (Fault | ProcessingException e) {
             //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
             // but better safe than sorry
-            
             //This checks if any exception in the hierachy is a socket timeout exception.
             List<Throwable> causes = getCauses(e);
-            if (retryOnTimeouts && causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
+            if (shouldRetryOnTimeout(operation) &&
+                causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
                 //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
                 // different levels of the hierachy
                 //TODO should we run a counter to avoid eternal retries?
@@ -258,7 +258,7 @@ public abstract class HttpClient {
                 return invokeDirect(newLink, type, entity, operation);
             }
         } catch (WebApplicationException e) {
-            if (retryOn429 && rateLimitSleep(e, currentURI)) {
+            if (shouldRetryOn429(operation) && rateLimitSleep(e, currentURI)) {
                 return invokeDirect(link, type, entity, operation);
             }
             
@@ -321,7 +321,30 @@ public abstract class HttpClient {
         
     }
     
+    private boolean shouldRetryOn429(Operation operation) {
+        switch (operation){
+            case GET:
+                return true;
+            case POST:
+            case PUT:
+            case DELETE:
+                return retryOn429;
+            default:
+                return false;
+        }    }
     
+    private boolean shouldRetryOnTimeout(Operation operation) {
+        switch (operation){
+            case GET:
+                return true;
+            case POST:
+            case PUT:
+            case DELETE:
+                return retryOnTimeouts;
+            default:
+                return false;
+        }
+    }
     
     
     private List<Throwable> getCauses(Throwable throwable) {
