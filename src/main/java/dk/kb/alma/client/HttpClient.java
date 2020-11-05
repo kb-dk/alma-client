@@ -52,6 +52,10 @@ public abstract class HttpClient {
     
     private boolean cachingEnabled = true;
     
+    private boolean retryOnTimeouts = true;
+    
+    private boolean retryOn429 = true;
+    
     private final String target;
     
     public HttpClient(String target,
@@ -213,7 +217,7 @@ public abstract class HttpClient {
             
             //This checks if any exception in the hierachy is a socket timeout exception.
             List<Throwable> causes = getCauses(e);
-            if (causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
+            if (retryOnTimeouts && causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
                 //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
                 // different levels of the hierachy
                 //TODO should we run a counter to avoid eternal retries?
@@ -254,7 +258,7 @@ public abstract class HttpClient {
                 return invokeDirect(newLink, type, entity, operation);
             }
         } catch (WebApplicationException e) {
-            if (rateLimitSleep(e, currentURI)) {
+            if (retryOn429 && rateLimitSleep(e, currentURI)) {
                 return invokeDirect(link, type, entity, operation);
             }
             
@@ -375,5 +379,21 @@ public abstract class HttpClient {
     
     public void setCachingEnabled(boolean cachingEnabled) {
         this.cachingEnabled = cachingEnabled;
+    }
+    
+    public boolean isRetryOnTimeouts() {
+        return retryOnTimeouts;
+    }
+    
+    public void setRetryOnTimeouts(boolean retryOnTimeouts) {
+        this.retryOnTimeouts = retryOnTimeouts;
+    }
+    
+    public boolean isRetryOn429() {
+        return retryOn429;
+    }
+    
+    public void setRetryOn429(boolean retryOn429) {
+        this.retryOn429 = retryOn429;
     }
 }
