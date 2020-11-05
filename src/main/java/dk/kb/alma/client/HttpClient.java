@@ -79,11 +79,52 @@ public abstract class HttpClient {
                             .maximumSize(cacheSize)
                             .expireAfterAccess(cacheTimeMillis, TimeUnit.MILLISECONDS)
                             .build();
-        
-        
-        
-        
     }
+    
+    //GETTERS + SETTERS
+    
+    public boolean isCachingEnabled() {
+        return cachingEnabled;
+    }
+    
+    /**
+     * Controls whether or not we use caching for GET requests. Non-GET requests never use caching. If this is true
+     * (default), GET requests use caching.
+     * @param cachingEnabled should caching be enabled for GET requests
+     */
+    public void setCachingEnabled(boolean cachingEnabled) {
+        this.cachingEnabled = cachingEnabled;
+    }
+    
+    public boolean isRetryOnTimeouts() {
+        return retryOnTimeouts;
+    }
+    
+    /**
+     * retryOnTimeouts control whether or not we automatically retry non-GET requests that time out.
+     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET requests
+     * @param retryOnTimeouts should we retry non-GET requests that time out?
+     */
+    public void setRetryOnTimeouts(boolean retryOnTimeouts) {
+        this.retryOnTimeouts = retryOnTimeouts;
+    }
+    
+    public boolean isRetryOn429() {
+        return retryOn429;
+    }
+    
+    /**
+     * retryOn429 control whether or not we automatically retry non-GET requests that receive ALMA HTTP 429 (rate limit)
+     * errors.
+     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET requests
+     * @param retryOn429 should we retry non-GET requests that fail on rate limit.
+     */
+    public void setRetryOn429(boolean retryOn429) {
+        this.retryOn429 = retryOn429;
+    }
+    
+    
+    //PUBLIC METHODS
     
     public WebClient constructLink() {
         return getWebClient(target);
@@ -160,7 +201,24 @@ public abstract class HttpClient {
         return invokeDirect(link, type, null, AlmaRestClient.Operation.DELETE);
     }
     
-    protected <T, E> T invokeCache(final WebClient link,
+    
+    //Actual implementation
+    
+    /**
+     * Attempt to fetch the requested resource from the cache. If not found, fetches it from ACTUAL
+     * @param uri the URI to fetch
+     * @param type the Class of the result
+     * @param entity the body. Can be null
+     * @param useCache if false, will bypass cache
+     * @param operation the HTTP operation (GET, POST,...)
+     * @param <T> the type of the result
+     * @param <E> the type of the body entity
+     * @return the resulting java object, either from cache or from the actual server
+     * @throws AlmaConnectionException if we failed on a deeper level, like the connection
+     * @throws AlmaKnownException if we failed on a documented API error code
+     * @throws AlmaUnknownException if we failed on a higher level, but not in a documented way
+     */
+    protected <T, E> T invokeCache(final WebClient uri,
                                    Class<T> type,
                                    E entity,
                                    boolean useCache,
@@ -171,8 +229,8 @@ public abstract class HttpClient {
         useCache &= operation == AlmaRestClient.Operation.GET;
         
         //Remove the api key from the query string. This is something we handle here, not something you should set
-        removeAuth(link);
-        URI currentURI = link.getCurrentURI();
+        removeAuth(uri);
+        URI currentURI = uri.getCurrentURI();
         
         try {
             if (useCache) {
@@ -184,14 +242,14 @@ public abstract class HttpClient {
             }
             
             //It is possible for multiple threads to run here, potentially getting the same URI concurrently
-            T value = invokeDirect(link, type, entity, operation);
+            T value = invokeDirect(uri, type, entity, operation);
             
             if (useCache) {
                 cache.put(currentURI, value);
             }
             return value;
         } finally {
-            link.close();
+            uri.close();
         }
     }
     
@@ -199,16 +257,31 @@ public abstract class HttpClient {
     
     protected abstract WebClient addAuth(WebClient link);
     
-    protected <T,E> T invokeDirect(final WebClient link, Class<T> type, E entity, AlmaRestClient.Operation operation) {
+    /**
+     * Invoke the actual server and return the result.
+     *
+     * @param uri the uri to invoke
+     * @param type the class of the result
+     * @param entity the body entity. Can be null
+     * @param operation the operation (GET, POST,...)
+     * @param <T> the type of the result
+     * @param <E> the type of the entity
+     * @return the result
+     * @throws AlmaConnectionException if we failed on a deeper level, like the connection
+     * @throws AlmaKnownException if we failed on a documented API error code
+     * @throws AlmaUnknownException if we failed on a higher level, but not in a documented way
+     */
+    protected <T,E> T invokeDirect(final WebClient uri, Class<T> type, E entity, AlmaRestClient.Operation operation)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         //Remove the api key from the query string. This is something we handle here, not something you should set
-        removeAuth(link);
+        removeAuth(uri);
     
-        URI currentURI = link.getCurrentURI();
+        URI currentURI = uri.getCurrentURI();
         log.debug("{}ing on {}", operation, currentURI);
         T value;
         try {
-            WebClient webClient = addAuth(link);
+            WebClient webClient = addAuth(uri);
             value = webClient.invoke(operation.name(), entity, type);
             log.trace("{}ed on {}", operation, currentURI);
         } catch (Fault | ProcessingException e) {
@@ -223,7 +296,7 @@ public abstract class HttpClient {
                 //TODO should we run a counter to avoid eternal retries?
                 log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
                 sleep("Socket timeout exception for '" + currentURI + "'");
-                HTTPClientPolicy clientPolicy = WebClient.getConfig(link).getHttpConduit().getClient();
+                HTTPClientPolicy clientPolicy = WebClient.getConfig(uri).getHttpConduit().getClient();
                 clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
                 clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
                 clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
@@ -234,7 +307,7 @@ public abstract class HttpClient {
                           currentURI);
                 
                 
-                return invokeDirect(link, type, entity, operation);
+                return invokeDirect(uri, type, entity, operation);
             } else {
                 throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
             }
@@ -259,7 +332,7 @@ public abstract class HttpClient {
             }
         } catch (WebApplicationException e) {
             if (shouldRetryOn429(operation) && rateLimitSleep(e, currentURI)) {
-                return invokeDirect(link, type, entity, operation);
+                return invokeDirect(uri, type, entity, operation);
             }
             
             String entityMessage = "";
@@ -315,7 +388,7 @@ public abstract class HttpClient {
                                          e);
             
         } finally {
-            link.close();
+            uri.close();
         }
         return value;
         
@@ -347,6 +420,11 @@ public abstract class HttpClient {
     }
     
     
+    /**
+     * Walk through the Throwable cause-tree and return it as a list
+     * @param throwable the throwable
+     * @return a list of all the throwables that led to this throwables
+     */
     private List<Throwable> getCauses(Throwable throwable) {
         List<Throwable> result = new ArrayList<>();
         Throwable current = throwable;
@@ -389,34 +467,17 @@ public abstract class HttpClient {
         }
     }
     
-    
-    
+    /**
+     * Use this if you need invalidate a possible cache entry.
+     * An example usecase would be:
+     *  after a DELETE request, you want to invalidate the cache entry for the same resource
+     *  so that future GET requests will not get the not-deleted cached copy.
+     *
+     * @param currentURI the URI to invalidate cache for.
+     */
     protected void invalidateCacheEntry(URI currentURI) {
         cache.invalidate(currentURI);
     }
     
     
-    public boolean isCachingEnabled() {
-        return cachingEnabled;
-    }
-    
-    public void setCachingEnabled(boolean cachingEnabled) {
-        this.cachingEnabled = cachingEnabled;
-    }
-    
-    public boolean isRetryOnTimeouts() {
-        return retryOnTimeouts;
-    }
-    
-    public void setRetryOnTimeouts(boolean retryOnTimeouts) {
-        this.retryOnTimeouts = retryOnTimeouts;
-    }
-    
-    public boolean isRetryOn429() {
-        return retryOn429;
-    }
-    
-    public void setRetryOn429(boolean retryOn429) {
-        this.retryOn429 = retryOn429;
-    }
 }
