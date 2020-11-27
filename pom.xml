@@ -19,7 +19,7 @@
         <connection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</connection>
         <developerConnection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git
         </developerConnection>
-        <tag>alma-client-0.17</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <repositories>
