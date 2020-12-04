@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>dk.statsbiblioteket.sbprojects</groupId>
-        <artifactId>sbprojects-parent</artifactId>
+        <groupId>org.sbforge</groupId>
+        <artifactId>sbforge-parent</artifactId>
         <version>22</version>
-        <relativePath /><!-- override default parentpath of ../pom.xml-->
+        <relativePath/>
     </parent>
 
     <groupId>dk.kb.alma</groupId>
@@ -14,26 +15,12 @@
     <version>0.24-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-
     <scm>
         <connection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git</connection>
         <developerConnection>scm:git:ssh://git@sbprojects.statsbiblioteket.dk:7999/ssys/alma-client.git
         </developerConnection>
         <tag>HEAD</tag>
     </scm>
-
-    <repositories>
-        <repository>
-            <id>sbprojects-nexus</id>
-            <url>https://sbprojects.statsbiblioteket.dk/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <properties>
         <build.time>${maven.build.timestamp}</build.time>
@@ -123,6 +110,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
+            <version>5.6.1</version>
         </dependency>
 
         <dependency>
@@ -141,11 +129,18 @@
 
     </dependencies>
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
 
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -162,6 +157,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -215,6 +211,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -621,7 +618,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>add-test-resource</id>
