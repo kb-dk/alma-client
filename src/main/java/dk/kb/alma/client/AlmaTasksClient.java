@@ -1,5 +1,6 @@
 package dk.kb.alma.client;
 
+import com.google.common.collect.Lists;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.gen.requested_resources.RequestedResource;
 import dk.kb.alma.gen.requested_resources.RequestedResources;
@@ -19,11 +20,11 @@ public class AlmaTasksClient {
     
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
-
+    
     public AlmaTasksClient(AlmaRestClient almaRestClient) {
         this(almaRestClient, 100);
     }
-
+    
     public AlmaTasksClient(AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;
@@ -37,19 +38,25 @@ public class AlmaTasksClient {
     /*Requested Resources*/
     
     public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId, String circulationDeskName,
-                                                                    boolean allOrNothing) {
+                                                                    boolean allOrNothing, Logger... errorLoggers) {
         Function<Integer, AutochainingIterator.IteratorOffset<Integer, Iterator<RequestedResource>>>
                 nextIteratorFunction
                 = offset -> {
-            if (offset == null){
+            if (offset == null) {
                 offset = 0;
             }
+            List<Logger> loggers = Lists.asList(log,errorLoggers);
             List<RequestedResource> batchOfRequestedResources = getBatchOfRequestedResources(batchSize,
                                                                                              offset,
                                                                                              libraryId,
                                                                                              circulationDeskName,
-                                                                                             allOrNothing);
-            log.info("Retrieved requests {} to {} for (libraryID={},circulationDesk={})",offset,offset+batchOfRequestedResources.size(),libraryId, circulationDeskName);
+                                                                                             allOrNothing,
+                                                                                             loggers);
+            log.info("Retrieved requests {} to {} for (libraryID={},circulationDesk={})",
+                     offset,
+                     offset + batchOfRequestedResources.size(),
+                     libraryId,
+                     circulationDeskName);
             return AutochainingIterator.IteratorOffset.of(offset + batchOfRequestedResources.size(),
                                                           batchOfRequestedResources.iterator());
         };
@@ -66,43 +73,52 @@ public class AlmaTasksClient {
      * @param libraryID           LibraryID
      * @param circulationDeskName guess
      * @param allOrNothing        If anything fails, do you want the already fetched results or an exception?
+     * @param errorLoggers        loggers to use for logging errors. Only used if allOrNothing is false
      * @return an iterator of the requested resources
      */
     protected List<RequestedResource> getBatchOfRequestedResources(Integer limit,
                                                                    Integer offset,
                                                                    String libraryID,
                                                                    String circulationDeskName,
-                                                                   boolean allOrNothing) {
+                                                                   boolean allOrNothing,
+                                                                   List<Logger> errorLoggers) throws AlmaKnownException {
         //if (Objects.isNull(offset)){
         //    offset = 0;
         //}
         //This does not use getLinkValue, as we do NOT want these things cached
         WebClient link = almaRestClient.constructLink()
-                                 .path("task-lists")
-                                 .path("requested-resources")
-                                 .query("library", libraryID)
-                                 .query("circ_desk", circulationDeskName)
-                                 .query("location")
-                                 .query("order_by", "call_number")
-                                 .query("direction", "asc")
-                                 .query("pickup_inst")
-                                 .query("reported")
-                                 .query("printed")
-                                 .query("limit", limit)
-                                 .query("offset", offset);
+                                       .path("task-lists")
+                                       .path("requested-resources")
+                                       .query("library", libraryID)
+                                       .query("circ_desk", circulationDeskName)
+                                       .query("location")
+                                       .query("order_by", "call_number")
+                                       .query("direction", "asc")
+                                       .query("pickup_inst")
+                                       .query("reported")
+                                       .query("printed")
+                                       .query("limit", limit)
+                                       .query("offset", offset);
         
         RequestedResources result;
         try {
             result = almaRestClient.get(link, RequestedResources.class, false);
         } catch (AlmaKnownException e) {
-            //Known alma errors, we can be more intelligent here
-            log.error("Failed to retrieve content [{}-{}] for '{}'/'{}' with error {}. Continuing on",
-                      offset,
-                      offset + limit,
-                      libraryID,
-                      circulationDeskName,
-                      e.getMessage());
-            return Collections.emptyList();
+            
+            if (allOrNothing) {
+                throw e;
+            } else {
+                for (Logger logger : errorLoggers) {
+                    //Known alma errors, we can be more intelligent here
+                    logger.error("Failed to retrieve content [{}-{}] for '{}'/'{}' with error {}. Continuing on",
+                              offset,
+                              offset + limit,
+                              libraryID,
+                              circulationDeskName,
+                              e.getMessage());
+                }
+                return Collections.emptyList();
+            }
         } catch (Exception e) {
             //Something unknowable failed, we're fragged
             if (allOrNothing) {
@@ -110,9 +126,15 @@ public class AlmaTasksClient {
                         "Failed to retrieve content [" + offset + "-" + (offset + limit) + "] for '" + libraryID + "'/'"
                         + circulationDeskName + "'", e);
             } else {
-                log.error(
-                        "Failed to retrieve content [" + offset + "-" + (offset + limit) + "] for '" + libraryID + "'/'"
-                        + circulationDeskName + "' but continuing on", e);
+                for (Logger logger : errorLoggers) {
+                    //Known alma errors, we can be more intelligent here
+                    logger.error("Failed to retrieve content [{}-{}] for '{}'/'{}'. Continuing on",
+                                 offset,
+                                 offset + limit,
+                                 libraryID,
+                                 circulationDeskName,
+                                 e);
+                }
                 return Collections.emptyList();
             }
         }
@@ -131,19 +153,25 @@ public class AlmaTasksClient {
     }
     
     /*Lending requests*/
-
+    
     /**
-     * Get Lending Requests.
-     * Optional parameters may be null.
-     * @param library The resource sharing library from which lending requests should be retrieved. Mandatory.
-     * @param status The status of lending requests to retrieve. Optional.
-     * @param printed The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.
-     * @param reported The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.
-     * @param partner The partner value. Optional.
+     * Get Lending Requests. Optional parameters may be null.
+     *
+     * @param library         The resource sharing library from which lending requests should be retrieved. Mandatory.
+     * @param status          The status of lending requests to retrieve. Optional.
+     * @param printed         The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.
+     * @param reported        The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.
+     * @param partner         The partner value. Optional.
      * @param requestedFormat Requested format of the resource. Optional.
-     * @param suppliedFormat Supplied Format of the resource. Optional.
+     * @param suppliedFormat  Supplied Format of the resource. Optional.
      */
-    public UserResourceSharingRequests getLendingRequests(String library, String status, String printed, String reported, String partner, String requestedFormat, String suppliedFormat) {
+    public UserResourceSharingRequests getLendingRequests(String library,
+                                                          String status,
+                                                          String printed,
+                                                          String reported,
+                                                          String partner,
+                                                          String requestedFormat,
+                                                          String suppliedFormat) {
         WebClient link = almaRestClient.constructLink().path("task-lists/rs/lending-requests");
         link = tryAddQueryParameter(link, "library", library);
         link = tryAddQueryParameter(link, "status", status);
@@ -154,19 +182,25 @@ public class AlmaTasksClient {
         link = tryAddQueryParameter(link, "supplied_format", suppliedFormat);
         return almaRestClient.get(link, UserResourceSharingRequests.class);
     }
-
+    
     /**
-     * Currently the only supported action is 'mark_reported'.
-     * Optional parameters may be null.
-     * @param library The resource sharing library from which lending requests should be retrieved. Mandatory.
-     * @param status The status of lending requests to retrieve. Optional.
-     * @param printed The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.
-     * @param reported The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.
-     * @param partner The partner value. Optional.
+     * Currently the only supported action is 'mark_reported'. Optional parameters may be null.
+     *
+     * @param library         The resource sharing library from which lending requests should be retrieved. Mandatory.
+     * @param status          The status of lending requests to retrieve. Optional.
+     * @param printed         The 'printed' value of lending requests to retrieve. Optional. Possible values: Y, N.
+     * @param reported        The 'reported' value of lending requests to retrieve. Optional. Possible values: Y, N.
+     * @param partner         The partner value. Optional.
      * @param requestedFormat Requested format of the resource. Optional.
-     * @param suppliedFormat Supplied Format of the resource. Optional.
+     * @param suppliedFormat  Supplied Format of the resource. Optional.
      */
-    public UserResourceSharingRequests actOnLendingRequests(String library, String status, String printed, String reported, String partner, String requestedFormat, String suppliedFormat) {
+    public UserResourceSharingRequests actOnLendingRequests(String library,
+                                                            String status,
+                                                            String printed,
+                                                            String reported,
+                                                            String partner,
+                                                            String requestedFormat,
+                                                            String suppliedFormat) {
         WebClient link = almaRestClient.constructLink().path("task-lists/rs/lending-requests");
         link = tryAddQueryParameter(link, "op", "mark_reported");
         link = tryAddQueryParameter(link, "library", library);
@@ -178,9 +212,9 @@ public class AlmaTasksClient {
         link = tryAddQueryParameter(link, "supplied_format", suppliedFormat);
         return almaRestClient.post(link, UserResourceSharingRequests.class, "");
     }
-
+    
     private WebClient tryAddQueryParameter(WebClient link, String parameterKey, String parameterValue) {
-        if(parameterValue != null){
+        if (parameterValue != null) {
             return link.query(parameterKey, parameterValue);
         } else {
             return link;
