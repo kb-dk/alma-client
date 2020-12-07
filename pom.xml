@@ -21,6 +21,14 @@
         <tag>HEAD</tag>
     </scm>
 
+    <licenses>
+        <!--SBForge stuff should have a license-->
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <properties>
         <build.time>${maven.build.timestamp}</build.time>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
