@@ -2,6 +2,8 @@ package dk.kb.alma.client;
 
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
+import dk.kb.alma.gen.fees.Fee;
+import dk.kb.alma.gen.fees.Fees;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.Items;
@@ -170,5 +172,115 @@ public class AlmaUserClientTest {
         return userRequestLink.substring(userRequestLink.lastIndexOf("/")+1);
 
     }
-
+    
+    
+    
+    //FEES
+    //TODO fix these tests
+   /*
+    @Test
+    void testGetUser() {
+        User user = getNewUser();
+        when(restUtil.get(anyString(), anyMap(), Mockito.eq(User.class))).thenReturn(user);
+        
+        User result = almaClient.getUser();
+        Assertions.assertEquals(user.getPrimaryId(), result.getPrimaryId());
+    }
+    
+    @Test
+    void testGetUserById() {
+        User user = getNewUser();
+        when(restUtil.get(anyString(), anyMap(), Mockito.eq(User.class))).thenReturn(user);
+        
+        User result = almaClient.getUser(userId);
+        Assertions.assertEquals(user.getPrimaryId(), result.getPrimaryId());
+    }
+    
+    @Test
+    void testGetAllActiveFees() {
+        Fees fees = getNewFees();
+        when(restUtil.get(anyString(), anyMap(), Mockito.eq(Fees.class))).thenReturn(fees);
+        
+        Fees result = almaClient.getAllActiveFees();
+        Assertions.assertEquals(fees.getFees().get(0).getId(), result.getFees().get(0).getId());
+    }
+    
+    @Test
+    void testGetUserFee() {
+        Fee fee = getNewFee();
+        when(restUtil.get(anyString(), anyMap(), Mockito.eq(Fee.class))).thenReturn(fee);
+        
+        Fee result = almaClient.getUserFee(feeId);
+        Assertions.assertEquals(fee.getId(), result.getId());
+    }
+    
+    @Test
+    void testGetAllClosedFees() {
+        Fees fees = getNewFees();
+        when(restUtil.get(anyString(), anyMap(), Mockito.eq(Fees.class))).thenReturn(fees);
+        
+        Fees result = almaClient.getAllClosedFees();
+        Assertions.assertEquals(fees.getFees().get(0).getId(), result.getFees().get(0).getId());
+    }
+    
+    @Test
+    void testGetAllFees() {
+        Fees fees = getNewFees();
+        when(restUtil.get(anyString(), anyMap(), Mockito.eq(Fees.class))).thenReturn(fees);
+        
+        Fees result = almaClient.getAllFees(userId, AlmaClient.FeeStatus.ACTIVE.toString());
+        Assertions.assertEquals(fees.getFees().get(0).getId(), result.getFees().get(0).getId());
+    }
+    
+    @Test
+    void testPayUserFee() {
+        Fee fee = getNewFee();
+        when(restUtil.post(anyString(), anyMap(), anyString(), Mockito.eq(Fee.class))).thenReturn(fee);
+        
+        Fee result = almaClient.payUserFee(userId, feeId, "0", METHOD, COMMENT, EXTERNAL_TRANSACTION_ID);
+        Assertions.assertEquals(fee.getId(), result.getId());
+    }
+    
+    @Test
+    void testPayAllFees() {
+        Fees fees = getNewFees();
+        when(restUtil.post(anyString(), anyMap(), anyString(), Mockito.eq(Fees.class))).thenReturn(fees);
+        
+        Fees result = almaClient.payAllFees(userId, METHOD, COMMENT, EXTERNAL_TRANSACTION_ID);
+        Assertions.assertEquals(fees.getFees().get(0).getId(), result.getFees().get(0).getId());
+    }
+    
+    private User getNewUser() {
+        User user = new User();
+        user.setPrimaryId("userId");
+        user.setFirstName("Test");
+        user.setLastName("Unit");
+        
+        return user;
+    }
+    
+    private Fee getNewFee() {
+        
+        Fee fee = new Fee();
+        fee.setId(feeId);
+        fee.setOwner(new Fee.Owner());
+        fee.setStatus(new Fee.Status());
+        Fee.UserPrimaryId userId = new Fee.UserPrimaryId();
+        userId.setValue("userId");
+        fee.setUserPrimaryId(userId);
+        
+        return fee;
+    }
+    
+    private Fees getNewFees() {
+        Fees fees = new Fees();
+        
+        fees.setTotalRecordCount(new Long(1));
+        fees.setTotalSum(new Float(10));
+        
+        Fee fee = getNewFee();
+        
+        fees.getFees().add(new Fee());
+        return fees;
+    }*/
 }

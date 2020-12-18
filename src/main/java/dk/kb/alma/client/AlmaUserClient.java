@@ -3,6 +3,8 @@ package dk.kb.alma.client;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
+import dk.kb.alma.gen.fees.Fee;
+import dk.kb.alma.gen.fees.Fees;
 import dk.kb.alma.gen.requested_resources.RequestedResource;
 import dk.kb.alma.gen.user_requests.RequestTypes;
 import dk.kb.alma.gen.user_requests.UserRequest;
@@ -14,9 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class AlmaUserClient {
@@ -24,6 +30,9 @@ public class AlmaUserClient {
     
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
+    public enum FeeStatus {ACTIVE , INDISPUTE, EXPORTED, CLOSED};
+    
+    
     
     public AlmaUserClient(AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
@@ -221,6 +230,73 @@ public class AlmaUserClient {
                                        .query("override_blocks", String.valueOf(overrideBlocks));
         return almaRestClient.post(link, UserResourceSharingRequest.class, request);
         
+    }
+    
+    
+    
+    /*******************
+     * Fees
+     ********************/
+   
+    public Fee getUserFee(String userId, String feeId) {
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/users/")
+                                       .path(userId)
+                                       .path("/fees/")
+                                       .path(feeId)
+                                       .query("user_id_type", "all_unique");
+        return almaRestClient.get(link, Fee.class);
+    }
+    
+    public Fees getAllFees(String userId, FeeStatus status) {
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/users/")
+                                       .path(userId)
+                                       .path("/fees")
+                                       .query("user_id_type", "all_unique")
+                                       .query("status", status.toString());
+    
+        return almaRestClient.get(link, Fees.class);
+    }
+    
+    public Fees getAllActiveFees(String userId) {
+        return getAllFees(userId, FeeStatus.ACTIVE);
+    }
+    
+    public Fees getAllClosedFees(String userId) {
+        return getAllFees(userId, FeeStatus.CLOSED);
+    }
+    
+    
+    public Fee payUserFee(String userId, String feeId, String amount, String method, String comment, String external_transaction_id) {
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/users/")
+                                       .path(userId)
+                                       .path("/fees/")
+                                       .path(feeId)
+                                       .query("user_id_type", "all_unique")
+                                       .query("op", "pay")
+                                       .query("amount", amount)
+                                       .query("method", method)
+                                       .query("comment", comment)
+                                       .query("external_transaction_id", external_transaction_id);
+        return almaRestClient.post(link, Fee.class, null);
+    
+    }
+    
+    public Fees payAllFees(String userId, String method, String comment, String external_transaction_id){
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/users/")
+                                       .path(userId)
+                                       .path("/fees/")
+                                       .path("all")
+                                       .query("user_id_type", "all_unique")
+                                       .query("op", "pay")
+                                       .query("amount", "ALL")
+                                       .query("method", method)
+                                       .query("comment", comment)
+                                       .query("external_transaction_id", external_transaction_id);
+        return almaRestClient.post(link, Fees.class, null);
     }
     
 }
