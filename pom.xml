@@ -641,6 +641,27 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>alma-rest-item-loan</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>
+                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_item_loan.xsd
+                                    </url>
+                                </schema>
+                            </schemas>
+                            <generatePackage>dk.kb.alma.gen.item.loans</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-item-loans/</generateDirectory>
+                        </configuration>
+                    </execution>
+
+
                 </executions>
             </plugin>
 

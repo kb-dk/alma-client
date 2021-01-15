@@ -10,6 +10,7 @@ import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.bibs.Bibs;
 import dk.kb.alma.gen.holding.Holding;
 import dk.kb.alma.gen.holdings.Holdings;
+import dk.kb.alma.gen.item.loans.ItemLoan;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.ItemData;
 import dk.kb.alma.gen.items.Items;
@@ -483,5 +484,24 @@ public class AlmaInventoryClient {
         return almaRestClient.post(link, UserRequest.class, userRequest);
     }
     
+    /*LOANS*/
     
+    public ItemLoan createLoan(String userId,
+                               String bibId,
+                               String holdingId,
+                               String itemId,
+                               ItemLoan itemLoan)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(bibId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId)
+                                       .path("/loans")
+                                       .query("user_id", userId)
+                                       .query("user_id_type", "all_unique");
+    
+        return almaRestClient.post(link, ItemLoan.class, itemLoan);
+    }
 }
