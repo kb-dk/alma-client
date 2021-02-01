@@ -4,7 +4,6 @@ import com.google.common.collect.Iterables;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
-import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
 import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.bibs.Bibs;
@@ -25,9 +24,12 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -241,11 +243,45 @@ public class AlmaInventoryClient {
         return item;
     }
     
+    public Item getItem(@NotNull String bibId,
+                        @NotNull String holdingId,
+                        @NotNull String itemId,
+                        @Nullable String view,
+                        @Nullable String expand,
+                        @Nullable String user_id)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    
+        WebClient link = almaRestClient.constructLink()
+                                       .path("/bibs/")
+                                       .path(bibId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId);
+        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",view));
+        Optional.ofNullable(expand).ifPresent(viewValue -> link.query("expand",expand));
+        Optional.ofNullable(user_id).ifPresent(viewValue -> link.query("user_id",user_id));
+    
+        Item item = almaRestClient.get(link, Item.class);
+        
+        return item;
+    }
     public Item getItem(String barcode) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/items")
                                                 .query("item_barcode", barcode), Item.class);
     }
+    
+    public Item getItem(@NotNull String barcode, @Nullable String view, @Nullable String expand, @Nullable String user_id) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        WebClient link = almaRestClient.constructLink()
+                                        .path("/items")
+                                        .query("item_barcode", barcode);
+        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",view));
+        Optional.ofNullable(expand).ifPresent(viewValue -> link.query("expand",expand));
+        Optional.ofNullable(user_id).ifPresent(viewValue -> link.query("user_id",user_id));
+        return almaRestClient.get(link, Item.class);
+    }
+    
     
     public Item createItem(String bibId,
                            String holdingId,
