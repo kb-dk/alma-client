@@ -10,6 +10,7 @@ import dk.kb.alma.gen.bibs.Bibs;
 import dk.kb.alma.gen.holding.Holding;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.item.loans.ItemLoan;
+import dk.kb.alma.gen.item.loans.ItemLoans;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.ItemData;
 import dk.kb.alma.gen.items.Items;
@@ -539,5 +540,46 @@ public class AlmaInventoryClient {
                                        .query("user_id_type", "all_unique");
     
         return almaRestClient.post(link, ItemLoan.class, itemLoan);
+    }
+    
+    public Item scanIn(String mmsId, String holdingId, String itemId, String library, String circulationDesk){
+        //https://developers.exlibrisgroup.com/alma/apis/docs/bibs/UE9TVCAvYWxtYXdzL3YxL2JpYnMve21tc19pZH0vaG9sZGluZ3Mve2hvbGRpbmdfaWR9L2l0ZW1zL3tpdGVtX3BpZH0=/
+        //Scan-in operation on item.
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(mmsId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId)
+                                       .query("op", "scan")
+                                       .query("library", library)
+                                       .query("circ_desk", circulationDesk);
+        
+        return almaRestClient.post(link, Item.class, null);
+    }
+    
+    public ItemLoans getLoans(String mmsId, String holdingId, String itemId){
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(mmsId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId)
+                                       .path("/loans");
+    
+        return almaRestClient.get(link, ItemLoans.class);
+    }
+    
+    public ItemLoan getLoan(String mmsId, String holdingId, String itemId, String loanId){
+        WebClient link = almaRestClient.constructLink().path("/bibs/")
+                                       .path(mmsId)
+                                       .path("/holdings/")
+                                       .path(holdingId)
+                                       .path("/items/")
+                                       .path(itemId)
+                                       .path("/loans/")
+                                       .path(loanId);
+        
+        return almaRestClient.get(link, ItemLoan.class);
     }
 }
