@@ -15,8 +15,8 @@
     <packaging>jar</packaging>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:kb-dk/alma-client.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:kb-dk/alma-client.git
+        <connection>scm:git:ssh://git@github.com/kb-dk/alma-client.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/kb-dk/alma-client.git
         </developerConnection>
         <tag>HEAD</tag>
     </scm>
