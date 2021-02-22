@@ -111,14 +111,42 @@ public class AlmaUserClientTest {
 
     @Test
     public synchronized void testUpdateRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
-        AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
-        
-        UserRequest request = almaClient.getRequest("thl", "22097291510005763");
-        
+        AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(getAlmaClient());
+    
+        AlmaUserClient almaUserClient = new AlmaUserClient(getAlmaClient());
+    
+        final String mmsID = "99122652604305763";
+        final String itemID = "231882066200005763";
+        final String userID = "thl";
+    
+        cancelExistingRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
+    
+        UserRequest newrequest = new UserRequest();
+    
+        newrequest.setUserPrimaryId(userID);
+        newrequest.setMmsId(mmsID);
+    
+        newrequest.setItemId(itemID);
+        newrequest.setPickupLocationLibrary("SBL");
+        newrequest.setRequestType(RequestTypes.HOLD);
+        newrequest.setPickupLocationType(PickupLocationTypes.LIBRARY);
+    
+        UserRequest request = almaUserClient.createRequest(newrequest);
+    
+        assertTrue(request.getTitle().startsWith("Ja!"));
+    
+        String oldRequestId = request.getRequestId();
         request.setRequestId("00000000000000");
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            almaClient.updateRequest(request);
+        Assertions.assertThrows(AlmaKnownException.class, () -> {
+            try {
+                almaUserClient.updateRequest(request);
+            } finally {
+                boolean success = almaUserClient.cancelRequest(userID, oldRequestId, "PatronNotInterested", false);
+                assertTrue(success);
+            }
         });
+        
+        
     }
 
     @Test
@@ -154,6 +182,7 @@ public class AlmaUserClientTest {
     private UserResourceSharingRequest createResourceSharingRequest() {
         UserResourceSharingRequest request = new UserResourceSharingRequest();
         request.setTitle("AlmaUserClient integration test-" + new Random().nextInt());
+        
         UserResourceSharingRequest.Format format = new UserResourceSharingRequest.Format();
         format.setValue("PHYSICAL");
         request.setFormat(format);
@@ -161,8 +190,9 @@ public class AlmaUserClientTest {
         citationType.setValue("BK");
         request.setCitationType(citationType);
         request.setAgreeToCopyrightTerms(true);
+        request.setPickupLocationType("LIBRARY");
         UserResourceSharingRequest.PickupLocation pickupLocation = new UserResourceSharingRequest.PickupLocation();
-        pickupLocation.setValue("SBSVB");
+        pickupLocation.setValue("SBMAG");
         request.setPickupLocation(pickupLocation);
         return request;
     }
