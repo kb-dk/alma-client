@@ -41,8 +41,9 @@ public class AlmaSRUClient extends HttpClient {
                          long sleepVariation,
                          int connectTimeout,
                          int readTimeout,
-                         long cacheTimeMillis) {
-        super(almaSruUrl, minSleep, sleepVariation, Map.of("version","1.2"), connectTimeout, readTimeout, cacheTimeMillis);
+                         long cacheTimeMillis,
+                         Integer maxRetries) {
+        super(almaSruUrl, minSleep, sleepVariation, Map.of("version","1.2"), connectTimeout, readTimeout, cacheTimeMillis, maxRetries);
         
         
         this.almaSruRequestCount = almaSruRequestCount;
@@ -69,7 +70,7 @@ public class AlmaSRUClient extends HttpClient {
         
         
         logger.debug("SRU Search with {}", client.getCurrentURI());
-        SearchRetrieveResponse value = invokeDirect(client,SearchRetrieveResponse.class,null, Operation.GET);
+        SearchRetrieveResponse value = invokeDirect(client,SearchRetrieveResponse.class,null, Operation.GET,0);
         return value;
         
     }
@@ -83,7 +84,7 @@ public class AlmaSRUClient extends HttpClient {
         WebClient client = constructLink()
                                    .query("operation", "explain");
         
-        ExplainResponse value = invokeDirect(client,ExplainResponse.class,null, Operation.GET);
+        ExplainResponse value = invokeDirect(client,ExplainResponse.class,null, Operation.GET,0);
         Optional<Explain> explain = value.getRecord()
                                          .getRecordData()
                                          .getContent()

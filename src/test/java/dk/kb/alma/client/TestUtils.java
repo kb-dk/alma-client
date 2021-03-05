@@ -25,7 +25,8 @@ public class TestUtils {
                                   dodpro.getProperty("lang"),
                                   Integer.parseInt(dodpro.getProperty("connect_timeout")),
                                   Integer.parseInt(dodpro.getProperty("read_timeout")),
-                                  Long.parseLong(dodpro.getProperty("cache_timeout", "0"))
+                                  Long.parseLong(dodpro.getProperty("cache_timeout", "0")),
+                                  Integer.parseInt(dodpro.getProperty("max_retries", "3"))
         );
     }
     
@@ -44,7 +45,8 @@ public class TestUtils {
                                  Long.parseLong(dodpro.getProperty("alma_rate_limit_sleep_variation_millis")),
                                  Integer.parseInt(dodpro.getProperty("connect_timeout")),
                                  Integer.parseInt(dodpro.getProperty("read_timeout")),
-                                 Long.parseLong(dodpro.getProperty("cache_timeout", "0"))
+                                 Long.parseLong(dodpro.getProperty("cache_timeout", "0")),
+                                 Integer.parseInt(dodpro.getProperty("max_retries", "3"))
         );
     }
 }

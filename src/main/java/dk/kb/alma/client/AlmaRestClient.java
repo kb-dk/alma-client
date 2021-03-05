@@ -36,12 +36,13 @@ public class AlmaRestClient extends HttpClient {
              "da",
              30000,
              30000,
-             TimeUnit.HOURS.toMillis(1));
+             TimeUnit.HOURS.toMillis(1),
+             3);
     }
     
     public AlmaRestClient(String almaTarget, String alma_apikey, long minSleep, long sleepVariation, String lang)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        this(almaTarget, alma_apikey, minSleep, sleepVariation, lang, 3000, 3000, TimeUnit.HOURS.toMillis(5));
+        this(almaTarget, alma_apikey, minSleep, sleepVariation, lang, 3000, 3000, TimeUnit.HOURS.toMillis(5),3);
     }
     
     public AlmaRestClient(String almaTarget,
@@ -51,7 +52,8 @@ public class AlmaRestClient extends HttpClient {
                           String lang,
                           int connectTimeout,
                           int readTimeout,
-                          long cacheTimeMillis)
+                          long cacheTimeMillis,
+                         Integer maxRetries)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         super(almaTarget,
               minSleep,
@@ -62,7 +64,8 @@ public class AlmaRestClient extends HttpClient {
                     .collect(Collectors.toMap(element -> "lang", element -> element)),
               connectTimeout,
               readTimeout,
-              cacheTimeMillis);
+              cacheTimeMillis,
+              maxRetries);
         this.alma_apikey = alma_apikey;
         
         log.debug("Getting ALMA general info to determine alma host");

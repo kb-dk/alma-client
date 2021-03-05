@@ -26,12 +26,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public abstract class HttpClient {
@@ -54,6 +56,10 @@ public abstract class HttpClient {
     
     private boolean retryOnTimeouts = true;
     
+    private boolean retryOnSocketExceptions = true;
+    
+    private int maxRetries;
+    
     private boolean retryOn429 = true;
     
     private final String target;
@@ -64,7 +70,8 @@ public abstract class HttpClient {
                           Map<String,String> globalParams,
                           int connectTimeout,
                           int readTimeout,
-                          long cacheTimeMillis)
+                          long cacheTimeMillis,
+                      Integer maxRetries)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         this.target = target;
         this.minSleepMillis = minSleep;
@@ -73,6 +80,7 @@ public abstract class HttpClient {
     
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
+        this.maxRetries = Optional.ofNullable(maxRetries).orElse(3);
         
         int cacheSize = 1000;
         cache = CacheBuilder.newBuilder()
@@ -107,6 +115,20 @@ public abstract class HttpClient {
      */
     public void setRetryOnTimeouts(boolean retryOnTimeouts) {
         this.retryOnTimeouts = retryOnTimeouts;
+    }
+    
+    
+    public boolean isRetryOnSocketExceptions() {
+        return retryOnSocketExceptions;
+    }
+    
+    /**
+     * retryOnSocketExceptions control whether or not we automatically retry non-GET requests that fail on a socket exception.
+     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET requests
+     * @param retryOnSocketExceptions should we retry non-GET requests that fail out?
+     */
+    public void setRetryOnSocketExceptions(boolean retryOnSocketExceptions) {
+        this.retryOnSocketExceptions = retryOnSocketExceptions;
     }
     
     public boolean isRetryOn429() {
@@ -183,22 +205,22 @@ public abstract class HttpClient {
     
     public <T> T get(final WebClient link, Class<T> type, boolean useCache)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeCache(link, type, null, useCache, AlmaRestClient.Operation.GET);
+        return invokeCache(link, type, null, useCache, Operation.GET);
     }
     
     public <T, E> T put(final WebClient link, Class<T> type, E entity)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeDirect(link, type, entity, AlmaRestClient.Operation.PUT);
+        return invokeDirect(link, type, entity, Operation.PUT,0);
     }
     
     public <T, E> T post(final WebClient link, Class<T> type, E entity)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeDirect(link, type, entity, AlmaRestClient.Operation.POST);
+        return invokeDirect(link, type, entity, Operation.POST,0);
     }
     
     public <T> T delete(final WebClient link, Class<T> type)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeDirect(link, type, null, AlmaRestClient.Operation.DELETE);
+        return invokeDirect(link, type, null, Operation.DELETE,0);
     }
     
     
@@ -222,11 +244,11 @@ public abstract class HttpClient {
                                    Class<T> type,
                                    E entity,
                                    boolean useCache,
-                                   AlmaRestClient.Operation operation)
+                                   Operation operation)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         //Only use cache on getRequests
-        useCache &= operation == AlmaRestClient.Operation.GET;
+        useCache &= operation == Operation.GET;
         
         //Remove the api key from the query string. This is something we handle here, not something you should set
         removeAuth(uri);
@@ -242,7 +264,7 @@ public abstract class HttpClient {
             }
             
             //It is possible for multiple threads to run here, potentially getting the same URI concurrently
-            T value = invokeDirect(uri, type, entity, operation);
+            T value = invokeDirect(uri, type, entity, operation,0);
             
             if (useCache) {
                 cache.put(currentURI, value);
@@ -264,6 +286,7 @@ public abstract class HttpClient {
      * @param type the class of the result
      * @param entity the body entity. Can be null
      * @param operation the operation (GET, POST,...)
+     * @param retryCount A counter keeping track of which retry we are at. Just provide 0 if this does not make sense.
      * @param <T> the type of the result
      * @param <E> the type of the entity
      * @return the result
@@ -271,7 +294,7 @@ public abstract class HttpClient {
      * @throws AlmaKnownException if we failed on a documented API error code
      * @throws AlmaUnknownException if we failed on a higher level, but not in a documented way
      */
-    protected <T,E> T invokeDirect(final WebClient uri, Class<T> type, E entity, AlmaRestClient.Operation operation)
+    protected <T,E> T invokeDirect(final WebClient uri, Class<T> type, E entity, Operation operation, int retryCount)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         //Remove the api key from the query string. This is something we handle here, not something you should set
@@ -287,13 +310,23 @@ public abstract class HttpClient {
         } catch (Fault | ProcessingException e) {
             //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
             // but better safe than sorry
+            
+            // If maxRetries have been set (to 0+), limit the number of retries
+            // if maxRetries < 0, retry forever, with no limit
+            // if maxRetries == 0, fail immediately, rather than attempt to retry
+            if (maxRetries >= 0 && retryCount >= maxRetries){
+                throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
+            } else {
+                //Increment retrycount here so we do not forget it in one of the branches below
+                retryCount+=1;
+            }
+            
             //This checks if any exception in the hierachy is a socket timeout exception.
             List<Throwable> causes = getCauses(e);
             if (shouldRetryOnTimeout(operation) &&
                 causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
                 //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
                 // different levels of the hierachy
-                //TODO should we run a counter to avoid eternal retries?
                 log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
                 sleep("Socket timeout exception for '" + currentURI + "'");
                 HTTPClientPolicy clientPolicy = WebClient.getConfig(uri).getHttpConduit().getClient();
@@ -305,9 +338,17 @@ public abstract class HttpClient {
                           clientPolicy.getReceiveTimeout(),
                           operation.name(),
                           currentURI);
-                
-                
-                return invokeDirect(uri, type, entity, operation);
+    
+    
+                return invokeDirect(uri, type, entity, operation, retryCount);
+            } else if (shouldRetryOnSocketException(operation) && causes
+                    .stream()
+                    .anyMatch(cause -> cause instanceof SocketException)) {
+    
+                log.trace("Socket Exception for " + operation.name() + " on " + currentURI, e);
+                sleep("Socket exception for '" + currentURI + "'");
+    
+                return invokeDirect(uri, type, entity, operation, retryCount);
             } else {
                 throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
             }
@@ -315,7 +356,7 @@ public abstract class HttpClient {
             URI redirectLocation = e.getLocation();
             log.debug("Redirecting {} to {}", operation, redirectLocation.getPath());
             if (redirectLocation.isAbsolute()) {
-                return invokeDirect(getWebClient(redirectLocation), type, entity, operation);
+                return invokeDirect(getWebClient(redirectLocation), type, entity, operation, retryCount);
             } else {
                 WebClient newLink = constructLink();
                 newLink = newLink.replacePath(redirectLocation.getPath());
@@ -328,11 +369,13 @@ public abstract class HttpClient {
                         newLink = newLink.replaceQuery(redirectQueryString);
                     }
                 }
-                return invokeDirect(newLink, type, entity, operation);
+                return invokeDirect(newLink, type, entity, operation, retryCount);
             }
         } catch (WebApplicationException e) {
             if (shouldRetryOn429(operation) && rateLimitSleep(e, currentURI)) {
-                return invokeDirect(uri, type, entity, operation);
+                //Do not increment retryCount as 429's should be retried forever. They do not count as errors with
+                // a limited number of retries
+                return invokeDirect(uri, type, entity, operation, retryCount);
             }
             
             String entityMessage = "";
@@ -414,6 +457,19 @@ public abstract class HttpClient {
             case PUT:
             case DELETE:
                 return retryOnTimeouts;
+            default:
+                return false;
+        }
+    }
+    
+    private boolean shouldRetryOnSocketException(Operation operation) {
+        switch (operation){
+            case GET:
+                return true;
+            case POST:
+            case PUT:
+            case DELETE:
+                return retryOnSocketExceptions;
             default:
                 return false;
         }
