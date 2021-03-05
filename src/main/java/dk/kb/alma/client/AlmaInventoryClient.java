@@ -259,9 +259,9 @@ public class AlmaInventoryClient {
                                        .path(holdingId)
                                        .path("/items/")
                                        .path(itemId);
-        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",view));
-        Optional.ofNullable(expand).ifPresent(viewValue -> link.query("expand",expand));
-        Optional.ofNullable(user_id).ifPresent(viewValue -> link.query("user_id",user_id));
+        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",viewValue));
+        Optional.ofNullable(expand).ifPresent(expandValue -> link.query("expand",expandValue));
+        Optional.ofNullable(user_id).ifPresent(user_idValue -> link.query("user_id",user_idValue));
     
         Item item = almaRestClient.get(link, Item.class);
         
@@ -277,9 +277,9 @@ public class AlmaInventoryClient {
         WebClient link = almaRestClient.constructLink()
                                         .path("/items")
                                         .query("item_barcode", barcode);
-        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",view));
-        Optional.ofNullable(expand).ifPresent(viewValue -> link.query("expand",expand));
-        Optional.ofNullable(user_id).ifPresent(viewValue -> link.query("user_id",user_id));
+        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",viewValue));
+        Optional.ofNullable(expand).ifPresent(expandValue -> link.query("expand",expandValue));
+        Optional.ofNullable(user_id).ifPresent(user_idValue -> link.query("user_id",user_idValue));
         return almaRestClient.get(link, Item.class);
     }
     
