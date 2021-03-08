@@ -5,6 +5,7 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
+import dk.kb.alma.client.utils.Utils;
 import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.bibs.Bibs;
 import dk.kb.alma.gen.holding.Holding;
@@ -26,14 +27,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static dk.kb.alma.client.utils.Utils.nullable;
+import static dk.kb.alma.client.utils.Utils.withDefault;
 
 /**
  * Corresponds to https://developers.exlibrisgroup.com/console/?url=/wp-content/uploads/alma/openapi/bibs.json
@@ -44,11 +48,11 @@ public class AlmaInventoryClient {
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
     
-    public AlmaInventoryClient(AlmaRestClient almaRestClient) {
+    public AlmaInventoryClient(@NotNull AlmaRestClient almaRestClient) {
         this(almaRestClient, 100);
     }
     
-    public AlmaInventoryClient(AlmaRestClient almaRestClient, int batchSize) {
+    public AlmaInventoryClient(@NotNull AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;
     }
@@ -62,13 +66,13 @@ public class AlmaInventoryClient {
     
     
     /*BIBS*/
-    public Bib getBib(String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Bib getBib(@NotBlank String mmsID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(mmsID), Bib.class);
     }
 
-    public Bib updateBib(Bib record) throws AlmaConnectionException {
+    public Bib updateBib(@NotNull Bib record) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(record.getMmsId());
         
@@ -91,14 +95,14 @@ public class AlmaInventoryClient {
         
     }
 
-    public Bib createBibFromNZ(Bib bib, String mmsID) throws AlmaConnectionException {
+    public Bib createBibFromNZ(@NotNull Bib bib, @NotBlank String mmsID) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                                        .query("from_nz_mms_id", mmsID);
 
         return almaRestClient.post(link, Bib.class, bib);
     }
     
-    public Bib deleteBib(String bibId) throws AlmaConnectionException {
+    public Bib deleteBib(@NotBlank String bibId) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId);
         
@@ -106,13 +110,13 @@ public class AlmaInventoryClient {
     }
     
     
-    public Bib getBibRecord(String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Bib getBibRecord(@NotBlank String bibId) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(bibId), Bib.class);
     }
     
-    public Bib updateBibRecord(Bib record) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Bib updateBibRecord(@NotNull Bib record) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(record.getMmsId());
         
@@ -120,7 +124,7 @@ public class AlmaInventoryClient {
         return almaRestClient.put(link, Bib.class, record);
     }
     
-    public Set<Bib> getBibs(Set<String> bibIDs)
+    public Set<Bib> getBibs(@NotNull Set<String> bibIDs)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
@@ -152,7 +156,7 @@ public class AlmaInventoryClient {
      * @param suppressValue String value "true" means to suppress and "false" not to suppress
      * @return the Bib record
      */
-    public Bib setSuppressFromPublishing(String bibId, String suppressValue) throws AlmaConnectionException {
+    public Bib setSuppressFromPublishing(@NotBlank String bibId, @NotNull String suppressValue) throws AlmaConnectionException {
         Bib record = getBib(bibId);
         String suppress;
         if (suppressValue.equalsIgnoreCase("true")) {
@@ -172,7 +176,7 @@ public class AlmaInventoryClient {
     
     /*HOLDINGS*/
 
-    public Holdings getBibHoldings(String bibId)
+    public Holdings getBibHoldings(@NotBlank String bibId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
@@ -181,7 +185,7 @@ public class AlmaInventoryClient {
         
     }
     
-    public Holding getHolding(String bibId, String holdingId) throws AlmaConnectionException {
+    public Holding getHolding(@NotBlank String bibId, @NotBlank String holdingId) throws AlmaConnectionException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(bibId)
@@ -190,7 +194,7 @@ public class AlmaInventoryClient {
         
     }
     
-    public Holding updateHolding(String bibId, Holding holding) throws AlmaConnectionException {
+    public Holding updateHolding(@NotBlank String bibId, @NotNull Holding holding) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink()
                                        .path("/bibs/")
                                        .path(bibId)
@@ -202,7 +206,7 @@ public class AlmaInventoryClient {
     
     /*ITEMS*/
     
-    public Items getItems(String bibId, String holdingId)
+    public Items getItems(@NotBlank String bibId, @NotBlank String holdingId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         Items result = new Items();
         
@@ -230,7 +234,7 @@ public class AlmaInventoryClient {
     }
     
     
-    public Item getItem(String bibId, String holdingId, String itemId)
+    public Item getItem(@NotBlank String bibId, @NotBlank String holdingId, @NotBlank String itemId)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         Item item = almaRestClient.get(almaRestClient.constructLink().path("/bibs/")
@@ -244,9 +248,9 @@ public class AlmaInventoryClient {
         return item;
     }
     
-    public Item getItem(@NotNull String bibId,
-                        @NotNull String holdingId,
-                        @NotNull String itemId,
+    public Item getItem(@NotBlank String bibId,
+                        @NotBlank String holdingId,
+                        @NotBlank String itemId,
                         @Nullable String view,
                         @Nullable String expand,
                         @Nullable String user_id)
@@ -259,9 +263,9 @@ public class AlmaInventoryClient {
                                        .path(holdingId)
                                        .path("/items/")
                                        .path(itemId);
-        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",viewValue));
-        Optional.ofNullable(expand).ifPresent(expandValue -> link.query("expand",expandValue));
-        Optional.ofNullable(user_id).ifPresent(user_idValue -> link.query("user_id",user_idValue));
+        nullable(view).ifPresent(viewValue -> link.query("view", viewValue));
+        nullable(expand).ifPresent(expandValue -> link.query("expand", expandValue));
+        nullable(user_id).ifPresent(user_idValue -> link.query("user_id", user_idValue));
     
         Item item = almaRestClient.get(link, Item.class);
         
@@ -277,19 +281,19 @@ public class AlmaInventoryClient {
         WebClient link = almaRestClient.constructLink()
                                         .path("/items")
                                         .query("item_barcode", barcode);
-        Optional.ofNullable(view).ifPresent(viewValue -> link.query("view",viewValue));
-        Optional.ofNullable(expand).ifPresent(expandValue -> link.query("expand",expandValue));
-        Optional.ofNullable(user_id).ifPresent(user_idValue -> link.query("user_id",user_idValue));
+        nullable(view).ifPresent(viewValue -> link.query("view", viewValue));
+        nullable(expand).ifPresent(expandValue -> link.query("expand", expandValue));
+        nullable(user_id).ifPresent(user_idValue -> link.query("user_id", user_idValue));
         return almaRestClient.get(link, Item.class);
     }
     
     
-    public Item createItem(String bibId,
-                           String holdingId,
-                           String barcode,
-                           String description,
-                           String pages,
-                           String year) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Item createItem(@NotBlank String bibId,
+                           @NotBlank String holdingId,
+                           @Nullable String barcode,
+                           @Nullable String description,
+                           @Nullable String pages,
+                           @Nullable String year) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId)
                                        .path("/holdings/")
@@ -309,7 +313,7 @@ public class AlmaInventoryClient {
         return almaRestClient.post(link, Item.class, item);
     }
     
-    public Item updateItem(Item item) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+    public Item updateItem(@NotNull Item item) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(item.getBibData().getMmsId())
                                        .path("/holdings/")
@@ -321,7 +325,7 @@ public class AlmaInventoryClient {
         
     }
     
-    public Item deleteItem(Item item, boolean force, boolean cleanEmptyHolding) {
+    public Item deleteItem(@NotNull Item item, boolean force, boolean cleanEmptyHolding) {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(item.getBibData().getMmsId())
                                        .path("/holdings/")
@@ -337,7 +341,7 @@ public class AlmaInventoryClient {
     
     /*PORTFOLIOS*/
     
-    public Portfolio getBibPortfolios(String bibId) throws AlmaConnectionException {
+    public Portfolio getBibPortfolios(@NotBlank String bibId) throws AlmaConnectionException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(bibId)
@@ -345,7 +349,7 @@ public class AlmaInventoryClient {
         
     }
     
-    public Portfolio getPortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+    public Portfolio getPortfolio(@NotBlank String bibId, String portfolioId) throws AlmaConnectionException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(bibId)
@@ -354,7 +358,7 @@ public class AlmaInventoryClient {
         
     }
     
-    public Portfolio createPortfolio(String bibId, Portfolio portfolio) throws AlmaConnectionException {
+    public Portfolio createPortfolio(@NotBlank String bibId, Portfolio portfolio) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId)
                                        .path("/portfolios/");
@@ -362,7 +366,7 @@ public class AlmaInventoryClient {
         return almaRestClient.post(link, Portfolio.class, portfolio);
     }
 
-    public Portfolio createPortfolioECollection(String collectionId, String serviceId, Portfolio portfolio) throws AlmaConnectionException {
+    public Portfolio createPortfolioECollection(@NotBlank String collectionId, @NotBlank String serviceId, Portfolio portfolio) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/electronic/e-collections/")
                                        .path(collectionId)
                                        .path("/e-services/")
@@ -383,7 +387,7 @@ public class AlmaInventoryClient {
      * @deprecated
      */
     @Deprecated()
-    public Portfolio createPortfolio(String bibId, Boolean multiVolume, String pdfLink, String publicNote)
+    public Portfolio createPortfolio(@NotBlank String bibId, Boolean multiVolume, String pdfLink, String publicNote)
             throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId)
@@ -414,7 +418,7 @@ public class AlmaInventoryClient {
     }
     
     
-    public Portfolio updatePortfolio(String bibId, Portfolio pf) throws AlmaConnectionException {
+    public Portfolio updatePortfolio(@NotBlank String bibId, Portfolio pf) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink()
                                        .path("/bibs/")
                                        .path(bibId)
@@ -424,7 +428,7 @@ public class AlmaInventoryClient {
         return almaRestClient.put(link, Portfolio.class, pf);
     }
 
-    public Portfolio updatePortfolioECollection(String collectionId, String serviceId, Portfolio portfolio) throws AlmaConnectionException {
+    public Portfolio updatePortfolioECollection(@NotBlank String collectionId, @NotBlank String serviceId, Portfolio portfolio) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/electronic/e-collections/")
                                        .path(collectionId)
                                        .path("/e-services/")
@@ -435,7 +439,7 @@ public class AlmaInventoryClient {
         return almaRestClient.put(link, Portfolio.class, portfolio);
     }
 
-    public Portfolio deletePortfolio(String bibId, String portfolioId) throws AlmaConnectionException {
+    public Portfolio deletePortfolio(@NotBlank String bibId, @NotBlank String portfolioId) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId)
                                        .path("/portfolios/")
@@ -447,7 +451,7 @@ public class AlmaInventoryClient {
 
     /*REQUESTS*/
     
-    public UserRequests getRequests(String mmsID)
+    public UserRequests getRequests(@NotBlank String mmsID)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
@@ -455,7 +459,7 @@ public class AlmaInventoryClient {
                                                 .path("/requests"), UserRequests.class);
     }
     
-    public UserRequests getItemRequests(String mmsId, String holdingId, String itemId)
+    public UserRequests getItemRequests(@NotBlank String mmsId, @NotBlank String holdingId, @NotBlank String itemId)
             throws AlmaConnectionException {
         
         WebClient link = almaRestClient.constructLink().path("/bibs/")
@@ -470,7 +474,7 @@ public class AlmaInventoryClient {
     }
     
     
-    public UserRequest getItemRequest(String mmsId, String holdingId, String itemId, String request_id) {
+    public UserRequest getItemRequest(String mmsId, String holdingId, String itemId, @NotBlank String request_id) {
         
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(mmsId)
@@ -495,12 +499,12 @@ public class AlmaInventoryClient {
      * @param lastInterestDate   Last
      * @return
      */
-    public UserRequest createRequest(String userId,
-                                     String bibId,
-                                     String holdingId,
-                                     String itemId,
-                                     String pickupLocationCode,
-                                     XMLGregorianCalendar lastInterestDate)
+    public UserRequest createRequest(@NotBlank String userId,
+                                     @NotBlank String bibId,
+                                     @NotBlank String holdingId,
+                                     @NotBlank String itemId,
+                                     @NotBlank String pickupLocationCode,
+                                     @Nullable XMLGregorianCalendar lastInterestDate)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         WebClient link = almaRestClient.constructLink().path("/bibs/")
@@ -523,11 +527,11 @@ public class AlmaInventoryClient {
     
     /*LOANS*/
     
-    public ItemLoan createLoan(String userId,
-                               String bibId,
-                               String holdingId,
-                               String itemId,
-                               ItemLoan itemLoan)
+    public ItemLoan createLoan(@NotBlank String userId,
+                               @NotBlank String bibId,
+                               @NotBlank String holdingId,
+                               @NotBlank String itemId,
+                               @NotNull ItemLoan itemLoan)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(bibId)
@@ -542,7 +546,7 @@ public class AlmaInventoryClient {
         return almaRestClient.post(link, ItemLoan.class, itemLoan);
     }
     
-    public Item scanIn(String mmsId, String holdingId, String itemId, String library, String circulationDesk){
+    public Item scanIn(@NotBlank String mmsId, @NotBlank String holdingId, @NotBlank String itemId, @NotBlank String library, @NotBlank String circulationDesk){
         //https://developers.exlibrisgroup.com/alma/apis/docs/bibs/UE9TVCAvYWxtYXdzL3YxL2JpYnMve21tc19pZH0vaG9sZGluZ3Mve2hvbGRpbmdfaWR9L2l0ZW1zL3tpdGVtX3BpZH0=/
         //Scan-in operation on item.
         WebClient link = almaRestClient.constructLink().path("/bibs/")
@@ -558,7 +562,7 @@ public class AlmaInventoryClient {
         return almaRestClient.post(link, Item.class, null);
     }
     
-    public ItemLoans getLoans(String mmsId, String holdingId, String itemId){
+    public ItemLoans getLoans(@NotBlank String mmsId, @NotBlank String holdingId, @NotBlank String itemId){
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                        .path(mmsId)
                                        .path("/holdings/")
@@ -570,13 +574,14 @@ public class AlmaInventoryClient {
         return almaRestClient.get(link, ItemLoans.class);
     }
     
-    public ItemLoan getLoan(String mmsId, String holdingId, String itemId, String loanId){
+    public ItemLoan getLoan(@Nullable String mmsId, @Nullable String holdingId, @Nullable String itemId, @NotBlank String loanId){
+        //It seems that you do not NEED the mmsID, holdingId or itemId values, but you must input SOMETHING in those fields
         WebClient link = almaRestClient.constructLink().path("/bibs/")
-                                       .path(mmsId)
+                                       .path(withDefault(mmsId, "0"))
                                        .path("/holdings/")
-                                       .path(holdingId)
+                                       .path(withDefault(holdingId,"0"))
                                        .path("/items/")
-                                       .path(itemId)
+                                       .path(withDefault(itemId, "0"))
                                        .path("/loans/")
                                        .path(loanId);
         
