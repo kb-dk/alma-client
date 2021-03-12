@@ -11,14 +11,14 @@
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.27-SNAPSHOT</version>
+    <version>0.27</version>
     <packaging>jar</packaging>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/kb-dk/alma-client.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/kb-dk/alma-client.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>alma-client-0.27</tag>
     </scm>
 
     <licenses>
