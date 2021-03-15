@@ -58,7 +58,7 @@ public class AlmaObjectUtils {
     public static Email getBestEmailForUser(User user) {
         List<Email> emails = user.getContactInfo()
                                  .getEmails()
-                                 .getEmails();
+                                 .getEmail();
         Optional<Email> firstEmail = emails.stream().findFirst();
         Optional<Email> preferredEmail = emails
                                                  .stream()
@@ -106,11 +106,11 @@ public class AlmaObjectUtils {
         
         LocalDate today = LocalDate.now();
         Optional<Address> addressOptional =
-                addresses.getAddresses().stream()
+                addresses.getAddress().stream()
                 
                          //Only work addresses
                          .filter(address ->
-                                         address.getAddressTypes().getAddressTypes()
+                                         address.getAddressTypes().getAddressType()
                                                 .stream()
                                                 .anyMatch(type -> addressType.equalsIgnoreCase(type.getValue())))
                 

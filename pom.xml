@@ -227,6 +227,7 @@
                     </archive>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
@@ -412,6 +413,7 @@
                         </configuration>
                     </execution>
 
+
                     <execution>
                         <id>rest_users</id>
                         <goals>
@@ -420,13 +422,12 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <schemaLanguage>XMLSCHEMA</schemaLanguage>
-                            <schemas>
-                                <schema>
-                                    <url>
-                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_users.xsd
-                                    </url>
-                                </schema>
-                            </schemas>
+                            <schemaDirectory>src/main/schemas/</schemaDirectory>
+                            <schemaIncludes>
+                                <include>rest_users.xsd</include>
+                                <include>rest_user.xsd</include>
+                                <include>rest_researcher.xsd</include>
+                            </schemaIncludes>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.users</generatePackage>
                             <generateDirectory>target/generated-sources/jaxb2-alma-users/</generateDirectory>
