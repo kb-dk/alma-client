@@ -2,6 +2,7 @@ package dk.kb.alma.client;
 
 import dk.kb.alma.client.analytics.Report;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AlmaAnalyticsClientTest {
     
+    private static AlmaRestClient client;
+    
+    @BeforeAll
+    static void setupAlmaClient() throws IOException {
+        client = TestUtils.getAlmaClient();
+    }
     
     @Test
     public void testRestrictLimit() {
@@ -33,7 +40,7 @@ class AlmaAnalyticsClientTest {
     @Test
     @Disabled("Takes forever")
     public void testGetReport() throws AlmaConnectionException, IOException, TransformerException {
-        AlmaAnalyticsClient almaClient = new AlmaAnalyticsClient(getAlmaClient());
+        AlmaAnalyticsClient almaClient = new AlmaAnalyticsClient(client);
         
         Report report = almaClient.startReport(
                 "/shared/Royal Danish Library 45KBDK_KGL/Færdige rapporter/Digital kulturarv_DKM/Digitalt materiale i fysisk form/dvd-opstilling-bibnr-location\\/llo",

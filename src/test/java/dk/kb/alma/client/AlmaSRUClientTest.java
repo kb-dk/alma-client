@@ -5,6 +5,7 @@ import dk.kb.alma.client.utils.SRUtils;
 import dk.kb.alma.gen.sru.Explain;
 import dk.kb.util.other.StringListUtils;
 import dk.kb.util.xml.XML;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -18,9 +19,10 @@ import java.util.stream.Collectors;
 
 class AlmaSRUClientTest {
     
-    AlmaSRUClient client;
-    @BeforeEach
-    void setUp() throws IOException {
+    private static AlmaSRUClient client;
+    
+    @BeforeAll
+    public static void setUp() throws IOException {
         client = TestUtils.getAlmaSruClient();
     }
     

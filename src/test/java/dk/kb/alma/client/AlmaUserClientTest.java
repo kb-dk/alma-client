@@ -14,6 +14,7 @@ import dk.kb.alma.gen.user_requests.UserRequests;
 import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
 import dk.kb.alma.gen.users.User;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -30,9 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AlmaUserClientTest {
     
     
+    private static AlmaRestClient client;
+    
+    @BeforeAll
+    static void setupAlmaClient() throws IOException {
+        client = TestUtils.getAlmaClient();
+    }
+    
     @Test
     public synchronized void testGetUser() throws AlmaConnectionException, IOException {
-        AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
+        AlmaUserClient almaClient = new AlmaUserClient(client);
         
         User user = almaClient.getUser("thl");
         
@@ -42,9 +50,9 @@ public class AlmaUserClientTest {
     
     @Test
     public synchronized void testCreateUpdateAndCancelRequest() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(getAlmaClient());
+        AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(client);
 
-        AlmaUserClient almaUserClient = new AlmaUserClient(getAlmaClient());
+        AlmaUserClient almaUserClient = new AlmaUserClient(client);
 
         final String mmsID = "99122652604305763";
         final String itemID = "231882066200005763";
@@ -111,9 +119,9 @@ public class AlmaUserClientTest {
 
     @Test
     public synchronized void testUpdateRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(getAlmaClient());
+        AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(client);
     
-        AlmaUserClient almaUserClient = new AlmaUserClient(getAlmaClient());
+        AlmaUserClient almaUserClient = new AlmaUserClient(client);
     
         final String mmsID = "99122652604305763";
         final String itemID = "231882066200005763";
@@ -151,7 +159,7 @@ public class AlmaUserClientTest {
 
     @Test
     public synchronized void testCreateAndCancelRSRequest() throws IOException {
-        AlmaUserClient almaClient = new AlmaUserClient(getAlmaClient());
+        AlmaUserClient almaClient = new AlmaUserClient(client);
         String requester = "thl";
         
         UserResourceSharingRequest resourceSharingRequest = createResourceSharingRequest();

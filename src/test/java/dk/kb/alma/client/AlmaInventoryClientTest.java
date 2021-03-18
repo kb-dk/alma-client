@@ -9,6 +9,7 @@ import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.portfolios.Portfolio;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.marc4j.marc.Record;
@@ -20,11 +21,18 @@ import static dk.kb.alma.client.utils.MarcRecordHelper.DF245_TAG;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AlmaInventoryClientTest {
+
+    private static AlmaRestClient client;
+    
+    @BeforeAll
+    static void setupAlmaClient() throws IOException {
+        client = TestUtils.getAlmaClient();
+    }
     
     @Test
     @Disabled("The IDs are no longer valid in ALMA and I cannot find useful replacements")
     public void testGetBibRecord() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
         Bib bib = almaClient.getBib("99122993627405763");  // 99123290311205763
         
@@ -34,7 +42,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void testGetBibRecordWithFail() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
         try {
             almaClient.getBib("fail");
@@ -50,7 +58,7 @@ class AlmaInventoryClientTest {
     @Test
     @Disabled("The IDs are no longer valid in ALMA and I cannot find useful replacements")
     public void testUpdatePortfolio() throws IOException, AlmaConnectionException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         String bibId = "99123290311205763";
         
         String portfolioId = "532109932570005763";
@@ -65,7 +73,7 @@ class AlmaInventoryClientTest {
     @Test
     @Disabled("The IDs are no longer valid in ALMA and I cannot find useful replacements")
     public void testSetControlfield008() throws IOException, AlmaConnectionException, MarcXmlException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         String bibIdAna = "99122993392805763";
         String bibIdDigi = "99123315968505763";
         Bib anaRecord = almaClient.getBib(bibIdAna);
@@ -81,7 +89,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void createItem() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
         long barcode = (long) (Math.random() * 999999999999L);
         Item item = almaClient.createItem("99122993627405763",
@@ -101,7 +109,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void testGetItemByBarcode() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
         Item item = almaClient.getItem("201000489518");
         
@@ -110,7 +118,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void testGetHoldings() throws AlmaConnectionException, IOException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
 
 //        List<String> holdingIdList = new ArrayList<>();
         String bibId = "99122030762505763";
@@ -126,7 +134,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void testCreateBibRecord() throws IOException, AlmaConnectionException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         Bib bib = almaClient.createBib();
         try {
             assertNotNull(bib);
@@ -139,7 +147,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void testUpdateBib() throws IOException, MarcXmlException, AlmaConnectionException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         Bib bib = almaClient.createBib();
         try {
             assertNotNull(bib);
@@ -170,7 +178,7 @@ class AlmaInventoryClientTest {
     public void testSetSuppressFromPublishing() throws IOException, AlmaConnectionException, MarcXmlException {
         //99122993392805763 ana
         //99123315968505763 digi
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         String bibId = "99122993392805763";//99123319235105763
         Bib record = almaClient.getBib(bibId);
         Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(record);
@@ -183,7 +191,7 @@ class AlmaInventoryClientTest {
     
     @Test
     public void testCreatePortfolio() throws IOException, AlmaConnectionException {
-        AlmaInventoryClient almaClient = new AlmaInventoryClient(getAlmaClient(),100);
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         Bib bib = almaClient.createBib();
         Portfolio portfolio = almaClient.createPortfolio(bib.getMmsId(), false, "thePdfLink", "public note");
         try {
