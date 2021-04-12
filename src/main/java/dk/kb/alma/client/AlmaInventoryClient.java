@@ -17,6 +17,7 @@ import dk.kb.alma.gen.items.ItemData;
 import dk.kb.alma.gen.items.Items;
 import dk.kb.alma.gen.portfolios.LinkingDetails;
 import dk.kb.alma.gen.portfolios.Portfolio;
+import dk.kb.alma.gen.portfolios.Portfolios;
 import dk.kb.alma.gen.user_requests.PickupLocationTypes;
 import dk.kb.alma.gen.user_requests.RequestTypes;
 import dk.kb.alma.gen.user_requests.UserRequest;
@@ -341,11 +342,11 @@ public class AlmaInventoryClient {
     
     /*PORTFOLIOS*/
     
-    public Portfolio getBibPortfolios(@NotBlank String bibId) throws AlmaConnectionException {
+    public Portfolios getBibPortfolios(@NotBlank String bibId) throws AlmaConnectionException {
         return almaRestClient.get(almaRestClient.constructLink()
                                                 .path("/bibs/")
                                                 .path(bibId)
-                                                .path("/portfolios/"), Portfolio.class);
+                                                .path("/portfolios/"), Portfolios.class);
         
     }
     
