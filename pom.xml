@@ -17,8 +17,8 @@
 
     <scm>
         <url>https://github.com/kb-dk/alma-client</url>
-        <connection>scm:git:git@github.com/kb-dk/alma-client.git</connection>
-        <developerConnection>scm:git:git@github.com/kb-dk/alma-client.git</developerConnection>
+        <connection>scm:git:git@github.com:kb-dk/alma-client.git</connection>
+        <developerConnection>scm:git:git@github.com:kb-dk/alma-client.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
