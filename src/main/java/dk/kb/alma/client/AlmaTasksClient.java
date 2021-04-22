@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
+import static dk.kb.alma.client.utils.Utils.withDefault;
+
 public class AlmaTasksClient {
     
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -38,6 +40,7 @@ public class AlmaTasksClient {
     /*Requested Resources*/
     
     public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId, String circulationDeskName,
+                                                                    String location,
                                                                     boolean allOrNothing, Logger... errorLoggers) {
         Function<Integer, AutochainingIterator.IteratorOffset<Integer, Iterator<RequestedResource>>>
                 nextIteratorFunction
@@ -50,13 +53,15 @@ public class AlmaTasksClient {
                                                                                              offset,
                                                                                              libraryId,
                                                                                              circulationDeskName,
+                                                                                             location,
                                                                                              allOrNothing,
                                                                                              loggers);
-            log.info("Retrieved requests {} to {} for (libraryID={},circulationDesk={})",
+            log.info("Retrieved requests {} to {} for (libraryID={},circulationDesk={},location={})",
                      offset,
                      offset + batchOfRequestedResources.size(),
                      libraryId,
-                     circulationDeskName);
+                     circulationDeskName,
+                     location);
             return AutochainingIterator.IteratorOffset.of(offset + batchOfRequestedResources.size(),
                                                           batchOfRequestedResources.iterator());
         };
@@ -80,6 +85,7 @@ public class AlmaTasksClient {
                                                                    Integer offset,
                                                                    String libraryID,
                                                                    String circulationDeskName,
+                                                                   String location,
                                                                    boolean allOrNothing,
                                                                    List<Logger> errorLoggers) throws AlmaKnownException {
         //if (Objects.isNull(offset)){
@@ -91,7 +97,7 @@ public class AlmaTasksClient {
                                        .path("requested-resources")
                                        .query("library", libraryID)
                                        .query("circ_desk", circulationDeskName)
-                                       .query("location")
+                                       .query("location",withDefault(location,""))
                                        .query("order_by", "call_number")
                                        .query("direction", "asc")
                                        .query("pickup_inst")
