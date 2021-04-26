@@ -133,12 +133,14 @@ public class AlmaInventoryClient {
                             .map(NamedThread.function(
                                     (List<String> partion) -> {
                                         String partionBibIDs = String.join(",", partion);
-                                        return almaRestClient.get(almaRestClient.constructLink()
-                                                                                .path("/bibs/")
-                                                                                .query("mms_id", partionBibIDs)
-                                                                                .query("view", "full")
-                                                                                .query("expand", "None"),
-                                                                  Bibs.class);
+                                        Bibs bibs = almaRestClient.get(almaRestClient
+                                                                               .constructLink()
+                                                                               .path("/bibs/")
+                                                                               .query("mms_id", partionBibIDs)
+                                                                               .query("view", "full")
+                                                                               .query("expand", "None"), Bibs.class);
+                                        log.debug("Retrieved bibs range {} - ...{}... - {}",partion.get(0),partion.size(), partion.get(partion.size()-1));
+                                        return bibs;
                                     },
                                     partion -> threadName + "->" + "Bibs-from-" + partion.get(0) + "-to-" + partion.get(
                                             partion.size() - 1)))
