@@ -22,6 +22,9 @@ public class Invocation<T, E> implements AutoCloseable {
         this.type       = type;
         this.entity     = entity;
         this.operation  = operation;
+        if (retryCount < 0){ //if initial retrycount is negative, retry forever
+            retryCount = Integer.MAX_VALUE;
+        }
         this.retryCount = retryCount;
     }
     
