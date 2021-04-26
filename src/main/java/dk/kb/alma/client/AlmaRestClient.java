@@ -88,7 +88,8 @@ public class AlmaRestClient extends HttpClient {
     }
     
     protected WebClient addAuth(WebClient link) {
-        return link.replaceQueryParam(APIKEY, alma_apikey);
+        return link.header("Authorization","apikey "+alma_apikey);
+        //return link.replaceQueryParam(APIKEY, alma_apikey);
     }
     
     public String getAlmaEnvType() {
