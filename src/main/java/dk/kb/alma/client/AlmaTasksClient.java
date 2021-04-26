@@ -9,6 +9,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,11 @@ public class AlmaTasksClient {
                      libraryId,
                      circulationDeskName,
                      location);
+            
+            if (batchOfRequestedResources.size() < batchSize){
+                batchOfRequestedResources.add(null);
+            }
+            
             return AutochainingIterator.IteratorOffset.of(offset + batchOfRequestedResources.size(),
                                                           batchOfRequestedResources.iterator());
         };
@@ -152,7 +158,7 @@ public class AlmaTasksClient {
         
         Integer total_records = result.getTotalRecordCount();
         if (offset >= total_records || result.getRequestedResources() == null) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         } else {
             return result.getRequestedResources();
         }

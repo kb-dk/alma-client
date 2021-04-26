@@ -30,7 +30,7 @@ public class AutochainingIterator<K, T> implements Iterator<T> {
     private K offset;
     
     //The current iterator
-    private Iterator<T> current;
+    private Iterator<T> currentIterator;
     
     /**
      * The function to generate iterators Takes an integer as input, which is the offset
@@ -58,11 +58,11 @@ public class AutochainingIterator<K, T> implements Iterator<T> {
     
     private void init() {
         IteratorOffset<K, Iterator<T>> pair = iteratorGenerator.apply(null);
-        this.current = pair.getValue();
-        this.offset = pair.getKey();
+        this.currentIterator = pair.getValue();
+        this.offset          = pair.getKey();
         
-        if (this.current.hasNext()) {
-            currentItem = this.current.next();
+        if (this.currentIterator.hasNext()) {
+            currentItem = this.currentIterator.next();
         } else {
             currentItem = null;
         }
@@ -81,19 +81,19 @@ public class AutochainingIterator<K, T> implements Iterator<T> {
         }
         T result = currentItem;
         
-        if (current.hasNext()) {
+        if (currentIterator.hasNext()) {
             //prepare next item and return the current
-            currentItem = current.next();
+            currentItem = currentIterator.next();
         } else {
             //get next iterator
             IteratorOffset<K, Iterator<T>> pair = iteratorGenerator.apply(offset);
-            current = pair.getValue();
+            currentIterator = pair.getValue();
             if (offset.equals(pair.getKey())) {
                 currentItem = null;
             } else {
                 offset = pair.getKey();
-                if (current != null && current.hasNext()) {
-                    currentItem = current.next();
+                if (currentIterator != null && currentIterator.hasNext()) {
+                    currentItem = currentIterator.next();
                 } else {
                     currentItem = null;
                 }
