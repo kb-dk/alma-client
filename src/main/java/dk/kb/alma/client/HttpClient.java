@@ -8,14 +8,14 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaNotFoundException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
+import dk.kb.alma.client.utils.HttpUtils;
+import dk.kb.alma.client.utils.Invocation;
 import dk.kb.alma.gen.web_service_result.Error;
 import dk.kb.alma.gen.web_service_result.WebServiceResult;
-import dk.kb.util.xml.XML;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.impl.UriBuilderImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,16 +25,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.JAXBException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public abstract class HttpClient {
     
@@ -65,28 +64,28 @@ public abstract class HttpClient {
     private final String target;
     
     public HttpClient(String target,
-                          long minSleep,
-                          long sleepVariation,
-                          Map<String,String> globalParams,
-                          int connectTimeout,
-                          int readTimeout,
-                          long cacheTimeMillis,
-                      Integer maxRetries)
-            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        this.target = target;
-        this.minSleepMillis = minSleep;
+                      long minSleep,
+                      long sleepVariation,
+                      Map<String, String> globalParams,
+                      int connectTimeout,
+                      int readTimeout,
+                      long cacheTimeMillis,
+                      Integer maxRetries) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        this.target               = target;
+        this.minSleepMillis       = minSleep;
         this.sleepVariationMillis = sleepVariation;
-        this.globalParams = globalParams;
-    
+        this.globalParams         = globalParams;
+        
         this.connectTimeout = connectTimeout;
-        this.readTimeout = readTimeout;
-        this.maxRetries = Optional.ofNullable(maxRetries).orElse(3);
+        this.readTimeout    = readTimeout;
+        this.maxRetries     = Optional.ofNullable(maxRetries).orElse(3);
         
         int cacheSize = 1000;
-        cache = CacheBuilder.newBuilder()
-                            .maximumSize(cacheSize)
-                            .expireAfterAccess(cacheTimeMillis, TimeUnit.MILLISECONDS)
-                            .build();
+        cache = CacheBuilder
+                .newBuilder()
+                .maximumSize(cacheSize)
+                .expireAfterAccess(cacheTimeMillis, TimeUnit.MILLISECONDS)
+                .build();
     }
     
     //GETTERS + SETTERS
@@ -98,6 +97,7 @@ public abstract class HttpClient {
     /**
      * Controls whether or not we use caching for GET requests. Non-GET requests never use caching. If this is true
      * (default), GET requests use caching.
+     *
      * @param cachingEnabled should caching be enabled for GET requests
      */
     public void setCachingEnabled(boolean cachingEnabled) {
@@ -110,7 +110,9 @@ public abstract class HttpClient {
     
     /**
      * retryOnTimeouts control whether or not we automatically retry non-GET requests that time out.
-     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET requests
+     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET
+     * requests
+     *
      * @param retryOnTimeouts should we retry non-GET requests that time out?
      */
     public void setRetryOnTimeouts(boolean retryOnTimeouts) {
@@ -123,8 +125,11 @@ public abstract class HttpClient {
     }
     
     /**
-     * retryOnSocketExceptions control whether or not we automatically retry non-GET requests that fail on a socket exception.
-     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET requests
+     * retryOnSocketExceptions control whether or not we automatically retry non-GET requests that fail on a socket
+     * exception.
+     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET
+     * requests
+     *
      * @param retryOnSocketExceptions should we retry non-GET requests that fail out?
      */
     public void setRetryOnSocketExceptions(boolean retryOnSocketExceptions) {
@@ -136,9 +141,12 @@ public abstract class HttpClient {
     }
     
     /**
-     * retryOn429 control whether or not we automatically retry non-GET requests that receive ALMA HTTP 429 (rate limit)
+     * retryOn429 control whether or not we automatically retry non-GET requests that receive ALMA HTTP 429 (rate
+     * limit)
      * errors.
-     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET requests
+     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET
+     * requests
+     *
      * @param retryOn429 should we retry non-GET requests that fail on rate limit.
      */
     public void setRetryOn429(boolean retryOn429) {
@@ -177,8 +185,9 @@ public abstract class HttpClient {
             client = client.replaceQuery(link.getQuery());
         }
         
-        client = client.accept(MediaType.APPLICATION_XML_TYPE, MediaType.APPLICATION_JSON_TYPE)
-                       .type(MediaType.APPLICATION_XML_TYPE);
+        client = client
+                .accept(MediaType.APPLICATION_XML_TYPE, MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_XML_TYPE);
         
         if (globalParams != null) {
             for (Map.Entry<String, String> globalParam : globalParams.entrySet()) {
@@ -210,17 +219,17 @@ public abstract class HttpClient {
     
     public <T, E> T put(final WebClient link, Class<T> type, E entity)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeDirect(link, type, entity, Operation.PUT,0);
+        return invokeDirect(link, type, entity, Operation.PUT);
     }
     
     public <T, E> T post(final WebClient link, Class<T> type, E entity)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeDirect(link, type, entity, Operation.POST,0);
+        return invokeDirect(link, type, entity, Operation.POST);
     }
     
     public <T> T delete(final WebClient link, Class<T> type)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return invokeDirect(link, type, null, Operation.DELETE,0);
+        return invokeDirect(link, type, null, Operation.DELETE);
     }
     
     
@@ -228,23 +237,20 @@ public abstract class HttpClient {
     
     /**
      * Attempt to fetch the requested resource from the cache. If not found, fetches it from ACTUAL
-     * @param uri the URI to fetch
-     * @param type the Class of the result
-     * @param entity the body. Can be null
-     * @param useCache if false, will bypass cache
+     *
+     * @param uri       the URI to fetch
+     * @param type      the Class of the result
+     * @param entity    the body. Can be null
+     * @param useCache  if false, will bypass cache
      * @param operation the HTTP operation (GET, POST,...)
-     * @param <T> the type of the result
-     * @param <E> the type of the body entity
+     * @param <T>       the type of the result
+     * @param <E>       the type of the body entity
      * @return the resulting java object, either from cache or from the actual server
      * @throws AlmaConnectionException if we failed on a deeper level, like the connection
-     * @throws AlmaKnownException if we failed on a documented API error code
-     * @throws AlmaUnknownException if we failed on a higher level, but not in a documented way
+     * @throws AlmaKnownException      if we failed on a documented API error code
+     * @throws AlmaUnknownException    if we failed on a higher level, but not in a documented way
      */
-    protected <T, E> T invokeCache(final WebClient uri,
-                                   Class<T> type,
-                                   E entity,
-                                   boolean useCache,
-                                   Operation operation)
+    protected <T, E> T invokeCache(final WebClient uri, Class<T> type, E entity, boolean useCache, Operation operation)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         //Only use cache on getRequests
@@ -264,7 +270,7 @@ public abstract class HttpClient {
             }
             
             //It is possible for multiple threads to run here, potentially getting the same URI concurrently
-            T value = invokeDirect(uri, type, entity, operation,0);
+            T value = invokeDirect(uri, type, entity, operation);
             
             if (useCache) {
                 cache.put(currentURI, value);
@@ -279,166 +285,190 @@ public abstract class HttpClient {
     
     protected abstract WebClient addAuth(WebClient link);
     
+    
     /**
      * Invoke the actual server and return the result.
      *
-     * @param uri the uri to invoke
-     * @param type the class of the result
-     * @param entity the body entity. Can be null
+     * @param <T>       the type of the result
+     * @param <E>       the type of the entity
+     * @param uri       the uri to invoke
+     * @param type      the class of the result
+     * @param entity    the body entity. Can be null
      * @param operation the operation (GET, POST,...)
-     * @param retryCount A counter keeping track of which retry we are at. Just provide 0 if this does not make sense.
-     * @param <T> the type of the result
-     * @param <E> the type of the entity
      * @return the result
      * @throws AlmaConnectionException if we failed on a deeper level, like the connection
-     * @throws AlmaKnownException if we failed on a documented API error code
-     * @throws AlmaUnknownException if we failed on a higher level, but not in a documented way
+     * @throws AlmaKnownException      if we failed on a documented API error code
+     * @throws AlmaUnknownException    if we failed on a higher level, but not in a documented way
      */
-    protected <T,E> T invokeDirect(final WebClient uri, Class<T> type, E entity, Operation operation, int retryCount)
+    protected <T, E> T invokeDirect(final WebClient uri, Class<T> type, E entity, Operation operation)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return invokeDirect(new Invocation<>(uri, type, entity, operation, maxRetries));
+    }
+    
+    
+    protected <T, E> T invokeDirect(Invocation<T, E> invocation)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
         //Remove the api key from the query string. This is something we handle here, not something you should set
-        removeAuth(uri);
-    
-        URI currentURI = uri.getCurrentURI();
-        log.debug("{}ing on {}", operation, currentURI);
-        T value;
-        try {
-            WebClient webClient = addAuth(uri);
-            value = webClient.invoke(operation.name(), entity, type);
-            log.trace("{}ed on {}", operation, currentURI);
-        } catch (Fault | ProcessingException e) {
-            //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
-            // but better safe than sorry
-            
-            // If maxRetries have been set (to 0+), limit the number of retries
-            // if maxRetries < 0, retry forever, with no limit
-            // if maxRetries == 0, fail immediately, rather than attempt to retry
-            if (maxRetries >= 0 && retryCount >= maxRetries){
-                throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
-            } else {
-                //Increment retrycount here so we do not forget it in one of the branches below
-                retryCount+=1;
-            }
-            
-            //This checks if any exception in the hierachy is a socket timeout exception.
-            List<Throwable> causes = getCauses(e);
-            if (shouldRetryOnTimeout(operation) &&
-                causes.stream().anyMatch(cause -> cause instanceof SocketTimeoutException)) {
-                //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
-                // different levels of the hierachy
-                log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
-                sleep("Socket timeout exception for '" + currentURI + "'");
-                HTTPClientPolicy clientPolicy = WebClient.getConfig(uri).getHttpConduit().getClient();
-                clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
-                clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
-                clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
-                log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
-                          clientPolicy.getConnectionTimeout(),
-                          clientPolicy.getReceiveTimeout(),
-                          operation.name(),
-                          currentURI);
-    
-    
-                return invokeDirect(uri, type, entity, operation, retryCount);
-            } else if (shouldRetryOnSocketException(operation) && causes
-                    .stream()
-                    .anyMatch(cause -> cause instanceof SocketException)) {
-    
-                log.trace("Socket Exception for " + operation.name() + " on " + currentURI, e);
-                sleep("Socket exception for '" + currentURI + "'");
-    
-                return invokeDirect(uri, type, entity, operation, retryCount);
-            } else {
-                throw new AlmaConnectionException("Failed to " + operation.name() + "ing '" + currentURI + "'", e);
-            }
-        } catch (RedirectionException e) {
-            URI redirectLocation = e.getLocation();
-            log.debug("Redirecting {} to {}", operation, redirectLocation.getPath());
-            if (redirectLocation.isAbsolute()) {
-                return invokeDirect(getWebClient(redirectLocation), type, entity, operation, retryCount);
-            } else {
-                WebClient newLink = constructLink();
-                newLink = newLink.replacePath(redirectLocation.getPath());
-                String redirectQueryString = redirectLocation.getQuery();
-                if (redirectQueryString != null) {
-                    String currentQueryString = newLink.getCurrentURI().getQuery();
-                    if (currentQueryString != null) {
-                        newLink = newLink.replaceQuery(currentQueryString + "&" + redirectQueryString);
-                    } else {
-                        newLink = newLink.replaceQuery(redirectQueryString);
-                    }
-                }
-                return invokeDirect(newLink, type, entity, operation, retryCount);
-            }
-        } catch (WebApplicationException e) {
-            if (shouldRetryOn429(operation) && rateLimitSleep(e, currentURI)) {
-                //Do not increment retryCount as 429's should be retried forever. They do not count as errors with
-                // a limited number of retries
-                return invokeDirect(uri, type, entity, operation, retryCount);
-            }
-            
-            String entityMessage = "";
-            if (entity != null) {
-                try {
-                    entityMessage = "with entity '" + XML.marshall(entity) + "' ";
-                } catch (JAXBException jaxbException) {
-                    throw new AlmaConnectionException(jaxbException+": Failed to parse entity '" + entity + "' as xml, but throwing the original WebApplicationException",
-                                                      e);
-                }
-            }
-            
-            Response response = e.getResponse();
-            //Buffer entity so we can read the response multiple times
-            response.bufferEntity();
-            WebServiceResult result;
-            try {
-                result = response.readEntity(WebServiceResult.class);
-            } catch (Exception e2) {
-                log.error(
-                        "Failed to parse response {} as WebServiceResult, but throwing based on the original exception {}",
-                        response.readEntity(String.class),
-                        e,
-                        e2);
-                throw new AlmaUnknownException(operation.name(),
-                                               entityMessage,
-                                               currentURI,
-                                               response,
-                                               e);
-            }
-            Error error = null;
-            try {
-                error = result.getErrorList().getErrors().get(0);
-            } catch (RuntimeException noErrorInErrorlist) {
-                //ignore, just contiune
-            }
-            if (error != null) {
-                switch (error.getErrorCode()) {
-                    case "NOT_FOUND":
-                        throw new AlmaNotFoundException(operation.name(),
-                                                        entityMessage,
-                                                        currentURI,
-                                                        response,
-                                                        result,
-                                                        e);
-                }
-            }
-            throw new AlmaKnownException(operation.name(),
-                                         entityMessage,
-                                         currentURI,
-                                         response,
-                                         result,
-                                         e);
-            
-        } finally {
-            uri.close();
-        }
-        return value;
+        removeAuth(invocation.getUri());
         
+        URI currentURI = invocation.getUri().getCurrentURI();
+        log.debug("{}ing on {}", invocation.getOperation(), currentURI);
+        T value;
+        try (invocation) {
+            Invocation<T, E> retryInvocation;
+        
+            try {
+                WebClient webClient = addAuth(invocation.getUri());
+                value = webClient.invoke(invocation.getOperation().name(),
+                                         invocation.getEntity(),
+                                         invocation.getType());
+                log.trace("{}ed on {}", invocation.getOperation(), currentURI);
+                return value;
+            } catch (Fault | ProcessingException e) {
+                //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
+                // but better safe than sorry
+            
+                //This throws exception if we should NOT retry
+                retryInvocation = handleProcessingException(invocation, e);
+            } catch (RedirectionException e) {
+                //This throws exception if we should NOT retry
+                retryInvocation = handleRedirection(invocation, e);
+            } catch (WebApplicationException e) {
+                //This throws exception if we should NOT retry
+                retryInvocation = handleWebApplicationException(invocation, e);
+            }
+        
+            return invokeDirect(retryInvocation);
+        }
     }
     
+    
+    private <T, E> Invocation<T, E> handleProcessingException(Invocation<T, E> invocation, RuntimeException e)
+            throws AlmaConnectionException {
+        final Operation operation = invocation.getOperation();
+        final WebClient uri = invocation.getUri();
+        final URI currentURI = uri.getCurrentURI();
+        
+        //Exception if we should NOT retry
+        Supplier<AlmaConnectionException> almaConnectionExceptionSupplier = () -> new AlmaConnectionException(
+                "Failed to " + operation.name() + "ing '" + currentURI + "'",
+                e);
+        
+        invocation.decrementRetryCount(almaConnectionExceptionSupplier);
+        
+        
+        //This checks if any exception in the hierachy is a socket timeout exception.
+        List<Throwable> causes = HttpUtils.getCauses(e);
+        if (shouldRetryOnTimeout(operation) && causes
+                .stream()
+                .anyMatch(cause -> cause instanceof SocketTimeoutException)) {
+            //Multiple things, like SSL and ordinary reads and connects can cause SocketTimeouts, but at
+            // different levels of the hierachy
+            log.trace("Socket timeout for " + operation.name() + " on " + currentURI, e);
+            sleep("Socket timeout exception for '" + currentURI + "'");
+            
+            HttpUtils.extendTimeouts(operation, uri, currentURI);
+            
+        } else if (shouldRetryOnSocketException(operation) && causes
+                .stream()
+                .anyMatch(cause -> cause instanceof SocketException)) {
+            
+            log.trace("Socket Exception for " + operation.name() + " on " + currentURI, e);
+            sleep("Socket exception for '" + currentURI + "'");
+            
+        } else {
+            throw almaConnectionExceptionSupplier.get();
+        }
+        
+        return invocation;
+    }
+    
+    private <T, E> Invocation<T, E> handleWebApplicationException(Invocation<T, E> invocation,
+                                                                  WebApplicationException e)
+            throws AlmaConnectionException, AlmaUnknownException, AlmaKnownException {
+        final Operation operation = invocation.getOperation();
+        final URI currentURI = invocation.getUri().getCurrentURI();
+        final E entity = invocation.getEntity();
+        
+        if (shouldRetryOn429(operation) && rateLimitSleep(e, currentURI)) {
+            //Do not increment retryCount as 429's should be retried forever. They do not count as errors with
+            // a limited number of retries
+            return invocation;
+        }
+        
+        String entityMessage = HttpUtils.formatEntityMessage(entity, e);
+        
+        Response response = HttpUtils.getResponse(e);
+        WebServiceResult result = HttpUtils.readWebServiceResult(operation, currentURI, e, entityMessage, response);
+        Error firstError = HttpUtils.getFirstError(result);
+        
+        return handleErrorCodes(invocation, e, entityMessage, response, result, firstError);
+    }
+    
+    
+    private <T, E> Invocation<T, E> handleRedirection(Invocation<T, E> invocation, RedirectionException e) {
+        URI redirectLocation = e.getLocation();
+        log.debug("Redirecting {} to {}", invocation.getOperation(), redirectLocation.getPath());
+        if (redirectLocation.isAbsolute()) {
+            return invocation.withNewUri(getWebClient(redirectLocation));
+        } else {
+            WebClient newLink = constructLink();
+            newLink = newLink.replacePath(redirectLocation.getPath());
+            String redirectQueryString = redirectLocation.getQuery();
+            if (redirectQueryString != null) {
+                String currentQueryString = newLink.getCurrentURI().getQuery();
+                if (currentQueryString != null) {
+                    newLink = newLink.replaceQuery(currentQueryString + "&" + redirectQueryString);
+                } else {
+                    newLink = newLink.replaceQuery(redirectQueryString);
+                }
+            }
+            return invocation.withNewUri(newLink);
+        }
+    }
+    
+    
+    private <T, E> Invocation<T, E> handleErrorCodes(Invocation<T, E> invocation,
+                                                     WebApplicationException e,
+                                                     String entityMessage,
+                                                     Response response,
+                                                     WebServiceResult result,
+                                                     Error error) throws AlmaKnownException {
+        
+        Supplier<AlmaKnownException> defaultException = () -> new AlmaKnownException(invocation.getOperation().name(),
+                                                                                     entityMessage,
+                                                                                     invocation
+                                                                                             .getUri()
+                                                                                             .getCurrentURI(),
+                                                                                     response,
+                                                                                     result,
+                                                                                     e);
+        if (error != null) {
+            switch (error.getErrorCode()) {
+                case "NOT_FOUND":
+                    throw new AlmaNotFoundException(invocation.getOperation().name(),
+                                                    entityMessage,
+                                                    invocation.getUri().getCurrentURI(),
+                                                    response,
+                                                    result,
+                                                    e);
+                case "GENERAL_ERROR":
+                    // Full message seems to be "503 Service Unavailable - General error with the API Gateway – please retry later."
+                    if (error.getErrorMessage().contains("please retry later")) {
+                        invocation.decrementRetryCount(defaultException);
+                        sleep("ALMA responded '" + error.getErrorMessage() + "'");
+                        return invocation;
+                    }
+                    break;
+            }
+        }
+        throw defaultException.get();
+    }
+    
+    
     private boolean shouldRetryOn429(Operation operation) {
-        switch (operation){
+        switch (operation) {
             case GET:
                 return true;
             case POST:
@@ -447,10 +477,11 @@ public abstract class HttpClient {
                 return retryOn429;
             default:
                 return false;
-        }    }
+        }
+    }
     
     private boolean shouldRetryOnTimeout(Operation operation) {
-        switch (operation){
+        switch (operation) {
             case GET:
                 return true;
             case POST:
@@ -463,7 +494,7 @@ public abstract class HttpClient {
     }
     
     private boolean shouldRetryOnSocketException(Operation operation) {
-        switch (operation){
+        switch (operation) {
             case GET:
                 return true;
             case POST:
@@ -473,22 +504,6 @@ public abstract class HttpClient {
             default:
                 return false;
         }
-    }
-    
-    
-    /**
-     * Walk through the Throwable cause-tree and return it as a list
-     * @param throwable the throwable
-     * @return a list of all the throwables that led to this throwables
-     */
-    private List<Throwable> getCauses(Throwable throwable) {
-        List<Throwable> result = new ArrayList<>();
-        Throwable current = throwable;
-        while (current != null) {
-            result.add(current);
-            current = current.getCause();
-        }
-        return result;
     }
     
     
@@ -526,8 +541,8 @@ public abstract class HttpClient {
     /**
      * Use this if you need invalidate a possible cache entry.
      * An example usecase would be:
-     *  after a DELETE request, you want to invalidate the cache entry for the same resource
-     *  so that future GET requests will not get the not-deleted cached copy.
+     * after a DELETE request, you want to invalidate the cache entry for the same resource
+     * so that future GET requests will not get the not-deleted cached copy.
      *
      * @param currentURI the URI to invalidate cache for.
      */
