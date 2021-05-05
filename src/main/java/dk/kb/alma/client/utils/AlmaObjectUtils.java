@@ -91,13 +91,13 @@ public class AlmaObjectUtils {
         }
         ContactInfo contactInfo = user.getContactInfo();
         if (contactInfo == null) {
-            log.error("User '{}' has no contact info", user);
+            log.error("User '{}' has no contact info", user.getPrimaryId());
             return Arrays.asList(user.getFullName(),
                                  "User has no contact info");
         }
         Addresses addresses = contactInfo.getAddresses();
         if (addresses == null) {
-            log.error("User '{}' has no addresses", user);
+            log.error("User '{}' has no addresses", user.getPrimaryId());
             return Arrays.asList(user.getFullName(),
                                  "User has no addresses");
             
@@ -126,8 +126,8 @@ public class AlmaObjectUtils {
                          .findFirst();
         
         
-        if (!addressOptional.isPresent()) {
-            log.error("User '{}' has no valid {} addresse", user, addressType);
+        if (addressOptional.isEmpty()) {
+            log.warn("User '{}' has no valid {} address", user.getPrimaryId(), addressType);
             return Arrays.asList(user.getFullName(),
                                  "User has no valid " + addressType + " address");
             
@@ -145,7 +145,7 @@ public class AlmaObjectUtils {
                          addressO.getCountry().getDesc()
         )
                      .filter(Objects::nonNull)
-                     .map(line -> line.trim())
+                     .map(String::trim)
                      .filter(line -> !line.isEmpty())
                      .filter(line -> !"Denmark".equalsIgnoreCase(line)) //remove country if denmark
                      .collect(Collectors.toList());
