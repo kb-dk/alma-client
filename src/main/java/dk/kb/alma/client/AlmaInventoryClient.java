@@ -5,7 +5,6 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
-import dk.kb.alma.client.utils.Utils;
 import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.bibs.Bibs;
 import dk.kb.alma.gen.holding.Holding;
@@ -31,9 +30,12 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -127,19 +129,47 @@ public class AlmaInventoryClient {
     
     public Set<Bib> getBibs(@NotNull Set<String> bibIDs)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        
+        Pattern pattern = Pattern.compile(
+                "Input parameters mmsId (\\d+) is not valid\\.");
+        
         String threadName = Thread.currentThread().getName();
         Iterable<List<String>> partition = Iterables.partition(bibIDs, batchSize);
         return StreamSupport.stream(partition.spliterator(), true)
                             .map(NamedThread.function(
                                     (List<String> partion) -> {
-                                        String partionBibIDs = String.join(",", partion);
-                                        Bibs bibs = almaRestClient.get(almaRestClient
-                                                                               .constructLink()
-                                                                               .path("/bibs/")
-                                                                               .query("mms_id", partionBibIDs)
-                                                                               .query("view", "full")
-                                                                               .query("expand", "None"), Bibs.class);
-                                        log.debug("Retrieved bibs range {} - ...{}... - {}",partion.get(0),partion.size(), partion.get(partion.size()-1));
+                    
+                                        List<String> modifiablePartion = new ArrayList<>(partion);
+                                        Bibs bibs = null;
+                                        while (!partion.isEmpty()) {
+                                            try {
+                                                String partionBibIDs = String.join(",", modifiablePartion);
+                                                bibs = almaRestClient.get(almaRestClient
+                                                                                  .constructLink()
+                                                                                  .path("/bibs/")
+                                                                                  .query("mms_id", partionBibIDs)
+                                                                                  .query("view", "full")
+                                                                                  .query("expand", "None"),
+                                                                          Bibs.class);
+                                                break;
+                                            } catch (AlmaKnownException e) {
+                                                //Check if this is due to one of the mmsIDs being invalid. If so, try again without this mmsid
+                                                if (e.getErrorCode().equals("402203")) {
+                                                    Matcher matcher = pattern.matcher(e.getErrorMessage());
+                                                    if (matcher.matches()) {
+                                                        String badMMSId = matcher.group(1);
+                                                        log.warn("Requested bib data for mmsID {}. ALMA says this mmsID is invalid so disregarding",badMMSId,e);
+                                                        modifiablePartion.remove(badMMSId);
+                                                        continue;
+                                                    }
+                                                }
+                                                throw e; //If we did not hit the continue above, just throw the exception and fail normally
+                                            }
+                                        }
+                                        log.debug("Retrieved bibs range {} - ...{}... - {}",
+                                                  partion.get(0),
+                                                  partion.size(),
+                                                  partion.get(partion.size() - 1));
                                         return bibs;
                                     },
                                     partion -> threadName + "->" + "Bibs-from-" + partion.get(0) + "-to-" + partion.get(
