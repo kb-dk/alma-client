@@ -72,9 +72,6 @@ public class AlmaObjectUtils {
         return xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime().toLocalDate();
     }
     
-    public static LocalDateTime toLocalDateTime(XMLGregorianCalendar xmlGregorianCalendar) {
-        return xmlGregorianCalendar.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
-    }
     
     
     public static List<String> getWorkAddress(User user) {
