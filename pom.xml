@@ -44,8 +44,8 @@
         <!--      <api.check.phase>process-classes</api.check.phase>-->
 
 
-        <cxf.version>3.4.0</cxf.version>
-        <jackson.version>2.11.2</jackson.version>
+        <cxf.version>3.4.3</cxf.version>
+        <jackson.version>2.12.3</jackson.version>
 
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>dk.kb.util</groupId>
             <artifactId>kb-util</artifactId>
-            <version>1.4.3</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
 
 
@@ -83,6 +83,7 @@
         </dependency>
         <!-- JSON processing: jackson -->
         <dependency>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
@@ -90,17 +91,20 @@
 
 
         <dependency>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-xml-provider -->
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-xml-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.version}</version>
@@ -268,45 +272,36 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>com.evolvedbinary.maven.jvnet</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>2.5.0</version>
-                <dependencies>
-                    <!-- https://mvnrepository.com/artifact/com.thoughtworks.qdox/qdox -->
+                <version>0.15.0</version>
+<!--                <dependencies>
+                    &lt;!&ndash; https://mvnrepository.com/artifact/com.thoughtworks.qdox/qdox &ndash;&gt;
                     <dependency>
                         <groupId>com.thoughtworks.qdox</groupId>
                         <artifactId>qdox</artifactId>
                         <version>2.0.0</version>
                     </dependency>
-                </dependencies>
+                </dependencies>-->
                 <executions>
                     <execution>
                         <id>xjc_alma_sru</id>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <failOnNoSchemas>true</failOnNoSchemas>
-                            <packageName>dk.kb.alma.gen.sru</packageName>
+                            <generatePackage>dk.kb.alma.gen.sru</generatePackage>
 
 
-                            <xjcSourceExcludeFilters>
-                                <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
-                                    <patterns>
-                                        <pattern>\.txt</pattern>
-                                        <pattern>\.xjb</pattern>
-                                    </patterns>
-                                </filter>
-                            </xjcSourceExcludeFilters>
-                            <sources>
-                                <source>src/main/resources/alma_sru/</source>
+                            <schemaExcludes>
+                                <exclude>\.txt</exclude>
+                                <exclude>\.xjb</exclude>
+                            </schemaExcludes>
+                            <schemaDirectory>src/main/resources/alma_sru/</schemaDirectory>
+                            <removeOldOutput>false</removeOldOutput>
+                            <bindingDirectory>${basedir}/src/main/resources/</bindingDirectory>
 
-                            </sources>
-                            <clearOutputDir>false</clearOutputDir>
-                            <xjbSources>
-                                <xjbSource>${basedir}/src/main/resources/alma-api.xjb</xjbSource>
-                            </xjbSources>
                         </configuration>
                     </execution>
                 </executions>
@@ -314,16 +309,16 @@
 
 
             <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.14.0</version>
-                <dependencies>
+                <groupId>com.evolvedbinary.maven.jvnet</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>0.15.0</version>
+<!--                <dependencies>
                     <dependency>
                         <groupId>org.glassfish.jaxb</groupId>
                         <artifactId>jaxb-runtime</artifactId>
-                        <version>2.3.3</version>
+                        <version>3.0.1</version>
                     </dependency>
-                </dependencies>
+                </dependencies>-->
                 <executions>
                     <execution>
                         <id>rest_portfolios</id>
