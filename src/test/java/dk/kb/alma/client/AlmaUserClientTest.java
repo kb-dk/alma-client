@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static dk.kb.alma.client.TestUtils.getAlmaClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AlmaUserClientTest {
@@ -76,9 +77,12 @@ public class AlmaUserClientTest {
         
         String newComment = "integration test comment";
         request.setComment(newComment);
+        request.setAdditionalId("new Additional-id value");
         UserRequest updatedRequest = almaUserClient.updateRequest(request);
         
         assertEquals(newComment, updatedRequest.getComment());
+        //Test that the additional id is NOT settable
+        assertNotEquals("new Additional-id value",updatedRequest.getAdditionalId());
         
         boolean success = almaUserClient.cancelRequest(userID, request.getRequestId(), "PatronNotInterested", false);
         
