@@ -11,7 +11,7 @@
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.31-SNAPSHOT</version>
+    <version>0.31</version>
     <packaging>jar</packaging>
 
 
@@ -19,7 +19,7 @@
         <url>https://github.com/kb-dk/alma-client</url>
         <connection>scm:git:git@github.com:kb-dk/alma-client.git</connection>
         <developerConnection>scm:git:git@github.com:kb-dk/alma-client.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>alma-client-0.31</tag>
     </scm>
 
     <licenses>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>dk.kb.util</groupId>
             <artifactId>kb-util</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.4.4</version>
         </dependency>
 
 
