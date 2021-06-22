@@ -23,8 +23,8 @@ public class AlmaKnownException extends AlmaClientException {
                               Response response,
                               WebServiceResult result,
                               Exception e) {
-        super("Failed with code " + parseErrorCode(result) + " / " + parseErrorMessage(result) + " on " + operation + " "
-              + notNull(entityMessage) + " " + currentURI,
+        super("Failed with code '" + parseErrorCode(result) + "' / '" + parseErrorMessage(result) + "' on operation '" + operation + "' "
+              + notNull(entityMessage) + " on URI '" + currentURI+"'",
               operation,
               entityMessage,
               currentURI,
