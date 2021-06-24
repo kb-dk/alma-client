@@ -49,7 +49,7 @@ class AlmaInventoryClientTest {
             Assertions.fail("Should have thrown exception");
         } catch (AlmaKnownException e) {
             Assertions.assertEquals(
-                    "Failed with code 402203 / Input parameters mmsId fail is not valid. on GET  https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/fail",
+                    "Failed with code '402203' / 'Input parameters mmsId fail is not valid.' on operation 'GET'  on URI 'https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/fail'",
                     e.getMessage());
         }
     }
