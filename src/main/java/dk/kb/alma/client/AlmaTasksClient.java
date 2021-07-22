@@ -40,9 +40,11 @@ public class AlmaTasksClient {
     
     /*Requested Resources*/
     
-    public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId, String circulationDeskName,
+    public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId,
+                                                                    String circulationDeskName,
                                                                     String location,
-                                                                    boolean allOrNothing, Logger... errorLoggers) {
+                                                                    boolean allOrNothing,
+                                                                    Logger... errorLoggers) {
         Function<Integer, AutochainingIterator.IteratorOffset<Integer, Iterator<RequestedResource>>>
                 nextIteratorFunction
                 = offset -> {

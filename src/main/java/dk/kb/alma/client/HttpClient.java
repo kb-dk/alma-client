@@ -1,7 +1,10 @@
 package dk.kb.alma.client;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
@@ -163,11 +166,13 @@ public abstract class HttpClient {
     public WebClient getWebClient(URI link) {
         URI host = new UriBuilderImpl(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
         
+        JacksonJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
+        jacksonJaxbJsonProvider.disable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+        jacksonJaxbJsonProvider.disable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        jacksonJaxbJsonProvider.enable(DeserializationFeature.WRAP_EXCEPTIONS);
         
-        JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
-        jacksonJaxbJsonProvider.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-        jacksonJaxbJsonProvider.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        
+        jacksonJaxbJsonProvider.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
+        jacksonJaxbJsonProvider.enable(JsonParser.Feature.IGNORE_UNDEFINED);
         
         final List<?> providers = Arrays.asList(jacksonJaxbJsonProvider);
         WebClient client = WebClient.create(host.toString(), providers);
@@ -185,6 +190,10 @@ public abstract class HttpClient {
             client = client.replaceQuery(link.getQuery());
         }
         
+        //client = client
+        //        .accept(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE)
+        //        .type(MediaType.APPLICATION_JSON_TYPE);
+    
         client = client
                 .accept(MediaType.APPLICATION_XML_TYPE, MediaType.APPLICATION_JSON_TYPE)
                 .type(MediaType.APPLICATION_XML_TYPE);
