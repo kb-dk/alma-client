@@ -1,9 +1,12 @@
 package dk.kb.alma.client;
 
+import com.google.common.collect.ImmutableList;
 import dk.kb.alma.client.utils.Utils;
+import org.apache.commons.collections4.list.UnmodifiableList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -13,35 +16,78 @@ public class UtilsTest {
     
     @Test
     public void testCollectionsEmptyListImmutable() {
+        List<String> immutable = Collections.emptyList();
         try {
-            Collections.emptyList().add("test");
+            immutable.add("test");
             Assertions.fail("empty list is not immutable, what magic is this?");
         } catch (UnsupportedOperationException e){
             //expected
         }
-        Utils.toModifiableList(Collections.emptyList()).add("Test");
+        List<String> list = Utils.toModifiableList(immutable);
+        Assertions.assertEquals(0,list.size());
+        list.add("Test");
+        Assertions.assertEquals(list.get(0),("Test"));
     }
     
     @Test
     public void testListsOfImmutable() {
+        List<String> immutable = List.of();
         try {
-            List.of().add("test");
+            immutable.add("test");
             Assertions.fail("empty list is not immutable, what magic is this?");
         } catch (UnsupportedOperationException e){
             //expected
         }
-        Utils.toModifiableList(List.of()).add("Test");
+        List<String> list = Utils.toModifiableList(immutable);
+        Assertions.assertEquals(0,list.size());
+        list.add("Test");
+        Assertions.assertEquals(list.get(0),("Test"));
     }
     
     @Test
     public void testArraysAsListImmutable() {
+        List<String> immutable = Arrays.asList();
         try {
-            Arrays.asList().add("test");
+            immutable.add("test");
             Assertions.fail("empty list is not immutable, what magic is this?");
         } catch (UnsupportedOperationException e){
             //expected
         }
-        Utils.toModifiableList(Arrays.asList()).add("Test");
+        List<String> list = Utils.toModifiableList(immutable);
+        Assertions.assertEquals(0,list.size());
+        list.add("Test");
+        Assertions.assertEquals(list.get(0),("Test"));
+    }
+    
+    @Test
+    public void testGuavaImmutable() {
+        List<String> immutable = ImmutableList.of();
+        try {
+            immutable.add("test");
+            Assertions.fail("empty list is not immutable, what magic is this?");
+        } catch (UnsupportedOperationException e){
+            //expected
+        }
+        List<String> list = Utils.toModifiableList(immutable);
+        Assertions.assertEquals(0,list.size());
+        Assertions.assertEquals(0,list.size());
+        list.add("Test");
+        Assertions.assertEquals(list.get(0),("Test"));
+    }
+    
+    @Test
+    public void testApacheCollections() {
+        List<String> immutable = new UnmodifiableList<>(new ArrayList<>());
+        try {
+            immutable.add("test");
+            Assertions.fail("empty list is not immutable, what magic is this?");
+        } catch (UnsupportedOperationException e){
+            //expected
+        }
+        List<String> list = Utils.toModifiableList(immutable);
+        Assertions.assertEquals(0,list.size());
+        list.add("Test");
+        Assertions.assertEquals(list.get(0),("Test"));
     }
     
     @Test
