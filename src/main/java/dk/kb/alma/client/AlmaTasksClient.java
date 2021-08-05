@@ -2,6 +2,7 @@ package dk.kb.alma.client;
 
 import com.google.common.collect.Lists;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
+import dk.kb.alma.client.utils.Utils;
 import dk.kb.alma.gen.requested_resources.RequestedResource;
 import dk.kb.alma.gen.requested_resources.RequestedResources;
 import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequests;
@@ -9,7 +10,6 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +67,7 @@ public class AlmaTasksClient {
                      location);
             
             if (batchOfRequestedResources.size() < batchSize){
+                batchOfRequestedResources = Utils.toModifiableList(batchOfRequestedResources);
                 batchOfRequestedResources.add(null);
             }
             
@@ -160,7 +161,7 @@ public class AlmaTasksClient {
         
         Integer total_records = result.getTotalRecordCount();
         if (offset >= total_records || result.getRequestedResources() == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         } else {
             return result.getRequestedResources();
         }
