@@ -4,6 +4,8 @@ import com.sun.istack.Nullable;
 
 import dk.kb.util.xml.XPathSelector;
 import dk.kb.util.xml.XpathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Report {
+    private final static Logger log = LoggerFactory.getLogger(Report.class);
     
     private final String token;
     
@@ -70,6 +73,7 @@ public class Report {
             }
     
             token = xPathSelector.selectString(doc, "/QueryResult/ResumptionToken");
+            log.info("Report token is '{}'",token);
     
         } else {
             columns = previousReport.getColumns();

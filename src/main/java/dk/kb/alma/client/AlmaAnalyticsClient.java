@@ -65,6 +65,7 @@ public class AlmaAnalyticsClient {
         if (report.isFinished()) {
             throw new IllegalArgumentException("The report is finished, there is no more to get here");
         }
+        log.debug("Using Token {}",report.getToken());
         final Report rawReport;
         try {
             rawReport = almaRestClient.get(almaRestClient.constructLink().path("/analytics/reports")
