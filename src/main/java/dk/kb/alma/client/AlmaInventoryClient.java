@@ -57,7 +57,7 @@ public class AlmaInventoryClient {
     
     public AlmaInventoryClient(@NotNull AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
-        this.batchSize = batchSize;
+        this.batchSize = Integer.min(Integer.max(batchSize,1),100);
     }
     
     public AlmaRestClient getAlmaRestClient() {
