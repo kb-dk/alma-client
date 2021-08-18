@@ -45,7 +45,7 @@
 
 
         <cxf.version>3.4.3</cxf.version>
-        <jackson.version>2.12.3</jackson.version>
+        <jackson.version>2.11.2</jackson.version>
 
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
