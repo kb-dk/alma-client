@@ -362,6 +362,28 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>alma-partners</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>
+                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_partners.xsd
+                                    </url>
+                                </schema>
+                            </schemas>
+                            <generatePackage>dk.kb.alma.gen.partners</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-partners/
+                            </generateDirectory>
+                        </configuration>
+                    </execution>
+
+
 
                     <execution>
                         <id>web_service_result</id>
