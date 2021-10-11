@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import java.net.URI;
@@ -34,10 +35,17 @@ public class HttpUtils {
                                                         Response response) {
         WebServiceResult result;
         try {
-            result = response.readEntity(WebServiceResult.class);
+            if (List.of(MediaType.APPLICATION_XML_TYPE,
+                        MediaType.TEXT_XML_TYPE,
+                        MediaType.APPLICATION_JSON_TYPE)
+                    .contains(response.getMediaType())){
+                result = response.readEntity(WebServiceResult.class);
+            } else {
+                throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, new IllegalArgumentException("Invalid return type '"+response.getMediaType()+"'") );
+            }
         } catch (Exception e2) {
             log.error(
-                    "Failed to parse response {} as WebServiceResult, but throwing based on the original exception '{}'",
+                    "Failed to parse response '{}' as WebServiceResult, but throwing based on the original exception '{}'",
                     response.readEntity(String.class),
                     e.toString(),
                     e2);
