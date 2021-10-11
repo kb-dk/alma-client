@@ -37,9 +37,9 @@ public class HttpUtils {
             result = response.readEntity(WebServiceResult.class);
         } catch (Exception e2) {
             log.error(
-                    "Failed to parse response {} as WebServiceResult, but throwing based on the original exception {}",
+                    "Failed to parse response {} as WebServiceResult, but throwing based on the original exception '{}'",
                     response.readEntity(String.class),
-                    e,
+                    e.toString(),
                     e2);
             throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, e);
         }
