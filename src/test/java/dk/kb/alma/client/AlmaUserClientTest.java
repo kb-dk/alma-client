@@ -50,6 +50,18 @@ public class AlmaUserClientTest {
     
     
     @Test
+    public synchronized void testGetInvalidUser() throws AlmaConnectionException, IOException {
+        AlmaUserClient almaClient = new AlmaUserClient(client);
+        String invalidUser = "dsfdksdfsddfs";
+        AlmaKnownException exceptionThrown = Assertions.assertThrows(AlmaKnownException.class, () -> {
+            User user = almaClient.getUser(invalidUser);
+        });
+        assertEquals(exceptionThrown.getErrorCode(),"401861");
+        assertEquals(exceptionThrown.getErrorMessage(), "User with identifier "+invalidUser+" was not found.");
+    }
+    
+    
+    @Test
     public synchronized void testCreateUpdateAndCancelRequest() throws AlmaConnectionException, IOException {
         AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(client);
 

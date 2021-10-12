@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class HttpUtils {
     
@@ -35,13 +36,19 @@ public class HttpUtils {
                                                         Response response) {
         WebServiceResult result;
         try {
-            if (List.of(MediaType.APPLICATION_XML_TYPE,
-                        MediaType.TEXT_XML_TYPE,
-                        MediaType.APPLICATION_JSON_TYPE)
-                    .contains(response.getMediaType())){
+            if (Stream.of(MediaType.APPLICATION_XML_TYPE,
+                          MediaType.TEXT_XML_TYPE,
+                          MediaType.APPLICATION_JSON_TYPE)
+                      .anyMatch(mediaType -> response.getMediaType().isCompatible(mediaType))) {
                 result = response.readEntity(WebServiceResult.class);
             } else {
-                throw new AlmaUnknownException(operation.name(), entityMessage, currentURI, response, new IllegalArgumentException("Invalid return type '"+response.getMediaType()+"'") );
+                throw new AlmaUnknownException(operation.name(),
+                                               entityMessage,
+                                               currentURI,
+                                               response,
+                                               new IllegalArgumentException("Invalid return type '"
+                                                                            + response.getMediaType()
+                                                                            + "'"));
             }
         } catch (Exception e2) {
             log.error(
@@ -97,10 +104,10 @@ public class HttpUtils {
         clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
         clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
         log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
-                             clientPolicy.getConnectionTimeout(),
-                             clientPolicy.getReceiveTimeout(),
-                             operation.name(),
-                             currentURI);
+                  clientPolicy.getConnectionTimeout(),
+                  clientPolicy.getReceiveTimeout(),
+                  operation.name(),
+                  currentURI);
     }
     
     /**
