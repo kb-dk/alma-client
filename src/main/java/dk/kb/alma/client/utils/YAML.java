@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.ContextResolver;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;

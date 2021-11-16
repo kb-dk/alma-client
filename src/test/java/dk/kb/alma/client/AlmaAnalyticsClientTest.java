@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
-import static dk.kb.alma.client.TestUtils.getAlmaClient;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AlmaAnalyticsClientTest {

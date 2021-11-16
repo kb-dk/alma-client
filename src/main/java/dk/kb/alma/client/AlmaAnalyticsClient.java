@@ -1,10 +1,7 @@
 package dk.kb.alma.client;
 
-import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
-import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.analytics.Report;
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +81,7 @@ public class AlmaAnalyticsClient {
     }
     
     /* When reports stop
-    2021-11-04 10:10:22 [main] ERROR dk.kb.alma.client.utils.HttpUtils(HttpUtils.java:47) - Failed to parse response '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><web_service_result xmlns="http://com/exlibris/urm/general/xmlbeans"><errorsExist>true</errorsExist><errorList><error><errorCode>420033</errorCode><errorMessage>No more rows to fetch</errorMessage><trackingId>E02-0411091022-OVKS5-AWAE948043988</trackingId></error></errorList></web_service_result>' as WebServiceResult, but throwing based on the original exception 'javax.ws.rs.InternalServerErrorException: HTTP 500 Internal Server Error'
+    2021-11-04 10:10:22 [main] ERROR dk.kb.alma.client.utils.HttpUtils(HttpUtils.java:47) - Failed to parse response '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><web_service_result xmlns="http://com/exlibris/urm/general/xmlbeans"><errorsExist>true</errorsExist><errorList><error><errorCode>420033</errorCode><errorMessage>No more rows to fetch</errorMessage><trackingId>E02-0411091022-OVKS5-AWAE948043988</trackingId></error></errorList></web_service_result>' as WebServiceResult, but throwing based on the original exception 'jakarta.ws.rs.InternalServerErrorException: HTTP 500 Internal Server Error'
 dk.kb.alma.client.exceptions.AlmaUnknownException: Failed to GET on 'https://api-eu.hosted.exlibrisgroup.com/almaws/v1/analytics/reports?lang=da&token=97BA943266B3B2155DBB9F6B58A0F4C4E65BC6BCBA8C16A872F10530D1BEFB4EFC94D111DA30DE180D54EFF14DA657CA590F866A14B76ED8E14C823BBC4988AF' with response '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><web_service_result xmlns="http://com/exlibris/urm/general/xmlbeans"><errorsExist>true</errorsExist><errorList><error><errorCode>420033</errorCode><errorMessage>No more rows to fetch</errorMessage><trackingId>E02-0411091022-OVKS5-AWAE948043988</trackingId></error></errorList></web_service_result>' with headers '{Access-Control-Allow-Headers=[Origin, X-Requested-With, Content-Type, Accept, Authorization], Access-Control-Allow-Methods=[GET,OPTIONS], Access-Control-Allow-Origin=[*], connection=[close], Content-Length=[352], content-type=[application/xml;charset=UTF-8], Date=[Thu, 04 Nov 2021 09:10:21 GMT], p3p=[CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"], Server=[CA-API-Gateway/9.0], X-Exl-Api-Remaining=[1519628], X-Request-ID=[zkvHCAOFRZ], Content-Type=[application/xml;charset=UTF-8]}'
         at dk.kb.alma.client.utils.HttpUtils.readWebServiceResult(HttpUtils.java:44)
         at dk.kb.alma.client.HttpClient.handleWebApplicationException(HttpClient.java:412)

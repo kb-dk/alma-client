@@ -44,8 +44,8 @@
         <!--      <api.check.phase>process-classes</api.check.phase>-->
 
 
-        <cxf.version>3.4.3</cxf.version>
-        <jackson.version>2.11.2</jackson.version>
+        <cxf.version>3.4.5</cxf.version>
+        <jackson.version>2.13.0</jackson.version>
 
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
@@ -58,14 +58,14 @@
         <dependency>
             <groupId>dk.kb.util</groupId>
             <artifactId>kb-util</artifactId>
-            <version>1.4.4</version>
+            <version>1.4.5-SNAPSHOT</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.marc4j</groupId>
             <artifactId>marc4j</artifactId>
-            <version>2.9.1</version>
+            <version>2.9.2</version>
         </dependency>
 
         <dependency>
@@ -90,18 +90,21 @@
         </dependency>
 
 
+
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jakarta.rs/jackson-jakarta-rs-json-provider -->
+            <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+            <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-xml-provider -->
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-xml-provider</artifactId>
+            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jakarta.rs/jackson-jakarta-rs-xml-provider -->
+            <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+            <artifactId>jackson-jakarta-rs-xml-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
 
         <dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
@@ -113,7 +116,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <version>1.7.32</version>
         </dependency>
 
 
@@ -121,21 +124,21 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.1</version>
             <scope>test</scope>
-            <version>5.6.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.6</version>
             <scope>test</scope>
         </dependency>
 
@@ -273,7 +276,7 @@
 
             <plugin>
                 <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <artifactId>jaxb30-maven-plugin</artifactId>
                 <version>0.15.0</version>
 <!--                <dependencies>
                     &lt;!&ndash; https://mvnrepository.com/artifact/com.thoughtworks.qdox/qdox &ndash;&gt;
@@ -310,7 +313,7 @@
 
             <plugin>
                 <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <artifactId>jaxb30-maven-plugin</artifactId>
                 <version>0.15.0</version>
 <!--                <dependencies>
                     <dependency>

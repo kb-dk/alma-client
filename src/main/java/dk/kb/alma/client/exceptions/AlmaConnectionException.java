@@ -1,6 +1,7 @@
 package dk.kb.alma.client.exceptions;
 
 public class AlmaConnectionException extends RuntimeException{
+    
     public AlmaConnectionException(String message) {
         super(message);
     }

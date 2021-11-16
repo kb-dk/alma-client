@@ -1,6 +1,6 @@
 package dk.kb.alma.client.exceptions;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import java.net.URI;
 
 public class AlmaClientException extends RuntimeException {
