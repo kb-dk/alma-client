@@ -8,12 +8,14 @@ import dk.kb.alma.gen.bibs.Bib;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.portfolios.Portfolio;
+import dk.kb.util.xml.XML;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.marc4j.marc.Record;
 
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 import static dk.kb.alma.client.TestUtils.getAlmaClient;
@@ -30,13 +32,22 @@ class AlmaInventoryClientTest {
     }
     
     @Test
-    @Disabled("The IDs are no longer valid in ALMA and I cannot find useful replacements")
-    public void testGetBibRecord() throws AlmaConnectionException, IOException {
+    @Disabled("Still figuring out what to actually test in MARC")
+    public void testGetBibRecordMarc() throws AlmaConnectionException, TransformerException {
         AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
-        Bib bib = almaClient.getBib("99122993627405763");  // 99123290311205763
+        Bib bib = almaClient.getBib("99121999521205763");  // 99123290311205763
+        System.out.println(XML.domToString(bib.getAnies().get(0)));
+    }
+    
+    
+    @Test
+    public void testGetBibRecord() throws AlmaConnectionException {
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
-        assertEquals("99122993627405763", bib.getMmsId());
+        Bib bib = almaClient.getBib("99121999521205763");  // 99123290311205763
+        
+        assertEquals("99121999521205763", bib.getMmsId());
     }
     
     
