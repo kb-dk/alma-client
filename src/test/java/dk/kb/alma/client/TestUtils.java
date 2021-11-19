@@ -6,11 +6,16 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Optional;
 import java.util.Properties;
 
 public class TestUtils {
     
     public static AlmaRestClient getAlmaClient() throws IOException, AlmaConnectionException {
+        return getAlmaClient(null);
+    }
+        
+        public static AlmaRestClient getAlmaClient(String almaApiKey) throws IOException, AlmaConnectionException {
         Properties dodpro = new Properties();
         try (Reader propStream = new InputStreamReader(Thread.currentThread()
                                                              .getContextClassLoader()
@@ -18,8 +23,9 @@ public class TestUtils {
                                                        Charsets.UTF_8)) {
             dodpro.load(propStream);
         }
+        almaApiKey = Optional.ofNullable(almaApiKey).orElse(dodpro.getProperty("alma.apikey"));
         return new AlmaRestClient(dodpro.getProperty("alma.url"),
-                                  dodpro.getProperty("alma.apikey"),
+                                  almaApiKey,
                                   Long.parseLong(dodpro.getProperty("alma_rate_limit_min_sleep_millis")),
                                   Long.parseLong(dodpro.getProperty("alma_rate_limit_sleep_variation_millis")),
                                   dodpro.getProperty("lang"),

@@ -743,6 +743,27 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>alma-rest-vendors</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>
+                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_vendors.xsd
+                                    </url>
+                                </schema>
+                            </schemas>
+                            <generatePackage>dk.kb.alma.gen.vendor</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-vendors/</generateDirectory>
+
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 
