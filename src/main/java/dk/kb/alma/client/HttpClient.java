@@ -22,6 +22,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.RedirectionException;
 import javax.ws.rs.WebApplicationException;
@@ -309,12 +310,13 @@ public abstract class HttpClient {
      * @throws AlmaKnownException      if we failed on a documented API error code
      * @throws AlmaUnknownException    if we failed on a higher level, but not in a documented way
      */
+    @Nullable
     protected <T, E> T invokeDirect(final WebClient uri, Class<T> type, E entity, Operation operation)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return invokeDirect(new Invocation<>(uri, type, entity, operation, maxRetries));
     }
     
-    
+    @Nullable
     protected <T, E> T invokeDirect(Invocation<T, E> invocation)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         
@@ -333,6 +335,9 @@ public abstract class HttpClient {
                                          invocation.getEntity(),
                                          invocation.getType());
                 log.trace("{}ed on {}", invocation.getOperation(), currentURI);
+                if (value == null && (invocation.getType() == null || Void.TYPE == invocation.getType())){
+                    log.warn("Beware: Returning null from invocation {} but caller expected type {}", invocation, invocation.getType());
+                }
                 return value;
             } catch (Fault | ProcessingException e) {
                 //I am not entirely sure that Fault can reach this far, without being converted to a ProcessingException,
