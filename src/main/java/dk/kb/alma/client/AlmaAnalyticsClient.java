@@ -1,12 +1,10 @@
 package dk.kb.alma.client;
 
-import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
-import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.analytics.Report;
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,14 +41,16 @@ public class AlmaAnalyticsClient {
         filter = filter == null ? "" : filter;
         limit = restrictLimit(limit);
         col_names = col_names == null ? true : col_names;
-    
+        
+        Report almaReport = almaRestClient.get(almaRestClient.constructLink()
+                                                             .path("/analytics/reports")
+                                                             .query("path", reportPath)
+                                                             .query("filter", filter)
+                                                             .query("limit", limit)
+                                                             .query("col_names", col_names), Report.class, false);
+        Element doc = almaReport.getAnies().get(0);
         return dk.kb.alma.client.analytics.Report.parseFromAlmaReport(
-                almaRestClient.get(almaRestClient.constructLink()
-                                                 .path("/analytics/reports")
-                                                 .query("path", reportPath)
-                                                 .query("filter", filter)
-                                                 .query("limit", limit)
-                                                 .query("col_names", col_names), Report.class, false),
+                doc,
                 null);
     }
     
@@ -68,6 +68,7 @@ public class AlmaAnalyticsClient {
         log.debug("Using Token {}",report.getToken());
         final Report rawReport;
         try {
+            //Important that cache is not used, as this is the same url being requested each time
             rawReport = almaRestClient.get(almaRestClient.constructLink().path("/analytics/reports")
                                                          .query("token", report.getToken()), Report.class, false);
         } catch (AlmaKnownException e) {
@@ -78,8 +79,9 @@ public class AlmaAnalyticsClient {
                 throw e;
             }
         }
+        Element doc = rawReport.getAnies().get(0);
         return dk.kb.alma.client.analytics.Report.parseFromAlmaReport(
-                rawReport, //Important that cache is not used, as this is the same url being requested each time
+                doc,
                 report);
     }
     
