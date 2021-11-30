@@ -4,6 +4,7 @@ import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.code_table.CodeTable;
+import dk.kb.alma.gen.code_table.CodeTables;
 import dk.kb.alma.gen.general.General;
 import dk.kb.alma.gen.libraries.Libraries;
 import dk.kb.alma.gen.libraries.Library;
@@ -58,19 +59,37 @@ public class AlmaConfClient {
     }
     
     /*GENERAL*/
+   
     
     public CodeTable getCodeTable(String codeTableName)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
-        return getCodeTable(codeTableName, "da");
+        return getCodeTable(codeTableName, "da", null);
     }
     
-    public CodeTable getCodeTable(String codeTableName, String lang)
+    public CodeTable getCodeTable(String codeTableName, String lang, String scope)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/conf/code-tables/")
                                        .path(codeTableName)
                                        .replaceQueryParam("lang", lang);
-        
+        if (scope != null){
+            link = link.query("scope",scope);
+        }
         return almaRestClient.get(link, CodeTable.class);
+    }
+    
+    public CodeTables getCodeTables()
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        return getCodeTables("da", null);
+    }
+    
+    public CodeTables getCodeTables(String lang, String scope)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+        WebClient link = almaRestClient.constructLink().path("/conf/code-tables")
+                                       .replaceQueryParam("lang", lang);
+        if (scope != null){
+            link = link.query("scope",scope);
+        }
+        return almaRestClient.get(link, CodeTables.class);
     }
     
     public General getGeneralConf() {
