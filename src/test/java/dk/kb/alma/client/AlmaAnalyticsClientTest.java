@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static dk.kb.alma.client.TestUtils.getAlmaClient;
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,14 +43,20 @@ class AlmaAnalyticsClientTest {
     @Disabled("Takes forever")
     public void testGetReport() throws AlmaConnectionException, IOException, TransformerException {
         AlmaAnalyticsClient almaClient = new AlmaAnalyticsClient(client);
+
         
         Report report = almaClient.startReport(
-                "/shared/Royal Danish Library 45KBDK_KGL/Færdige rapporter/Digital kulturarv_DKM/Digitalt materiale i fysisk form/dvd-opstilling-bibnr-location\\/llo",
+                //"/shared/Royal Danish Library 45KBDK_KGL/Færdige rapporter/Digital kulturarv_DKM/Digitalt materiale i fysisk form/v3 cdripper-import",
+                "/shared/Royal Danish Library 45KBDK_KGL/Undervejs rapporter/ABRs tests/OpenRequests",
                 null,
-                null,
+                1000,
                 true);
+        List<Map<String, String>> rows = report.getRows();
+        for (Map<String, String> row : rows) {
+            System.out.println(row.get("Request Id"));
+        }
         
-        System.out.println(report);
+        //System.out.println(report);
     }
     
 }
