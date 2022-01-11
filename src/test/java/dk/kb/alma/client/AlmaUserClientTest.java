@@ -43,9 +43,9 @@ public class AlmaUserClientTest {
     public synchronized void testGetUser() throws AlmaConnectionException, IOException {
         AlmaUserClient almaClient = new AlmaUserClient(client);
         
-        User user = almaClient.getUser("thl");
+        User user = almaClient.getUser("abr");
         
-        assertEquals("Thomas", user.getFirstName().trim());
+        assertEquals("Asger", user.getFirstName().trim());
     }
     
     
@@ -69,7 +69,7 @@ public class AlmaUserClientTest {
 
         final String mmsID = "99122652604305763";
         final String itemID = "231882066200005763";
-        final String userID = "thl";
+        final String userID = "abr";
 
         cancelExistingRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
     
@@ -141,7 +141,7 @@ public class AlmaUserClientTest {
     
         final String mmsID = "99122652604305763";
         final String itemID = "231882066200005763";
-        final String userID = "thl";
+        final String userID = "abr";
     
         cancelExistingRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
     
@@ -176,7 +176,7 @@ public class AlmaUserClientTest {
     @Test
     public synchronized void testCreateAndCancelRSRequest() throws IOException {
         AlmaUserClient almaClient = new AlmaUserClient(client);
-        String requester = "thl";
+        String requester = "abr";
         
         UserResourceSharingRequest resourceSharingRequest = createResourceSharingRequest();
         Iterator<UserRequest> requests = almaClient.getRequests(requester, null, null);
