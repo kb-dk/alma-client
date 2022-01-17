@@ -22,6 +22,7 @@ import dk.kb.alma.gen.user_requests.RequestTypes;
 import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
 import dk.kb.util.other.NamedThread;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -309,6 +310,12 @@ public class AlmaInventoryClient {
                                                 .path("/items")
                                                 .query("item_barcode", barcode), Item.class);
     }
+    //TODO create getItemID method to return the mmsID, holdingID and itemID from the redirection, without actually fetching this whole thing
+    //From
+    //2022-01-17 17:03:51 [http-nio-8211-exec-10->130023138892-color.pdf] DEBUG dk.kb.alma.client.HttpClient(HttpClient.java:327) - GETing on https://api-eu.hosted.exlibrisgroup.com/almaws/v1/items?lang=da&item_barcode=130023138892
+    //2022-01-17 17:03:52 [http-nio-8211-exec-10->130023138892-color.pdf] DEBUG dk.kb.alma.client.HttpClient(HttpClient.java:426) - Redirecting GET to /almaws/v1/bibs/99121934487405763/holdings/222088890390005763/items/231631610730005763
+    //2022-01-17 17:03:52 [http-nio-8211-exec-10->130023138892-color.pdf] DEBUG dk.kb.alma.client.HttpClient(HttpClient.java:327) - GETing on https://api-eu.hosted.exlibrisgroup.com/almaws/v1/bibs/99121934487405763/holdings/222088890390005763/items/231631610730005763?lang=da
+    
     
     public Item getItem(@NotNull String barcode, @Nullable String view, @Nullable String expand, @Nullable String user_id) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink()
