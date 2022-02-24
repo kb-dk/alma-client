@@ -44,8 +44,6 @@
         <!--      <api.check.phase>process-classes</api.check.phase>-->
 
 
-        <cxf.version>3.4.5</cxf.version>
-        <jackson.version>2.12.5</jackson.version>
 
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
@@ -53,6 +51,27 @@
 
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-bom -->
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-bom</artifactId>
+                <version>3.5.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.13.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -79,14 +98,16 @@
             <!--For the alma rest client-->
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
         </dependency>
         <!-- JSON processing: jackson -->
         <dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
 
@@ -94,20 +115,17 @@
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-xml-provider -->
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-xml-provider</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
@@ -207,7 +225,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -273,7 +290,7 @@
 
             <plugin>
                 <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <artifactId>jaxb23-maven-plugin</artifactId>
                 <version>0.15.0</version>
 <!--                <dependencies>
                     &lt;!&ndash; https://mvnrepository.com/artifact/com.thoughtworks.qdox/qdox &ndash;&gt;
@@ -304,22 +321,7 @@
 
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
 
-
-            <plugin>
-                <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>0.15.0</version>
-<!--                <dependencies>
-                    <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-runtime</artifactId>
-                        <version>3.0.1</version>
-                    </dependency>
-                </dependencies>-->
-                <executions>
                     <execution>
                         <id>rest_portfolios</id>
                         <goals>
