@@ -1,6 +1,7 @@
 package dk.kb.alma.client;
 
 import dk.kb.alma.client.exceptions.AlmaKnownException;
+import dk.kb.alma.client.exceptions.AlmaNotFoundException;
 import dk.kb.alma.gen.vendor.Account;
 import dk.kb.alma.gen.vendor.Note;
 import dk.kb.alma.gen.vendor.Vendor;
@@ -24,6 +25,22 @@ public class AlmaAcquisitionsClientTest {
     @BeforeAll
     static void setupAlmaClient() throws IOException {
         client = TestUtils.getAlmaClient();
+        AlmaAcquisitionsClient almaClient = new AlmaAcquisitionsClient(client);
+
+//        almaClient.deleteVendor("pligt_test_vendor_manuel_oprettelse");
+        try {
+            almaClient.getVendor("pligt_test_vendor_manuel_oprettelse");
+        } catch (AlmaNotFoundException e) {
+            Vendor vendor = almaClient.newMaterialSupplierVendorObject("pligt_test_vendor_manuel_oprettelse",
+                    "pligt_test_vendor_manuel_oprettelse",
+                    "pligt_test_vendor_manuel_oprettelse",
+                    "pligt_test_vendor_account_manuel_code",
+                    "ACCOUNTINGDEPARTMENT");
+
+            Vendor newVendor = almaClient.createVendor(vendor);
+        }
+
+
     }
     
     @BeforeEach

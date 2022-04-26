@@ -79,7 +79,7 @@ public class AlmaUserClientTest {
         newrequest.setMmsId(mmsID);
 
         newrequest.setItemId(itemID);
-        newrequest.setPickupLocationLibrary("SBL");
+        newrequest.setPickupLocationLibrary("SBMAG");
         newrequest.setRequestType(RequestTypes.HOLD);
         newrequest.setPickupLocationType(PickupLocationTypes.LIBRARY);
         
@@ -151,7 +151,7 @@ public class AlmaUserClientTest {
         newrequest.setMmsId(mmsID);
     
         newrequest.setItemId(itemID);
-        newrequest.setPickupLocationLibrary("SBL");
+        newrequest.setPickupLocationLibrary("SBMAG");
         newrequest.setRequestType(RequestTypes.HOLD);
         newrequest.setPickupLocationType(PickupLocationTypes.LIBRARY);
     
