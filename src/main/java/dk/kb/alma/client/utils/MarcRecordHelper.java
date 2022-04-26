@@ -70,13 +70,14 @@ public class MarcRecordHelper {
     }
     
     public static Record getMarcRecordFromAlmaRecord(Bib almaRecord) throws MarcXmlException {
-        Node marcXmlNode;
-        int anySize = almaRecord.getAnies().size();
-        if (anySize == 4) {
-            marcXmlNode = almaRecord.getAnies().get(3);
-        } else if (anySize == 1) {
-            marcXmlNode = almaRecord.getAnies().get(0);
-        } else {
+        Node marcXmlNode = null;
+
+        for (Element any : almaRecord.getAnies()) {
+            if(any.getTagName().equals("record")){//This is where marc-fields are
+                marcXmlNode=any;
+            }
+        }
+        if(marcXmlNode==null) {
             throw new MarcXmlException("Wrong number of marcXml objects:  " + almaRecord.getAnies().size() +
                                        " was found on Alma record with id: " + almaRecord.getMmsId());
         }
