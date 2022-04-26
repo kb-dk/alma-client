@@ -26,10 +26,15 @@ public class AlmaAcquisitionsClient {
     public AlmaAcquisitionsClient(AlmaRestClient almaRestClient) {
         this.almaRestClient = almaRestClient;
     }
-    
-    
+
+
     public Vendors getVendors() {
-        
+        return getVendors("");
+    }
+
+
+    public Vendors getVendors(String searchString) {
+
         Vendors result = new Vendors();
         
         int limit = 100;
@@ -38,9 +43,19 @@ public class AlmaAcquisitionsClient {
         while (true) {
             //TODO filter active?
             //TODO filter type?
-            Vendors items = almaRestClient.get(almaRestClient.constructLink().path("/acq/vendors/")
-                                                             .query("limit", limit)
-                                                             .query("offset", offset), Vendors.class);
+            Vendors items = null;
+            if (searchString.isEmpty()) {
+                items = almaRestClient.get(almaRestClient.constructLink().path("/acq/vendors/")
+                        .query("limit", limit)
+                        .query("offset", offset), Vendors.class);
+            } else {
+                items = almaRestClient.get(almaRestClient.constructLink().path("/acq/vendors/")
+                        .query("q", searchString)
+                        .query("limit", limit)
+                        .query("offset", offset), Vendors.class);
+
+            }
+
             result.getVendors().addAll(items.getVendors());
             offset += items.getVendors().size();
             
@@ -98,8 +113,8 @@ public class AlmaAcquisitionsClient {
         
         Vendor.Language language = new Vendor.Language();
         vendor.setLanguage(language);
-        language.setValue("en");
-        language.setDesc("English");
+        language.setValue("da");
+        language.setDesc("Danish");
         
         
         //List of currencies with which the vendor operates.
