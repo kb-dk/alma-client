@@ -11,6 +11,7 @@ import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
 import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
 import dk.kb.alma.gen.users.User;
+import dk.kb.alma.gen.users.Users;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class AlmaUserClient {
     
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
-    public enum FeeStatus {ACTIVE , INDISPUTE, EXPORTED, CLOSED};
+    public enum FeeStatus {ACTIVE , INDISPUTE, EXPORTED, CLOSED}
     
     
     
@@ -59,6 +60,13 @@ public class AlmaUserClient {
                                                 .path("/users/")
                                                 .path(userID)
                                                 .query("user_id_type", userIDType), User.class);
+    }
+
+    public Users getUsersFromSourceUserId(String sourceUserId, String sourceInstitutionCode) throws AlmaConnectionException {
+        return (Users)this.almaRestClient.get(this.almaRestClient.constructLink()
+                .path("/users/")
+                .query("source_user_id", new Object[]{sourceUserId})
+                .query("source_institution_code", new Object[]{sourceInstitutionCode}), Users.class);
     }
     
     /*LOANS*/
