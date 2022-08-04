@@ -30,7 +30,7 @@ public class AlmaUserClient {
     
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
-    public enum FeeStatus {ACTIVE , INDISPUTE, EXPORTED, CLOSED, ALL};
+    public enum FeeStatus {ACTIVE , INDISPUTE, EXPORTED, CLOSED};
     
     
     
