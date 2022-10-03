@@ -5,7 +5,6 @@ import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.fees.Fee;
 import dk.kb.alma.gen.fees.Fees;
-import dk.kb.alma.gen.requested_resources.RequestedResource;
 import dk.kb.alma.gen.user_requests.RequestTypes;
 import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
@@ -16,13 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 public class AlmaUserClient {
@@ -48,7 +43,7 @@ public class AlmaUserClient {
     }
     
     /*USERS*/
-    
+
     public User getUser(String userID) throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return getUser(userID, "all_unique");
     }

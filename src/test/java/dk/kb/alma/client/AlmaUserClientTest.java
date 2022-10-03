@@ -2,8 +2,6 @@ package dk.kb.alma.client;
 
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaKnownException;
-import dk.kb.alma.gen.fees.Fee;
-import dk.kb.alma.gen.fees.Fees;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.Items;
@@ -13,9 +11,10 @@ import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
 import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
 import dk.kb.alma.gen.users.User;
+import dk.kb.alma.gen.users.UserIdentifier;
+import dk.kb.alma.gen.users.UserIdentifiers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -24,10 +23,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static dk.kb.alma.client.TestUtils.getAlmaClient;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AlmaUserClientTest {
     
@@ -42,9 +38,8 @@ public class AlmaUserClientTest {
     @Test
     public synchronized void testGetUser() throws AlmaConnectionException, IOException {
         AlmaUserClient almaClient = new AlmaUserClient(client);
-        
+        //This user must be present in PSB!!
         User user = almaClient.getUser("abr");
-        
         assertEquals("Asger", user.getFirstName().trim());
     }
     

@@ -7,8 +7,6 @@ import dk.kb.alma.gen.vendor.ContactInfo;
 import dk.kb.alma.gen.vendor.EdiInfo;
 import dk.kb.alma.gen.vendor.Emails;
 import dk.kb.alma.gen.vendor.Interfaces;
-import dk.kb.alma.gen.vendor.Libraries;
-import dk.kb.alma.gen.vendor.Library;
 import dk.kb.alma.gen.vendor.Notes;
 import dk.kb.alma.gen.vendor.PaymentMethods;
 import dk.kb.alma.gen.vendor.Phones;
@@ -80,7 +78,12 @@ public class AlmaAcquisitionsClient {
                                                 .path(vendor.getCode()), Vendor.class, vendor);
     }
     
-    
+    public Vendor updateVendorAndChangeVendorCode(Vendor vendor, String oldVendorCode) {
+        return almaRestClient.put(almaRestClient.constructLink().path("/acq/vendors/")
+                                                .path(oldVendorCode), Vendor.class, vendor);
+    }
+
+
     public Vendor createVendor(Vendor vendor) {
         return almaRestClient.post(almaRestClient.constructLink().path("/acq/vendors"), Vendor.class, vendor);
     }

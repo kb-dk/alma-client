@@ -26,8 +26,6 @@ public class AlmaAcquisitionsClientTest {
     static void setupAlmaClient() throws IOException {
         client = TestUtils.getAlmaClient();
         AlmaAcquisitionsClient almaClient = new AlmaAcquisitionsClient(client);
-
-//        almaClient.deleteVendor("pligt_test_vendor_manuel_oprettelse");
         try {
             almaClient.getVendor("pligt_test_vendor_manuel_oprettelse");
         } catch (AlmaNotFoundException e) {
@@ -36,11 +34,18 @@ public class AlmaAcquisitionsClientTest {
                     "pligt_test_vendor_manuel_oprettelse",
                     "pligt_test_vendor_account_manuel_code",
                     "ACCOUNTINGDEPARTMENT");
-
             Vendor newVendor = almaClient.createVendor(vendor);
+        } catch (Exception e) {
+            System.out.println("mvn e.getMessage() = " + e.getMessage());
+            if (e.getMessage().contains("402880")) {
+                Vendor vendor = almaClient.newMaterialSupplierVendorObject("pligt_test_vendor_manuel_oprettelse",
+                        "pligt_test_vendor_manuel_oprettelse",
+                        "pligt_test_vendor_manuel_oprettelse",
+                        "pligt_test_vendor_account_manuel_code",
+                        "ACCOUNTINGDEPARTMENT");
+                Vendor newVendor = almaClient.createVendor(vendor);
+            }
         }
-
-
     }
     
     @BeforeEach
@@ -82,14 +87,30 @@ public class AlmaAcquisitionsClientTest {
         
         assertEquals(content, updatedVendor.getNotes().getNotes().get(0).getContent());
     }
-    
+     @Test
+    void updateVendorWithNewVendorCode() {
+        AlmaAcquisitionsClient almaClient = new AlmaAcquisitionsClient(client);
+         final String oldVendorCode = "pligt_test_vendor_manuel_oprettelse";
+         final String newVendorCode = "newVendorCode";
+         Vendor vendor = almaClient.getVendor(oldVendorCode);
+         vendor.setCode(newVendorCode);
+         almaClient.updateVendorAndChangeVendorCode(vendor, oldVendorCode);
+         Vendor updatedVendor = almaClient.getVendor(newVendorCode);
+         assertEquals(newVendorCode, updatedVendor.getCode());
+//       Rolling back
+         vendor = almaClient.getVendor(newVendorCode);
+         vendor.setCode(oldVendorCode);
+         almaClient.updateVendorAndChangeVendorCode(vendor, newVendorCode);
+         updatedVendor = almaClient.getVendor(oldVendorCode);
+         assertEquals(oldVendorCode, updatedVendor.getCode());
+    }
+
     @Test
     void cloneVendor() {
         AlmaAcquisitionsClient almaClient = new AlmaAcquisitionsClient(client);
         Vendor vendor = almaClient.getVendor("pligt_test_vendor_manuel_oprettelse");
-    
         String cloneCode = "pligt_test_vendor_manuel_oprettelse_clone";
-        
+
         try {
             almaClient.deleteVendor(cloneCode);
         } catch (AlmaKnownException e){
