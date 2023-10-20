@@ -5,6 +5,8 @@ import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.fees.Fee;
 import dk.kb.alma.gen.fees.Fees;
+import dk.kb.alma.gen.purchase_requests.PurchaseRequest;
+import dk.kb.alma.gen.purchase_requests.PurchaseRequests;
 import dk.kb.alma.gen.user_requests.RequestTypes;
 import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
@@ -293,5 +295,51 @@ public class AlmaUserClient {
                                        .query("external_transaction_id", external_transaction_id);
         return almaRestClient.post(link, Fees.class, null);
     }
-    
+
+
+
+    /*******************
+     * Purchaserequests
+     ********************/
+
+
+//    https://developers.exlibrisgroup.com/alma/apis/users/#Requests
+
+//    POST /almaws/v1/users/{user_id}/purchase-requests
+
+    public PurchaseRequests getPurchaseRequests(String userId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+
+        WebClient link = almaRestClient.constructLink()
+                .path("/users/")
+                .path(userId)
+                .path("/purchase-requests");
+
+        return almaRestClient.get(link, PurchaseRequests.class);
+    }
+
+    public boolean cancelPurchaseRequest(String userId, String purchaseRequestId)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+
+        WebClient link = almaRestClient.constructLink()
+                .path("/users/")
+                .path(userId)
+                .path("/purchase-requests")
+                .path(purchaseRequestId)
+                .query("op", "delete");
+
+        almaRestClient.post(link, PurchaseRequest.class, null);
+        return true;
+    }
+
+    public PurchaseRequest createPurchaseRequest(String userId, PurchaseRequest purchaseRequest)
+            throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
+
+        WebClient link = almaRestClient.constructLink().path("/users/")
+                .path(userId)
+                .path("/purchase-requests");
+
+        return almaRestClient.post(link, PurchaseRequest.class, purchaseRequest);
+    }
+
 }

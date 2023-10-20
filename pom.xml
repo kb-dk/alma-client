@@ -770,6 +770,26 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>alma-rest-purchase_requests</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
+                            <schemas>
+                                <schema>
+                                    <url>
+                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_purchase_requests.xsd
+                                    </url>
+                                </schema>
+                            </schemas>
+                            <generatePackage>dk.kb.alma.gen.purchase_requests</generatePackage>
+                            <generateDirectory>target/generated-sources/jaxb2-alma-purchase_requests/</generateDirectory>
+
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

@@ -33,8 +33,8 @@ class PrimoClientTest {
     @Test
     void primoTranslations() {
         var trans = primoClient.getTranslations("da");
-        assertEquals("Værk ID", trans.get("fulldisplay.lds01").asText());
-        //System.out.println(trans.toPrettyString());
+        final String text = trans.get("fulldisplay.lds01").asText();
+        assertEquals("Værk ID", text);
     }
     
     @Test

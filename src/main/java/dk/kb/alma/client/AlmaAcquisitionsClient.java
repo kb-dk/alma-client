@@ -248,4 +248,18 @@ public class AlmaAcquisitionsClient {
         
         return accounts;
     }
+
+    /*******************
+     * Purchaserequests
+     ********************/
+
+    public void deletePurchaseRequest(String purchaseId) {
+        almaRestClient.delete(
+                almaRestClient.constructLink()
+                        .path("acq/purchase-requests/")
+                        .path(purchaseId)
+                , Void.class);
+    }
+
+
 }

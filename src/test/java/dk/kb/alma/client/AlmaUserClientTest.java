@@ -5,14 +5,16 @@ import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.items.Items;
+import dk.kb.alma.gen.purchase_requests.Amount;
+import dk.kb.alma.gen.purchase_requests.PurchaseRequest;
+import dk.kb.alma.gen.purchase_requests.PurchaseRequests;
+import dk.kb.alma.gen.purchase_requests.ResourceMetadata;
 import dk.kb.alma.gen.user_requests.PickupLocationTypes;
 import dk.kb.alma.gen.user_requests.RequestTypes;
 import dk.kb.alma.gen.user_requests.UserRequest;
 import dk.kb.alma.gen.user_requests.UserRequests;
 import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
 import dk.kb.alma.gen.users.User;
-import dk.kb.alma.gen.users.UserIdentifier;
-import dk.kb.alma.gen.users.UserIdentifiers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,8 @@ public class AlmaUserClientTest {
     
     
     private static AlmaRestClient client;
-    
+    private final String TEST_USER_IN_PSB = "jjeg";
+
     @BeforeAll
     static void setupAlmaClient() throws IOException {
         client = TestUtils.getAlmaClient();
@@ -39,8 +42,9 @@ public class AlmaUserClientTest {
     public synchronized void testGetUser() throws AlmaConnectionException, IOException {
         AlmaUserClient almaClient = new AlmaUserClient(client);
         //This user must be present in PSB!!
-        User user = almaClient.getUser("abr");
-        assertEquals("Asger", user.getFirstName().trim());
+        User user = almaClient.getUser(TEST_USER_IN_PSB);
+        final String TEST_USER_FIRST_NAME = "Jørgen";
+        assertEquals(TEST_USER_FIRST_NAME, user.getFirstName().trim());
     }
     
     
@@ -57,16 +61,16 @@ public class AlmaUserClientTest {
     
     
     @Test
-    public synchronized void testCreateUpdateAndCancelRequest() throws AlmaConnectionException, IOException {
+    public synchronized void testCreateUpdateAndCancelUserRequest() throws AlmaConnectionException, IOException {
         AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(client);
 
         AlmaUserClient almaUserClient = new AlmaUserClient(client);
 
         final String mmsID = "99122652604305763";
         final String itemID = "231882066200005763";
-        final String userID = "abr";
+        final String userID = TEST_USER_IN_PSB;
 
-        cancelExistingRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
+        cancelExistingUserRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
     
         UserRequest newrequest = new UserRequest();
 
@@ -96,11 +100,11 @@ public class AlmaUserClientTest {
         assertTrue(success);
     }
     
-    private void cancelExistingRequestIfPresent(AlmaInventoryClient almaInventoryClient,
-                                                AlmaUserClient almaUserClient,
-                                                String mmsID,
-                                                String itemID,
-                                                String userID) {
+    private void cancelExistingUserRequestIfPresent(AlmaInventoryClient almaInventoryClient,
+                                                    AlmaUserClient almaUserClient,
+                                                    String mmsID,
+                                                    String itemID,
+                                                    String userID) {
         Holdings holdings = almaInventoryClient.getBibHoldings(mmsID);
         List<String> holdingIDs = holdings.getHoldings()
                                           .stream()
@@ -129,16 +133,16 @@ public class AlmaUserClientTest {
     }
 
     @Test
-    public synchronized void testUpdateRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
+    public synchronized void testUpdateUserRequestWithInvalidRequestId() throws AlmaConnectionException, IOException {
         AlmaInventoryClient almaInventoryClient = new AlmaInventoryClient(client);
     
         AlmaUserClient almaUserClient = new AlmaUserClient(client);
     
         final String mmsID = "99122652604305763";
         final String itemID = "231882066200005763";
-        final String userID = "abr";
+        final String userID = TEST_USER_IN_PSB;
     
-        cancelExistingRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
+        cancelExistingUserRequestIfPresent(almaInventoryClient, almaUserClient, mmsID, itemID, userID);
     
         UserRequest newrequest = new UserRequest();
     
@@ -169,9 +173,9 @@ public class AlmaUserClientTest {
     }
 
     @Test
-    public synchronized void testCreateAndCancelRSRequest() throws IOException {
+    public synchronized void testCreateAndCancelResourceSharingRequest() throws IOException {
         AlmaUserClient almaClient = new AlmaUserClient(client);
-        String requester = "abr";
+        String requester = TEST_USER_IN_PSB;
         
         UserResourceSharingRequest resourceSharingRequest = createResourceSharingRequest();
         Iterator<UserRequest> requests = almaClient.getRequests(requester, null, null);
@@ -190,7 +194,7 @@ public class AlmaUserClientTest {
 
         createdRequest = almaClient.getResourceSharingRequest(requester, createdRequest.getRequestId());
 
-        String userRequestId = getUserRequestIdFromRSRequest(createdRequest);
+        String userRequestId = getUserRequestIdFromResourceSharingRequest(createdRequest);
 
         boolean cancelled = almaClient.cancelRequest(requester, userRequestId, "AnotherReason", false);
 
@@ -216,14 +220,110 @@ public class AlmaUserClientTest {
         return request;
     }
 
-    public String getUserRequestIdFromRSRequest(UserResourceSharingRequest resourceSharingRequest) throws AlmaConnectionException {
+    public String getUserRequestIdFromResourceSharingRequest(UserResourceSharingRequest resourceSharingRequest) throws AlmaConnectionException {
         String userRequestLink = resourceSharingRequest.getUserRequest().getLink();
         return userRequestLink.substring(userRequestLink.lastIndexOf("/")+1);
 
     }
-    
-    
-    
-    //FEES
-    
+
+    @Test
+    public void testCreateGetAndCancelPurchaseRequest(){
+        final String mmsID = "99122652604305763";
+        final String userID = TEST_USER_IN_PSB;
+        client.setCachingEnabled(false);
+        AlmaUserClient almaUserClient = new AlmaUserClient(client);
+
+        //pretest. Delete existing purchase requests for user.
+        PurchaseRequests purchaseRequests = almaUserClient.getPurchaseRequests(TEST_USER_IN_PSB);
+        if (purchaseRequests.getTotalRecordCount()>0) {
+            deleteAllPurchaseRequestsForUser(purchaseRequests.getPurchaseRequests());
+            purchaseRequests = almaUserClient.getPurchaseRequests(TEST_USER_IN_PSB);
+            assertEquals(0, (int) purchaseRequests.getTotalRecordCount(), "Efter sletning er der stadig purchase requests! Antal: " + purchaseRequests.getTotalRecordCount());
+        }
+
+        //create
+        PurchaseRequest purchaseRequest = initPurchaseRequest(mmsID);
+        PurchaseRequest result = almaUserClient.createPurchaseRequest(userID, purchaseRequest);
+        final String purchaseRequestRequestId = result.getRequestId();
+        // alma needs time to recocignize the new purchase request for some reason!!!
+        justWait();
+
+        //get all
+        purchaseRequests = almaUserClient.getPurchaseRequests(TEST_USER_IN_PSB);
+        assertEquals(1, (int) purchaseRequests.getTotalRecordCount(), "Forventet 1, antal fundet: " + purchaseRequests.getTotalRecordCount());
+        final List<PurchaseRequest> purchaseRequestList = purchaseRequests.getPurchaseRequests();
+        boolean idFound = purchaseRequestList.stream().anyMatch(
+                tmpPurchaseRequest -> tmpPurchaseRequest.getRequestId().equalsIgnoreCase(purchaseRequestRequestId)
+        );
+        Assertions.assertTrue(idFound, "Kunne ikke finde id " + purchaseRequestRequestId);
+
+        //cancel
+        deleteAllPurchaseRequestsForUser(purchaseRequestList);
+        purchaseRequests = almaUserClient.getPurchaseRequests(TEST_USER_IN_PSB);
+        assertEquals(0, (int) purchaseRequests.getTotalRecordCount(), "Forventet 0, fundet " + purchaseRequests.getTotalRecordCount());
+
+    }
+
+    private static void justWait() {
+        System.out.println("ventetid starter");
+        try {
+            Thread.sleep(3000);
+            System.out.println("ventetid forbi");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testInvalidUserPurchaseRequest(){
+        final String mmsID = "findes_ikke";
+        final String userID = "findes heller ikke";
+        AlmaUserClient almaUserClient = new AlmaUserClient(client);
+
+        //create
+        PurchaseRequest purchaseRequest = initPurchaseRequest(mmsID);
+
+        //test exception type
+        Exception exception = Assertions.assertThrows(
+                AlmaKnownException.class, () -> almaUserClient.createPurchaseRequest(userID, purchaseRequest)
+        );
+        // test message
+        final String expectedErrorMessage = "User with identifier " + userID + " of type  was not found.";
+        Assertions.assertTrue(exception.getMessage().contains(expectedErrorMessage));
+    }
+
+    private static PurchaseRequest initPurchaseRequest(String mmsID) {
+        PurchaseRequest purchaseRequest = new PurchaseRequest();
+        PurchaseRequest.Format format = new PurchaseRequest.Format();
+        format.setValue("E");
+        purchaseRequest.setFormat(format);
+
+        PurchaseRequest.OwningLibrary owningLibrary = new PurchaseRequest.OwningLibrary();
+        owningLibrary.setValue("SBMAG");
+        purchaseRequest.setOwningLibrary(owningLibrary);
+
+        Amount amount = new Amount();
+        Amount.Currency currency = new Amount.Currency();
+        currency.setValue("DKK");
+        amount.setCurrency(currency);
+        amount.setSum("500");
+        purchaseRequest.setEstimatedCost(amount);
+
+        ResourceMetadata resourceMetadata = new ResourceMetadata();
+        ResourceMetadata.MmsId resourceMetadateMmsId = new ResourceMetadata.MmsId();
+        resourceMetadateMmsId.setValue(mmsID);
+        resourceMetadata.setMmsId(resourceMetadateMmsId);
+        purchaseRequest.setResourceMetadata(resourceMetadata);
+
+        PurchaseRequest.Fund fund= new PurchaseRequest.Fund();
+        fund.setValue("AUL_MONO");
+        purchaseRequest.setFund(fund);
+        return purchaseRequest;
+    }
+
+    private void deleteAllPurchaseRequestsForUser(List<PurchaseRequest> purchaseRequestList) {
+        AlmaAcquisitionsClient almaAcquisitionsClient = new AlmaAcquisitionsClient(client);
+        purchaseRequestList.forEach(tmpPurchaseRequest -> almaAcquisitionsClient.deletePurchaseRequest(tmpPurchaseRequest.getRequestId()));
+    }
+
 }

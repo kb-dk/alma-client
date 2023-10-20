@@ -1,0 +1,4 @@
+v.0.40: 2023-10-17:
+* changelog.txt tilføjet
+* purchase request tilføjet til AlmaUserClient
+* acquisitionsClient udvidet med deletePurchaseRequest
