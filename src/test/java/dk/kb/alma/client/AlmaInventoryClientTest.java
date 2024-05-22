@@ -17,8 +17,8 @@ import org.marc4j.marc.Record;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.List;
 
-import static dk.kb.alma.client.TestUtils.getAlmaClient;
 import static dk.kb.alma.client.utils.MarcRecordHelper.DF245_TAG;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,15 +42,23 @@ class AlmaInventoryClientTest {
     
     
     @Test
-    public void testGetBibRecord() throws AlmaConnectionException {
+    public void testMarcRecordHelper() throws AlmaConnectionException, MarcXmlException {
         AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
         
-        Bib bib = almaClient.getBib("99121999521205763");  // 99123290311205763
-        
-        assertEquals("99121999521205763", bib.getMmsId());
+        Bib bib = almaClient.getBib("99122217581905763");  // 99123290311205763
+        final Record marcRecord = MarcRecordHelper.getMarcRecordFromAlmaRecord(bib);
+        final List<String> subfieldValues = MarcRecordHelper.getSubfieldValuesNew(marcRecord, "300", 'a');
+        assertEquals(2, subfieldValues.size());
     }
     
-    
+    @Test
+    public void testGetBibRecord() throws AlmaConnectionException {
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);
+        Bib bib = almaClient.getBib("99121999521205763");
+        assertEquals("99121999521205763", bib.getMmsId());
+    }
+
+
     @Test
     public void testGetBibRecordWithFail() throws AlmaConnectionException, IOException {
         AlmaInventoryClient almaClient = new AlmaInventoryClient(client,100);

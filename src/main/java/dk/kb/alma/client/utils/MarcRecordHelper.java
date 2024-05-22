@@ -283,11 +283,47 @@ public class MarcRecordHelper {
         return getDataFields(marcRecord, tag).stream().findFirst().map(dataField -> dataField.getSubfield(subfieldTag)).filter(
                 Objects::nonNull).map(subfield -> subfield.getData()).orElse(null);
     }
-    
-    
+
+    /**
+     * Find all subfields for a given tag and subfieldtag
+     * @Deprecated
+     * This uses the dataField.getSubfield(subfieldTag) resulting in only one subfield in the list.
+     * I don´t se any way of finding and test the use of this method. So;
+     * use getSubfieldValuesNew for for future use.
+     * @param tag
+     * @param subfieldTag
+     * @return List of ONLY first subfieldtag on datafields
+     */
+    @Deprecated
     public static List<String> getSubfieldValues(Record marcRecord, String tag, Character subfieldTag) {
         return getDataFields(marcRecord, tag).stream().map(dataField -> dataField.getSubfield(subfieldTag)).filter(
                 Objects::nonNull).map(subfield -> subfield.getData()).collect(Collectors.toList());
+    }
+
+
+    /**
+     * Find all subfields for a given tag and subfieldtag
+     * replaces getSubfieldValues!
+     * @param tag
+     * @param subfieldTag
+     * @return List of ALL subfieldtags on datafields
+     */
+    public static List<String> getSubfieldValuesNew(Record marcRecord, String tag, Character subfieldTag) {
+        return getDataFields(marcRecord, tag).stream()
+                .flatMap(dataField -> dataField.getSubfields(subfieldTag).stream())
+                .filter(Objects::nonNull)
+                .map(Subfield::getData)
+                .collect(Collectors.toList());
+/*
+        final List<DataField> dataFields = getDataFields(marcRecord, tag);
+        List<Subfield> allSubfields = new ArrayList<Subfield>();
+        dataFields.forEach(dataField -> {
+            final List<Subfield> subfields = dataField.getSubfields(subfieldTag);
+            allSubfields.addAll(subfields);
+        });
+        return allSubfields.stream().filter(
+                Objects::nonNull).map(subfield -> subfield.getData()).collect(Collectors.toList());
+*/
     }
     
     

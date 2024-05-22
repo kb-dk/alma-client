@@ -1,3 +1,6 @@
+v.0.42: 2024-05-22:
+* Added correct MarcRecordHelper.getSubfieldValuesNew. Old one marked Deprecated
+
 v.0.41: 2023-11-20:
 * SRU-client now has extractIssn() and extractIssnA() methods
 
