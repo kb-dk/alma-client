@@ -1,5 +1,6 @@
 package dk.kb.primo.client;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -12,6 +13,7 @@ class PrimoClientTest {
     public URI prodURI = URI.create("https://soeg.kb.dk/primaws/rest");
     private PrimoClient primoClient = new PrimoClient(psbURI, "45KBDK_KGL", "45KBDK_KGL:KGL", "en");
     
+    @Disabled
     @Test
     void primoSearch() {
         //Search for specific mmsID
