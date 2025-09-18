@@ -732,18 +732,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <schemaLanguage>XMLSCHEMA</schemaLanguage>
-                            <schemas>
-                                <schema>
-                                    <url>
-                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_electronic_collections.xsd
-                                    </url>
-                                </schema>
-                                <schema>
-                                    <url>
-                                        https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/rest_electronic_services.xsd
-                                    </url>
-                                </schema>
-                            </schemas>
+                            <schemaDirectory>src/main/schemas/electronic</schemaDirectory>
                             <generatePackage>dk.kb.alma.gen.item.electronic</generatePackage>
                             <generateDirectory>target/generated-sources/jaxb2-alma-electronic/</generateDirectory>
                         </configuration>
