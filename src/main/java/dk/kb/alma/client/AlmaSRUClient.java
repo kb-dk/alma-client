@@ -258,4 +258,5 @@ public class AlmaSRUClient extends HttpClient {
     protected WebClient addAuth(WebClient uri) {
         return uri;
     }
+
 }
