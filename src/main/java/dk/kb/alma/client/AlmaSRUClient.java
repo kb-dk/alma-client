@@ -70,15 +70,15 @@ public class AlmaSRUClient extends HttpClient {
      */
     @Nonnull
     public SearchRetrieveResponse searchRetrieve(Query query, int startPos, int numHits) {
-        
-        numHits = Math.min(almaSruRequestCount, max(0, numHits));
+
+        int cappedHits = capNumHits(numHits);
         WebClient client = constructLink()
                 //Mandatory arguments
                 .query("operation", "searchRetrieve")
                 .query("query", query.build())
                 //Optionals
                 .query("startRecord", startPos)
-                .query("maximumRecords", numHits)
+                .query("maximumRecords", cappedHits)
                 .query("recordSchema", "marcxml");
         
         
@@ -90,13 +90,73 @@ public class AlmaSRUClient extends HttpClient {
                                        + "', startpos="
                                        + startPos
                                        + ", numHits="
-                                       + numHits
+                                       + cappedHits
                                        + ") is null");
         }
         return value;
         
     }
-    
+
+    /**
+     * Executes a search and retrieve operation using the SRU (Search/Retrieve via URL) protocol.
+     *
+     * @param query        The query object containing the search criteria.
+     * @param startPos     The starting position of the records to retrieve.
+     * @param numHits      The maximum number of records to retrieve. This value will be capped at the
+     *                     maximum allowed by the SRU request.
+     * @param recordSchema The schema of the records to be returned, which defines the format of the
+     *                     retrieved records. Currently, the supported values are:
+     *                     <ul>
+     *                         <li>marcxml</li>
+     *                         <li>dc</li>
+     *                         <li>dcx</li>
+     *                         <li>mods</li>
+     *                         <li>unimarcxml</li>
+     *                         <li>kormarcxml</li>
+     *                         <li>cnmarcxml</li>
+     *                         <li>isohold (ISO 20775 standard)</li>
+     *                         <li>lc_bf_instance</li>
+     *                     </ul>
+     *  @return A {@link SearchRetrieveResponse} object containing the results of the search operation.
+     * @throws RuntimeException if the search operation returns null.
+     */
+    @Nonnull
+    public SearchRetrieveResponse searchRetrieve(Query query, int startPos, int numHits, String recordSchema) {
+        int cappedHits = capNumHits(numHits);
+
+        WebClient client = buildSearchRetrieveClient(query, startPos, cappedHits, recordSchema);
+
+        logger.debug("SRU Search with {}", client.getCurrentURI());
+
+        return executeRequest(client, query, startPos, cappedHits);
+    }
+
+    private int capNumHits(int numHits) {
+        return Math.min(almaSruRequestCount, Math.max(0, numHits));
+    }
+
+    private WebClient buildSearchRetrieveClient(Query query, int startPos, int numHits, String recordSchema) {
+        return constructLink()
+                .query("operation", "searchRetrieve")
+                .query("query", query.build())
+                .query("startRecord", startPos)
+                .query("maximumRecords", numHits)
+                .query("recordSchema", recordSchema);
+    }
+
+    private SearchRetrieveResponse executeRequest(WebClient client, Query query, int startPos, int numHits) {
+        SearchRetrieveResponse response = invokeDirect(client, SearchRetrieveResponse.class, null, Operation.GET);
+
+        if (response == null) {
+            throw new RuntimeException("Result for (query '"
+                    + query
+                    + "', startpos=" + startPos
+                    + ", numHits=" + numHits
+                    + ") is null");
+        }
+        return response;
+    }
+
     /**
      * Search for records through the SRU interface.
      */
@@ -198,4 +258,5 @@ public class AlmaSRUClient extends HttpClient {
     protected WebClient addAuth(WebClient uri) {
         return uri;
     }
+
 }
