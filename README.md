@@ -48,7 +48,7 @@ The Exceptions that can be thrown are all subtypes of `dk.kb.alma.client.excepti
 The common types are
 
 * `AlmaConnectionException`: When a network error was encountered
-* `AlmaKnownException`: When the error is of a documented ALMA type. This exception will have these fields: 
+* `AlmaKnownException`: When the error is of a documented ALMA type This exception will have these fields: 
 ```java
 WebServiceResult result;
 String errorCode;       
