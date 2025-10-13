@@ -1,0 +1,92 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="cdi_group_settings" type="cdi_group_settings"/>
+
+	<xs:complexType name="cdi_group_settings">
+		<xs:annotation>
+			<xs:documentation>List of CDI Group Settings.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="cdi_group_setting" type="cdi_group_setting" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>CDI Group Settings.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="cdi_group_setting">
+		<xs:annotation>
+			<xs:documentation>CDI Group Settings.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="group" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Group name. Must be a valid [Inventory Management Group|http://knowledge.exlibrisgroup.com/Alma/Product_Documentation/Alma_Online_Help_(English)/Resource_Management/080Configuring_Resource_Management/160Configuring_Inventory_Management_Groups].
+						The "desc" attribute contains the group description.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="cdi_search_activation_status" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>CDI Search activation status.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cdi_only_full_text_activation" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>CDI-only full text activation.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="subscribe_to_only_some_titles_in_the_collection" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Subscribe to only some titles in this collection.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="do_not_show_as_full_text_available_in_cdi_even_if_active_in_alma" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Do not show as full text in CDI even if active in Alma.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

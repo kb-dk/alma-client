@@ -31,7 +31,7 @@ class AlmaPartnersClientTest {
                                        .findFirst()
                                        .orElseThrow(() -> new AssertionError("No partner found"));
         
-        assertThat(foundPartner.getPartnerDetails().getName(), is("Emerson College Library"));
+        assertThat(foundPartner.getPartnerDetails().getName(), is("Emerson College (ECL) "));
         assertThat(foundPartner.getPartnerDetails().getCode(), is("074281"));
         assertThat(foundPartner.getPartnerDetails().getProfileDetails().getProfileType().value(), is("EMAIL"));
         

@@ -1,0 +1,198 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation>
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="cdi_info">
+		<xs:annotation>
+			<xs:documentation>CDI Info.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="cdi_collection_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>BMFXJ</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Used when publishing the CDI holdings file of the
+						institution.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cdi_collection_id_override" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>BMFXJ</xs:example>
+					</xs:appinfo>
+					<xs:documentation>CDI Collection ID (override).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="number_of_records_in_cdi" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Number of records currently indexed in CDI.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cdi_update_frequency" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Estimated update frequency of the collection in CDI.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="search_rights_in_cdi" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Search Rights in CDI.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="full_text_linking_in_cdi" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indicates which type of link (collection level or link resolver) is needed to provide full text for a collection. 
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="cdi_last_market_update" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>CDI Last Market Update.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element> 
+			<xs:element name="cdi_newspapers_search" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Determine the behavior regarding the Newspaper Search interface.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="provider_coverage" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indicates how a collection is indexed in CDI. Yes means that the collection is indexed with data received directly from provider. No means that we do not get a database directly from the provider, but at least 80% of the content of the collection is covered in CDI by data received from other providers.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="resource_types" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Lists up to 5 of the most frequently index resource types for the collection.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="full_text_rights_in_cdi" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Subscription (Title Level)</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The behaviour regarding the need for a subscription to access the full text.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="cdi_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Full Text Collection</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Type of database in CDI, which can be either A&amp;I Database (Citation-only database, where records from the collection do not provide full text linking in CDI) 
+					or Full-Text Collection (Records from the collection provide full text linking in CDI).
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="cdi_activation_required" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>CDI activation required – (only available when the CDI model is EasyActive)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="coverage_percentage" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Items that are available for CDI indicate the coverage percentage of the records in CDI. This indicator also includes the last date of calculation for this statistic. This information only displays if the coverage percentage has been calculated. If the date is not populated, it will not be displayed.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -99,6 +99,24 @@ public class AlmaInventoryClient {
         
     }
 
+    /**
+     * Creates a new Bib record based on the provided Bib record.
+     * <p>
+     * This method takes an existing Bib record as a parameter and uses it as a basis to create a new Bib record
+     * The new record will initially contain the same data as the provided record.
+     * </p>
+     *
+     * @param bib the Bib record used as a basis for the new record.
+     * @return the newly created Bib record.
+     * @throws AlmaConnectionException if the connection to Alma fails during the creation process.
+     */
+    public Bib createBibFromBib(@NotNull Bib bib) throws AlmaConnectionException {
+        WebClient link = almaRestClient.constructLink().path("/bibs/");
+
+        return almaRestClient.post(link, Bib.class, bib);
+
+    }
+
     public Bib createBibFromNZ(@NotNull Bib bib, @NotBlank String mmsID) throws AlmaConnectionException {
         WebClient link = almaRestClient.constructLink().path("/bibs/")
                                                        .query("from_nz_mms_id", mmsID);

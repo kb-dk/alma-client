@@ -1,0 +1,594 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>Electronic service defines the linking and activation definitions of an electronic collection.
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:include schemaLocation="rest_notes.xsd"/>
+	<xs:include schemaLocation="rest_group_settings.xsd"/>
+	<xs:include schemaLocation="rest_linking_parameters.xsd"/>
+<!--	<xs:include schemaLocation="rest_han_proxy_licenses.xsd"/>-->
+
+	<xs:element name="electronic_service" type="electronic_service"/>
+
+	<xs:complexType name="electronic_service">
+		<xs:annotation>
+			<xs:documentation>Electronic service object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>62387556060001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Identifier of the electronic service in Alma. Output parameter.
+						Should be used in subsequent queries regarding the service.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="is_local" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the service is linked to CZ or local. Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>ServiceType</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>getFullTxt</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The type of service. Mandatory.
+					Possible code are listed in ServiceType [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, type can be modified only for local services.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="public_description" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>getFullTxt</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The description to display in the search results.
+					In the PUT action, public_description can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internal_description" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>A description for internal reference only.
+					In the PUT action, internal_description can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="public_description_override" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>The description to display in the search results.
+					In the PUT action, public_description_override can be modified for both local and linked services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="activation_status" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>ElectronicBaseStatus</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>10</xs:example>
+					</xs:appinfo>
+					<xs:documentation>"Available" or "Not Available". Mandatory.
+					Possible code are listed in ElectronicBaseStatus [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, activation_status can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="activate_new_portfolios" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether new portfolios should be automatically activated when they are added to this service.
+						This option is available for services that are related to aggregator or selective packages collections.
+						In the PUT action, activate_new_portfolios can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="delete_removed_portfolios" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether portfolios removed from the CZ collection should be automatically deleted in the IZ,
+						This option is available for services that are related to aggregator or selective packages collections.
+						In the PUT action, delete_removed_portfolios can be modified for all services. If sent empty, the field will be saved as False.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="active_from_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2015-06-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Activation date. Default is current date
+					In the PUT action, active_from_date can be modified for all services.
+					.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="active_until_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2027-01-02Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Activation end date.
+					In the PUT action, active_until_date can be modified for all services.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="service_temporarily_unavailable" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>BooleanYesNo</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Corresponds to the Electronic Service field 'Display service temporarily unavailable message'.
+					Temporarily deactivate the service (make it unavailable) today or on a specified date.
+					Possible code are listed in BooleanYesNo [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, service_temporarily_unavailable can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="service_unavailable_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>1900-11-30Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Corresponds to the Electronic Service field 'Display unavailability message from date'.
+					The date for when the service becomes unavailable.
+					Relevant only when service_temporarily_unavailable is TRUE.
+					If not entered, and service_temporarily_unavailable is TRUE - the current date is used.
+					In the PUT action, service_unavailable_date can be modified for all services.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="service_unavailable_until_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>1900-11-30Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Corresponds to the Electronic Service field 'Display unavailability message until date'.
+					The date for when the service becomes unavailable.
+					Relevant only when service_temporarily_unavailable is TRUE.
+					If not entered, and service_temporarily_unavailable is TRUE - the current date is used.
+					In the PUT action, service_unavailable_date can be modified for all services.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="service_unavailable_reason" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Corresponds to the Electronic Service field 'Service unavailability display message'.
+					The reason that the service is unavailable.
+					In the PUT action, service_unavailable_reason can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parser" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>AnthroSource::AnthroSource</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The destination service.
+					In the PUT action, parser can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parser_override" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>A parser to override the value in the Parser field.
+					In the PUT action, parser_override can be modified for both local and linked services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parser_parameters" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>url=http://www.anthrosource.net</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The linking/access information for the service.
+					In the PUT action, parser_parameters can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parser_parameters_override" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>The linking/access information for the service. 
+					In the PUT action, parser_parameters_override can be modified for both local and linked services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="link_resolver_plugin" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>LinkResolverPlugin</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>EBSCO</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Plugin to be used when resolving.
+					Possible code are listed in LinkResolverPlugin [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, link_resolver_plugin can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="url_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>The type of URL that is used for this service:
+						Dynamic URL - Select a linking URL dynamically at the service level based on the list of conditions defined in the Dynamic URL field.
+						Parser Parameters - An override for the parser's parameters in the Parser parameters (override) field.
+						In the PUT action, url_type can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="url_type_override" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable/>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Override value of the url_type.
+					In the PUT action, url_type_override can be modified for both local and linked services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="dynamic_url" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>List of IF conditions to determine the service's linking URL.
+						Relevant when URL Type is Dynamic URL.
+						In the PUT action, dynamic_url can be modified for local services only.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dynamic_url_override" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Override value of the dynamic_url. Relevant when URL Type is Dynamic URL. 
+					In the PUT action, dynamic_url_override can be modified for both local and linked services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="free" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>IsFree</xs:codeTable>
+						<xs:example>0</xs:example>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Whether the service is free.
+					Possible code are listed in IsFree [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, free can be modified only for local services.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="free_override" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>IsFree</xs:codeTable>
+						<xs:example>0</xs:example>
+						<xs:tags>api get put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Override value of the free indication. Relevant and returned only for resources linked to CZ.
+					In the PUT action, free_override can be modified only for resources linked to CZ.
+					Possible code are listed in IsFree [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API]. 
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="crossref_supported" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>CrossRefSupported</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>This parameter specifies whether or not CrossRef is supported for this electronic resource.
+					See www.crossref.org for more information regarding the CrossRef DOI (Digital Object Identifier) service.
+					Possible code are listed in CrossRefSupported [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, crossref_supported can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="crossref_supported_override" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>CrossRefSupported</xs:codeTable>
+						<xs:tags>api get put</xs:tags>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Override value of the crossref_supported. Relevant and returned only for resources linked to CZ.
+					In the PUT action, crossref_supported_override can be modified only for resources linked to CZ.
+					Possible code are listed in CrossRefSupported [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API]. 
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="crossref_enabled" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>crossRefEnabled</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Select Yes, No, or Inherit to indicate your preference for using the CrossRef service.
+						Possible code are listed in crossRefEnabled [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+						In the PUT action, crossref_enabled can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="proxy_enabled" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>BooleanYesNo</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Whether to enable a proxy.
+					Possible code are listed in BooleanYesNo [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, proxy_enabled can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="proxy" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>LAW_PROXY</xs:example>
+					</xs:appinfo>
+					<xs:documentation>A proxy profile code. This must be a valid code of an integration profile of "Resolver proxy" type.
+					In the PUT action, proxy can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linking_level" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>LinkingLevel</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>ARTICLE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The linking level or unit to which the electronic collection will link.
+					Possible code are listed in LinkingLevel [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					In the PUT action, linking_level can be modified only for local services.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="linking_level_override" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>LinkingLevel</xs:codeTable>
+						<xs:tags>api get put</xs:tags>
+						<xs:example>ARTICLE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Override value of the linking_level. Relevant and returned only for resources linked to CZ.
+					In the PUT action, linking_level_override can be modified only for resources linked to CZ.
+					Possible code are listed in LinkingLevel [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API]. 
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+<!--			<xs:element name="han_proxy_licenses" type="han_proxy_licenses" minOccurs="0" maxOccurs="1">-->
+<!--				<xs:annotation>-->
+<!--					<xs:appinfo>-->
+<!--						<xs:tags>api get post put</xs:tags>-->
+<!--					</xs:appinfo>-->
+<!--					<xs:documentation>HAN Proxy Licenses, may be configured on the service level if proxy_enabled=Yes and Proxy=HAN. In the PUT action the incoming list will replace the existing list. If linking_parameters element is not part of the payload, the existing list will be kept. If linking_parameters element exists in the payload, but is empty - the existing list will be deleted. </xs:documentation>-->
+<!--				</xs:annotation>-->
+<!--			</xs:element>-->
+			<xs:element name="linking_parameters" type="linking_parameters" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The service's related linking parameters. In the PUT action the incoming list will replace the existing list. If linking_parameters element is not part of the payload, the existing list will be kept. If linking_parameters element exists in the payload, but is empty - the existing list will be deleted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="portfolios" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>52</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+			       		A count of the number of portfolios. Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="authentication_note" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>Some</xs:example>
+					</xs:appinfo>
+					<xs:documentation>A note related to authentication (to display in the discovery system).
+					In the PUT action, authentication_note can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="public_note" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>None</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Information about the service (to display in the discovery system).
+					In the PUT action, public_note can be modified for all services.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="notes" type="notes" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The e-collection's related notes.
+					In the PUT action the incoming list will replace the existing list. If the incoming list is empty, the existing list will be deleted.
+					In the PUT action, notes can be modified for all services.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="group_settings" type="group_settings" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>List of access restrictions based on location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+</xs:schema>

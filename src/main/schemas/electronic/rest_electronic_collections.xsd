@@ -1,0 +1,31 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>List of electronic collections.</xs:documentation>
+	</xs:annotation>
+
+	<xs:include schemaLocation="rest_electronic_collection.xsd"/>
+
+	<xs:element name="electronic_collections" type="electronic_collections"/>
+
+	<xs:complexType name="electronic_collections">
+		<xs:annotation>
+			<xs:documentation>A list of electronic collections.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="electronic_collection" type="electronic_collection">
+				<xs:annotation>
+					<xs:documentation>Electronic collection object.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+
+		<xs:attribute name="total_record_count" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The total number of electronic collections.
+								This can be used when retrieving a long list using pagination.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+</xs:schema>

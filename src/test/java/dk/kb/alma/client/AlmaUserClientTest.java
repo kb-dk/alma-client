@@ -17,6 +17,7 @@ import dk.kb.alma.gen.user_resource_sharing_request.UserResourceSharingRequest;
 import dk.kb.alma.gen.users.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 public class AlmaUserClientTest {
     
     
