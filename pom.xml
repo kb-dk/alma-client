@@ -288,7 +288,7 @@
                     <execution>
                         <id>xjc_alma_sru</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -317,7 +317,7 @@
                     <execution>
                         <id>rest_portfolios</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -338,7 +338,7 @@
                     <execution>
                         <id>alma-rest-user_resource_sharing_request</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -359,7 +359,7 @@
                     <execution>
                         <id>alma-partners</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -382,7 +382,7 @@
                     <execution>
                         <id>web_service_result</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -404,7 +404,7 @@
                     <execution>
                         <id>rest_bibs</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -424,7 +424,7 @@
                     <execution>
                         <id>rest_code_table</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -451,7 +451,7 @@
                     <execution>
                         <id>rest_items</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -473,7 +473,7 @@
                     <execution>
                         <id>rest_users</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -493,7 +493,7 @@
                     <execution>
                         <id>rest_fees</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -515,7 +515,7 @@
                     <execution>
                         <id>rest_libraries</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -535,7 +535,7 @@
                     <execution>
                         <id>alma-rest_general</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -555,7 +555,7 @@
                     <execution>
                         <id>alma-rest-requested_resources</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -576,7 +576,7 @@
                     <execution>
                         <id>alma-rest-user_requests</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -597,7 +597,7 @@
                     <execution>
                         <id>alma-rest-locations</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -617,7 +617,7 @@
                     <execution>
                         <id>alma-rest-holdings</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -637,7 +637,7 @@
                     <execution>
                         <id>alma-rest-holding</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -657,7 +657,7 @@
                     <execution>
                         <id>alma-rest-analytics</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -682,7 +682,7 @@
                     <execution>
                         <id>alma-rest-webhooks</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -701,7 +701,7 @@
                     <execution>
                         <id>alma-rest-item-loans</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -721,7 +721,7 @@
                     <execution>
                         <id>alma-rest-electronic</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -735,7 +735,7 @@
                     <execution>
                         <id>alma-rest-vendors</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -756,7 +756,7 @@
                     <execution>
                         <id>alma-rest-purchase_requests</id>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
