@@ -36,114 +36,119 @@
         <!-- Run 'mvn package -DallTests' to run all tests, including slow ones
              Annotate tests with '@Tag("slow")' or '@Tag("fast")' -->
         <!-- Specify java version here, to support forbiddenapis plugin -->
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <!-- Replace the line below with  -->
         <api.check.phase>none</api.check.phase>
         <!--       to disable forbidden APIs check -->
         <!--      <api.check.phase>process-classes</api.check.phase>-->
 
-
-        <cxf.version>3.4.5</cxf.version>
-        <jackson.version>2.12.5</jackson.version>
-
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
         <description.short>KB Digitisation on Demand</description.short>
-
+        <cxf.version>3.4.5</cxf.version>
+        <jackson.version>3.0.3</jackson.version>
+        <jackson-datatype-jsr310.version>3.0.0-rc2</jackson-datatype-jsr310.version>
+        <kb-util.version>2.0.1</kb-util.version>
+        <marc4j.version>2.9.2</marc4j.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
+        <junit.version>6.0.1</junit.version>
+        <junit-jupiter-engine.version>${junit.version}</junit-jupiter-engine.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <logback-classic.version>1.5.22</logback-classic.version>
+        <mockito-core.version>5.21.0</mockito-core.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <error_prone_core>2.45.0</error_prone_core>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <jaxb2-maven-plugin.version>4.0.0</jaxb2-maven-plugin.version>
+        <license-maven-plugin.version>2.7.0</license-maven-plugin.version>
+        <jakarta.xml.bind-api.version>4.0.4</jakarta.xml.bind-api.version>
+        <jaxb-runtime.version>4.0.6</jaxb-runtime.version>
     </properties>
-
 
     <dependencies>
         <dependency>
             <groupId>dk.kb.util</groupId>
             <artifactId>kb-util</artifactId>
-            <version>1.4.6</version>
+            <version>${kb-util.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.marc4j</groupId>
             <artifactId>marc4j</artifactId>
-            <version>2.9.2</version>
+            <version>${marc4j.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
+            <version>${guava.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
         <dependency>
-            <!--For the alma rest client-->
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        <!-- JSON processing: jackson -->
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta.xml.bind-api.version}</version>
         </dependency>
-
-
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <groupId>tools.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-datatype-jsr310.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-xml-provider -->
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <groupId>tools.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-xml-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.33</version>
+            <version>${slf4j-api.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.18.0</version>
+            <version>${mockito-core.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
-            <version>5.8.2</version>
+            <version>${junit-jupiter-engine.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>2.2</version>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.10</version>
+            <version>${logback-classic.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-runtime.version}</version>
+        </dependency>
     </dependencies>
+
     <build>
         <testResources>
             <testResource>
@@ -151,7 +156,6 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
-
         <resources>
             <resource>
                 <directory>target/generated-resources</directory>
@@ -161,7 +165,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>2.0.0</version>
+                <version>${license-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>download-licenses</id>
@@ -194,7 +198,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -211,7 +215,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -219,8 +223,9 @@
                         <path>
                             <groupId>com.google.errorprone</groupId>
                             <artifactId>error_prone_core</artifactId>
-                            <version>2.3.3</version>
+                            <version>${error_prone_core}</version>
                         </path>
+<!--                        TODO this is very old - Should we remove it? -->
                         <path>
                             <groupId>com.google.guava</groupId>
                             <artifactId>guava-beta-checker</artifactId>
@@ -265,7 +270,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven-jar-plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -276,17 +281,9 @@
             </plugin>
 
             <plugin>
-                <groupId>com.evolvedbinary.maven.jvnet</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>0.15.0</version>
-<!--                <dependencies>
-                    &lt;!&ndash; https://mvnrepository.com/artifact/com.thoughtworks.qdox/qdox &ndash;&gt;
-                    <dependency>
-                        <groupId>com.thoughtworks.qdox</groupId>
-                        <artifactId>qdox</artifactId>
-                        <version>2.0.0</version>
-                    </dependency>
-                </dependencies>-->
+                <version>${jaxb2-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>xjc_alma_sru</id>
@@ -313,16 +310,9 @@
 
 
             <plugin>
-                <groupId>com.evolvedbinary.maven.jvnet</groupId>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>0.15.0</version>
-<!--                <dependencies>
-                    <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-runtime</artifactId>
-                        <version>3.0.1</version>
-                    </dependency>
-                </dependencies>-->
+                <version>${jaxb2-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>rest_portfolios</id>
