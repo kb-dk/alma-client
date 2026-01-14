@@ -1,0 +1,55 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>An object representation of Rapido offer</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="rapido_attributes" type="rapido_attributes" />
+
+	<xs:complexType name="rapido_attributes">
+		<xs:annotation>
+			<xs:documentation>Rapido attributes</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="request_labels" type="request_labels" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						This list will contain all the
+						labels that are related to
+						the request.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+		<xs:complexType name="request_labels">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				This list will contain all the
+				labels that are
+				related to
+				the request.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="label" type="xs:string" minOccurs="0"
+				maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						request label
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>exampleLabel</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>	 
+</xs:schema>
