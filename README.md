@@ -58,7 +58,7 @@ String errorMessage;
 * `AlmaNotFoundException`: When you request something that could not be found.
 
 
-The special structure of the `AlmaRestClient` allows us to create client methods corresponding to the ALMA api with a minimun of fuss. Example
+The special structure of the `AlmaRestClient` allows us to create client methods corresponding to the ALMA api with a minimum of fuss. Example
 
 See <https://developers.exlibrisgroup.com/alma/apis/docs/bibs/R0VUIC9hbG1hd3MvdjEvYmlicy97bW1zX2lkfQ==/>
 
@@ -71,7 +71,7 @@ public Bib getBib(String mmsID) throws AlmaConnectionException, AlmaKnownExcepti
 }
 ```
 
-Then create the nessesary lightweight clients from this object.
+Then create the necessary lightweight clients from this object.
 
 These lightweight clients can be created and destroyed as you like, they are just wrappers around the REST client and is thus very fast to create.
 
