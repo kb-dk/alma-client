@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:element name="item_loan" type="item_loan" />
+
+	<xs:complexType name="item_loan">
+		<xs:sequence>
+			<xs:element name="loan_id" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>1234</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Identifier of the loan in Alma. Should be used in subsequent queries regarding the loan.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="circ_desk" nillable="false" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>post get</xs:tags>
+						<xs:codeTable>circ_desks</xs:codeTable>
+						<xs:example>MAINCIRC</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The circulation desk code that is responsible for the loan. Mandatory. The field has 2 attribures: "desc" and "link"</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Circulation</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="link" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>/almaws/v1/libraries/GRAD/circ-desks/MAINCIRC</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="return_circ_desk" nillable="false" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>post get</xs:tags>
+						<xs:codeTable>circ_desks</xs:codeTable>
+						<xs:example>MAINCIRC</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The circulation desk code where the item was returned.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Main Desk</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="link" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>/almaws/v1/libraries/GRAD/circ-desks/MAINCIRC</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="library" nillable="false" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>post get</xs:tags>
+						<xs:codeTable>libraries</xs:codeTable>
+						<xs:example>GRAD</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The library code that is responsible of the loan. Mandatory.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Graduate Library</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="user_id" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>ID1234</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The loaning user identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="item_barcode" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>000237055710000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The barcode of the loaned item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="due_date" type="xs:dateTime" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get put</xs:tags>
+						<xs:example>2014-0623T14:00:00.000Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The loan's due date. Can be modified using PUT or the renew API.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="loan_status" type="loan_status" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>ACTIVE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The loan's status. Output parameter. 
+					Possible values are: Active and Complete (for loan that has been returned).
+					Note: When using the API with JSON the loan_status are retrieved as codes: ACTIVE, COMPLETE. When sending a PUT or POST with JSON this field should not be included (or, if included, should be: Active, Complete)"
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="loan_date" type="xs:dateTime" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2014-06-22T11:00:28.377Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date in which the loan took place. Output parameter. In the POST loan action, Alma populate this field with the
+						current date and time.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="return_date" type="xs:dateTime" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2014-06-22T11:00:28.377Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date in which the loan was returned. Output parameter. 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="returned_by"  minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>ID1234</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The returning user identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="process_status" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:codeTable>HItemLoan.processStatus</xs:codeTable>
+						<xs:example>NORMAL</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The loan's process status. Output parameter. Possible codes are listed in 'Loan Process Status Search Column' code-table.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="mms_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1011221</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Bibliographic record identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="holding_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1234</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+			             Holdings id that the item is associated with. Output parameter.
+			       </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="item_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>458322000441021</xs:example>ITEMID1234
+			      </xs:appinfo>
+					<xs:documentation>Physical item pid of the item. Output parameter</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="title" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>American Quest / by Bradford Smith.</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The title of the loaned item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="author" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>Smith, Bradford</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The author of the loaned item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>v2</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The description of the loaned item when dealing with multi volume/issue item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="publication_year" type="numericString" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2007</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The year of publication of the loaned item. Digits only. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="location_code" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>loc_01</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The current loacation of the item. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="name" type="xs:string">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Location One</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="item_policy" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:codeTable>ItemPolicy</xs:codeTable>
+						<xs:example>09</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's related policy. Output parameter. Possible codes are listed in 'Item Policy' code-table.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="description" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="call_number" type="xs:string" nillable="false" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>F S644a</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The call number of the loaned item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="loan_fine" type="xs:float" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>400.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The amount that would be charged if the item would have been returned now (for example, if the loan is overdue). Output
+						parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="request_id" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+				Internal identifier of the related request in Alma, generated by Alma.
+				Should be used in subsequent queries regarding the request.
+				See [GET user's request API|https://developers.exlibrisgroup.com/alma/apis/users].
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="renewable" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Flag that indicates if the loan is renewable.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last_renew_date" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2019-02-1723T14:00:00.000Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The loan's last renew date. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last_renew_status" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>401167;401166;</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The result of the last attempt to renew the loan. Output parameter. Some (but not all) of the possible codes are listed in 'MashUpLabels' code-table.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="numericString">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="loan_status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Active"/>
+			<xs:enumeration value="Complete"/>
+		</xs:restriction>
+		<!--  note: when using the API with JSON the loan_status are retrieved as codes: ACTIVE, COMPLETE -->
+	</xs:simpleType>
+</xs:schema>

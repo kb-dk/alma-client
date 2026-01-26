@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="rest_item_loan.xsd" />
+	<xs:include schemaLocation="rest_item.xsd" />
+	<xs:include schemaLocation="rest_fee.xsd" />
+	<xs:include schemaLocation="webhook_user.xsd" />
+	<xs:include schemaLocation="rest_lending_resource_sharing_request.xsd" />
+	<xs:include schemaLocation="rest_user_resource_sharing_request.xsd" />
+	<xs:include schemaLocation="rest_user_request.xsd" />
+
+	<xs:element name="notification_data" type="notification_data" />
+	<xs:complexType name="notification_data">
+		<xs:all>
+			<xs:element name="general_data" type="general_data"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						Letter basic data.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="item_loans" type="item_loans" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A list of item loans.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="items" type="items" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A list of items.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="fees" type="fees" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A list of user's fees.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="receiver" type="user" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A notification receiver. See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/webhook_user.xsd]
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="user_resource_sharing_requests" type="user_resource_sharing_requests" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A list of a user's resource sharing requests.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="lending_resource_sharing_requests" type="lending_resource_sharing_requests" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A list of a user's resource sharing requests.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="user_requests" type="user_requests" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						A list of user's requests.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sms_content" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						SMS content.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="general_data">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Letter basic data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="letter_name" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The name of the letter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="letter_type" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The type of the letter.
+						Possible value are: FulCancelRequestLetter, FulUserBorrowingActivityLetter, FulItemChangeDueDateLetter, FulPlaceOnHoldShelfLetter
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="subject" type="xs:string" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The subject of the letter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="item_loans">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				A list of item loans.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="item_loan" type="item_loan" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific item's loan.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="items">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				A list of items.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="item" type="item" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="fees">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				A list of fees.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="fee" type="fee" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific fee.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="user_resource_sharing_requests">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				A list of user resource sharing requests.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="user_resource_sharing_request" type="user_resource_sharing_request" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific resource sharing request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="lending_resource_sharing_requests">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				A list of user resource sharing requests.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="lending_resource_sharing_request" type="lending_resource_sharing_request" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific resource sharing request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="user_requests">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				A list of user requests.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="user_request" type="user_request" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific user request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,120 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>
+			An object representation of a Holding Record
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="holding" type="holding" />
+
+	<xs:complexType name="holding">
+		<xs:annotation>
+			<xs:documentation>Holding Record</xs:documentation>
+		</xs:annotation>
+
+		<xs:sequence>
+
+			<xs:element name="holding_id" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>227339340000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Holding record identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="created_by" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>Acquisition (PO line POL-67555)</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Creator of the record. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="created_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2014-05-14Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The record creation date. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="last_modified_by" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>exl_impl</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Last user to modify the record. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="last_modified_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2014-05-14Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date by which the last change to the record was made. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="originating_system" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The system in which the record was initially generated. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="originating_system_id" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The id of the record in the original system. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be published to Primo. 
+This is the value defined on the specific record as a management tag.
+Note that the default for POST is false.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="calculated_suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be published to Primo. Note that this field might be true even when suppress_from_publishing is false. This is, for example, if the entire location has been suppressed. Output parameter.        </xs:documentation>
+				</xs:annotation>
+  			</xs:element>
+
+			<xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"
+				processContents="lax" />
+
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

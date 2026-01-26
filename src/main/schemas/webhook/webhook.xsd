@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+		<xs:annotation>
+		<xs:documentation>
+			Webhooks are "user-defined HTTP callbacks". They are usually triggered by some event, and include information on the results or status of that event.
+			When that event occurs, the source site makes an HTTP request to a configured URI. The target end-point catches the HTTP call, and might take an action according to the received information.
+
+			Alma is able to send a webhook when the following occur:
+			- A job run has finished
+			- Notification is sent
+			- User Updated
+			- Loan events
+			- User request events
+			- BIB events
+			- Inventory events
+			- Lending resource sharing request events
+			- Planed for future release: Portfolio and Representation events
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:include schemaLocation="rest_job_instance.xsd" />
+	<xs:include schemaLocation="rest_webhook_notifications.xsd"/>
+	<xs:include schemaLocation="webhook_user_extended.xsd"/>
+	<xs:include schemaLocation="rest_user_request.xsd"/>
+	<xs:include schemaLocation="rest_item_loan.xsd"/>
+	<xs:include schemaLocation="rest_bib.xsd"/>
+	<xs:include schemaLocation="rest_holding.xsd"/>
+	<xs:include schemaLocation="rest_item.xsd"/>
+	<xs:include schemaLocation="rest_portfolio.xsd"/>
+	<xs:include schemaLocation="rest_representation.xsd"/>
+	<xs:include schemaLocation="rest_lending_resource_sharing_request.xsd"/>
+	<xs:include schemaLocation="rest_user_resource_sharing_request.xsd"/>
+
+
+	<xs:element name="notification">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="id" type="xs:string" nillable="false" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Unique identifier of this webhook message.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="action" type="xs:string" nillable="false" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:appinfo>
+							<xs:example>USER</xs:example>
+						</xs:appinfo>
+						<xs:documentation>
+							The action type which initiates the webhook call:
+							NOTIFICATION, USER, REQUEST, LOAN, BIB, ITEM etc.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="event" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:appinfo>
+							<xs:codeTable>WebhookEvents</xs:codeTable>
+							<xs:example>LOAN_CREATED</xs:example>
+						</xs:appinfo>
+						<xs:documentation>
+							Relevant when action is LOAN or REQUEST.
+							The related event which triggered the webhook.
+							Possible codes are listed in 'WebhookEvents' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="desc" type="xs:string" use="optional"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="institution" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							The institution in which the webhook was triggered.
+							This information is important when working in a network.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="desc" type="xs:string" use="optional" />
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="time" type="xs:dateTime" nillable="false" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>The time the action occurred. ISO8601 date format.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="job_instance" type="job_instance" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							Relevant when action=JOB_END.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_job_instance.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="notification_data" type="notification_data" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+						    Relevant when action=NOTIFICATION.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_webhook_notifications.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="webhook_user" type="webhook_user_extended" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+						    Relevant when action=USER.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/webhook_user_extended.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="user_request" type="user_request" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+						    Relevant when action=REQUEST.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_user_request.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="item_loan" type="item_loan" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+						    Relevant when action=LOAN.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_item_loan.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="bib" type="bib" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							Relevant when action=BIB.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_bib.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="holding" type="holding" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							Relevant when action=HOLDING.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_holding.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="item" type="item" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							Relevant when action=ITEM.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/xsd/rest_item.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="portfolio" type="portfolio" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							For future use.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="representation" type="representation" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							For future use.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="rapido_lending_resource_sharing_request" type="lending_resource_sharing_request" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							Relevant when action=LENDING_REQUEST.
+							See structure [here|https://developers.exlibrisgroup.com/rapido/apis/docs/xsd/rest_lending_resource_sharing_request.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="lending_resource_sharing_request" type="user_resource_sharing_request" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							Relevant when action=LENDING_REQUEST.
+							See structure [here|https://developers.exlibrisgroup.com/alma/apis/docs/xsd/rest_user_resource_sharing_request.xsd]
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

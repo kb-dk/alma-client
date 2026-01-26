@@ -1,11 +1,14 @@
 <jaxb:bindings
-        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-        jaxb:version="2.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/jaxb
+              https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd"
+        jaxb:version="3.0"
         xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc"
         jaxb:extensionBindingPrefixes="xjc">
 
     <jaxb:globalBindings>
         <xjc:simple/>
-
     </jaxb:globalBindings>
+
 </jaxb:bindings>

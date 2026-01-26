@@ -1,0 +1,111 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:documentation>An object representation of resource sharing request costs</xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="rs_request_costs" type="rs_request_costs" />
+
+    <xs:complexType name="rs_request_costs">
+        <xs:annotation>
+            <xs:documentation>Rapido offer details</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="base_fee_amount" type="xs:decimal" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>5</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Base fee amount</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="service_level_fee_amount" type="xs:decimal" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>5</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Service level fee amount</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="copyright_fee_amount" type="xs:decimal" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>5</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Copyright fee amount</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="page_overage_fee_amount" type="xs:decimal" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>5</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Page overage fee amount</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="vat_amount" type="xs:decimal" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>5</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The VAT amount</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="costs_currency" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>USD</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The currency that we use for the request cost.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="override_max_cost_amount" type="xs:decimal" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>12.5</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>The maximum amount the borrower approves to
+                        pay for this specific request. Optional</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="override_max_cost_ind" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>true</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>An indication of whether the borrower approved
+                        overriding the max cost defined on the partner
+                        record. Default is false. Not relevant for borrowing
+                        requests.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="override_fees" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>get</xs:tags>
+                        <xs:example>true</xs:example>
+                    </xs:appinfo>
+                    <xs:documentation>Lender overridden fees indicator as defined by
+                        the shipping cost lender rules.
+                        Default is false. Not relevant for borrowing
+                        requests.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
