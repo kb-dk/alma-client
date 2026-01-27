@@ -296,6 +296,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                    </compilerArgs>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <annotationProcessorPaths>
@@ -371,9 +376,8 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
+
                             <generatePackage>dk.kb.alma.gen.sru</generatePackage>
-
-
                             <schemaExcludes>
                                 <exclude>\.txt</exclude>
                                 <exclude>\.xjb</exclude>
@@ -384,15 +388,7 @@
 
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
 
-
-            <plugin>
-                <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>${jaxb2-maven-plugin.version}</version>
-                <executions>
                     <execution>
                         <id>rest_portfolios</id>
                         <goals>
