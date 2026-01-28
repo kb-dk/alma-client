@@ -12,11 +12,11 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,14 +64,7 @@ public class HttpUtils {
     public static <E> String formatEntityMessage(E entity, WebApplicationException e) {
         String entityMessage = "";
         if (entity != null) {
-            try {
-                entityMessage = "with entity '" + XML.marshall(entity) + "' ";
-            } catch (JAXBException jaxbException) {
-                throw new AlmaConnectionException(jaxbException
-                                                  + ": Failed to parse entity '"
-                                                  + entity
-                                                  + "' as xml, but throwing the original WebApplicationException", e);
-            }
+            entityMessage = "with entity '" + XML.marshall(entity) + "' ";
         }
         return entityMessage;
     }

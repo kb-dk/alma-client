@@ -96,7 +96,7 @@ public class MarcRecordHelper {
                                            almaRecord.getMmsId());
             }
             return marcRecord;
-        } catch (TransformerException | IOException e) {
+        } catch (IOException e) {
             throw new MarcXmlException("Failed to read marcXml from Alma record with id: " + almaRecord.getMmsId(), e);
         }
     }
@@ -111,7 +111,7 @@ public class MarcRecordHelper {
             
             almaRecord.getAnies().clear();
             almaRecord.getAnies().add(marcElement);
-        } catch (IOException | ParserConfigurationException | SAXException e) {
+        } catch (IOException e) {
             throw new MarcXmlException("Failed to save marc record on Alma record");
         }
     }

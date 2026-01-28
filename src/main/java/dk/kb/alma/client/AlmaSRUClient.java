@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import javax.annotation.Nonnull;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Nonnull;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
@@ -230,13 +229,7 @@ public class AlmaSRUClient extends HttpClient {
         if (result == null){
             return "null";
         } else {
-            try {
-                return XML.marshall(result);
-            } catch (JAXBException e) {
-                log.error("Failed to remarshal result object as xml for log message. "
-                          + "Not escalating this exception as it will block out whatever called this",e);
-                return e.getMessage();
-            }
+            return XML.marshall(result);
         }
     }
     

@@ -1,14 +1,17 @@
 package dk.kb.primo.client;
 
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import dk.kb.util.json.JSON;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.impl.UriBuilderImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -37,42 +40,43 @@ public class PrimoClient {
         this.vid                = vid;
         this.lang               = lang;
     }
-    
+
     private WebClient getWebClient(URI link) {
-        URI host = new UriBuilderImpl(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
-        
-        
-        JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
-        jacksonJaxbJsonProvider.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-        jacksonJaxbJsonProvider.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        
-        
-        final List<?> providers = Arrays.asList(jacksonJaxbJsonProvider);
-        WebClient client = WebClient.create(host.toString(), providers);
-        
-        
+        URI host = new UriBuilderImpl(link)
+                .replaceQuery(null)
+                .replacePath(null)
+                .replaceMatrix(null)
+                .build();
+
+        ObjectMapper mapper = JsonMapper.builder()
+                .enable(DeserializationFeature.UNWRAP_ROOT_VALUE)
+                .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                .enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS)
+                .build();
+
+        JacksonJsonProvider jacksonProvider = new JacksonJsonProvider(mapper);
+
+        WebClient client = WebClient.create(host.toString(), List.of(jacksonProvider));
+
         HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
-        //conduit.getClient().setConnectionTimeout(connectTimeout);
-        //conduit.getClient().setConnectionRequestTimeout(connectTimeout);
-        //conduit.getClient().setReceiveTimeout(readTimeout);
-        
+
         if (link.getPath() != null) {
             client = client.path(link.getPath());
         }
         if (link.getQuery() != null) {
             client = client.replaceQuery(link.getQuery());
         }
-        
+
         client = client
-                         .accept(MediaType.APPLICATION_JSON_TYPE)
-                         .type(MediaType.APPLICATION_JSON_TYPE);
-        
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE);
+
         if (globalParams != null) {
-            for (Map.Entry<String, String> globalParam : globalParams.entrySet()) {
-                client = client.replaceQueryParam(globalParam.getKey(), globalParam.getValue());
+            for (Map.Entry<String, String> p : globalParams.entrySet()) {
+                client = client.replaceQueryParam(p.getKey(), p.getValue());
             }
         }
-        
+
         return client;
     }
     

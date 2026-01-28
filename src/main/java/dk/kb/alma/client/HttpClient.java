@@ -1,10 +1,10 @@
 package dk.kb.alma.client;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dk.kb.alma.client.exceptions.AlmaConnectionException;
@@ -22,13 +22,13 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.RedirectionException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.RedirectionException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -99,7 +99,7 @@ public abstract class HttpClient {
     }
     
     /**
-     * Controls whether or not we use caching for GET requests. Non-GET requests never use caching. If this is true
+     * Controls whether we use caching for GET requests. Non-GET requests never use caching. If this is true
      * (default), GET requests use caching.
      *
      * @param cachingEnabled should caching be enabled for GET requests
@@ -113,8 +113,8 @@ public abstract class HttpClient {
     }
     
     /**
-     * retryOnTimeouts control whether or not we automatically retry non-GET requests that time out.
-     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET
+     * retryOnTimeouts control whether we automatically retry non-GET requests that time out.
+     * This is always enabled for GET requests. This parameter controls whether we also retry for non-GET
      * requests
      *
      * @param retryOnTimeouts should we retry non-GET requests that time out?
@@ -129,9 +129,9 @@ public abstract class HttpClient {
     }
     
     /**
-     * retryOnSocketExceptions control whether or not we automatically retry non-GET requests that fail on a socket
+     * retryOnSocketExceptions control whether we automatically retry non-GET requests that fail on a socket
      * exception.
-     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET
+     * This is always enabled for GET requests. This parameter controls whether we also retry for non-GET
      * requests
      *
      * @param retryOnSocketExceptions should we retry non-GET requests that fail out?
@@ -148,7 +148,7 @@ public abstract class HttpClient {
      * retryOn429 control whether or not we automatically retry non-GET requests that receive ALMA HTTP 429 (rate
      * limit)
      * errors.
-     * This is always enabled for GET requests. This parameter controls whether or not we also retry for non-GET
+     * This is always enabled for GET requests. This parameter controls whether we also retry for non-GET
      * requests
      *
      * @param retryOn429 should we retry non-GET requests that fail on rate limit.
@@ -163,49 +163,53 @@ public abstract class HttpClient {
     public WebClient constructLink() {
         return getWebClient(target);
     }
-    
+
     public WebClient getWebClient(URI link) {
-        URI host = new UriBuilderImpl(link).replaceQuery(null).replacePath(null).replaceMatrix(null).build();
-        
-        JacksonJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
-        jacksonJaxbJsonProvider.disable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-        jacksonJaxbJsonProvider.disable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        jacksonJaxbJsonProvider.enable(DeserializationFeature.WRAP_EXCEPTIONS);
-        
-        jacksonJaxbJsonProvider.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
-        jacksonJaxbJsonProvider.enable(JsonParser.Feature.IGNORE_UNDEFINED);
-        
-        final List<?> providers = Arrays.asList(jacksonJaxbJsonProvider);
+
+        URI host = new UriBuilderImpl(link)
+                .replaceQuery(null)
+                .replacePath(null)
+                .replaceMatrix(null)
+                .build();
+
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .disable(DeserializationFeature.UNWRAP_ROOT_VALUE)
+                .disable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                .enable(DeserializationFeature.WRAP_EXCEPTIONS)
+                .enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS)
+                .build();
+
+        JacksonJsonProvider jacksonProvider = new JacksonJsonProvider(objectMapper);
+
+        List<?> providers = Arrays.asList(jacksonProvider);
+
         WebClient client = WebClient.create(host.toString(), providers);
-        
-        
+
         HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
         conduit.getClient().setConnectionTimeout(connectTimeout);
         conduit.getClient().setConnectionRequestTimeout(connectTimeout);
         conduit.getClient().setReceiveTimeout(readTimeout);
-        
+
         if (link.getPath() != null) {
             client = client.path(link.getPath());
         }
         if (link.getQuery() != null) {
             client = client.replaceQuery(link.getQuery());
         }
-        
-        //client = client
-        //        .accept(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_XML_TYPE)
-        //        .type(MediaType.APPLICATION_JSON_TYPE);
-    
+
         client = client
                 .accept(MediaType.APPLICATION_XML_TYPE, MediaType.APPLICATION_JSON_TYPE)
                 .type(MediaType.APPLICATION_XML_TYPE);
-        
+
         if (globalParams != null) {
             for (Map.Entry<String, String> globalParam : globalParams.entrySet()) {
-                client = client.replaceQueryParam(globalParam.getKey(), globalParam.getValue());
+                client = client.replaceQueryParam(
+                        globalParam.getKey(),
+                        globalParam.getValue()
+                );
             }
         }
-        
-        
+
         return client;
     }
     
