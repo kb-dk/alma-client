@@ -59,7 +59,6 @@
         <mockito-core.version>5.21.0</mockito-core.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
-        <error_prone_core>2.46.0</error_prone_core>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
         <jakarta.xml.bind-api.version>4.0.4</jakarta.xml.bind-api.version>
@@ -304,11 +303,6 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.google.errorprone</groupId>
-                            <artifactId>error_prone_core</artifactId>
-                            <version>${error_prone_core}</version>
-                        </path>
 <!--                        TODO this is very old - Should we remove it? -->
                         <path>
                             <groupId>com.google.guava</groupId>
@@ -327,8 +321,6 @@
                         <configuration>
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>
-                                <!-- Remove -XepDisableAllChecks to keep all checks enabled -->
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:BetaApi:ERROR</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
@@ -343,8 +335,6 @@
                                  NOTE: in this specific case, we could just NOT enable Error Prone at all -->
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>
-                                <!-- Remove -XepDisableAllChecks to keep all checks enabled -->
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:BetaApi:OFF</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
