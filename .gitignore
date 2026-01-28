@@ -4,3 +4,4 @@
 *.iws
 
 target/
+/src/test/resources/almaclient.properties
