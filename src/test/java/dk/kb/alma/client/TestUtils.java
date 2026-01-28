@@ -19,7 +19,7 @@ public class TestUtils {
         Properties dodpro = new Properties();
         try (Reader propStream = new InputStreamReader(Thread.currentThread()
                                                              .getContextClassLoader()
-                                                             .getResourceAsStream("almaclient.properties.sample"),
+                                                             .getResourceAsStream("almaclient.properties"),
                                                        Charsets.UTF_8)) {
             dodpro.load(propStream);
         }
@@ -41,7 +41,7 @@ public class TestUtils {
         Properties dodpro = new Properties();
         try (Reader propStream = new InputStreamReader(Thread.currentThread()
                                                              .getContextClassLoader()
-                                                             .getResourceAsStream("almaclient.properties.sample"),
+                                                             .getResourceAsStream("almaclient.properties"),
                                                        Charsets.UTF_8)) {
             dodpro.load(propStream);
         }
