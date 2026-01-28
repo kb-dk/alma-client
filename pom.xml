@@ -50,7 +50,6 @@
 
         <kb-util.version>2.0.1</kb-util.version>
         <marc4j.version>2.9.2</marc4j.version>
-        <guava.version>33.5.0-jre</guava.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <junit.version>6.0.1</junit.version>
         <junit-jupiter-engine.version>${junit.version}</junit-jupiter-engine.version>
@@ -69,6 +68,9 @@
         <jackson-datatype-jsr310.version>3.0.0-rc2</jackson-datatype-jsr310.version>
         <jackson-annotations.version>3.0-rc2</jackson-annotations.version>
         <jaxb-maven-plugin.generateDirectory>target/generated-sources/</jaxb-maven-plugin.generateDirectory>
+        <byte-buddy.version>1.17.7</byte-buddy.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <argLine/>
     </properties>
 
     <dependencies>
@@ -81,11 +83,6 @@
             <groupId>org.marc4j</groupId>
             <artifactId>marc4j</artifactId>
             <version>${marc4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -272,7 +269,27 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar
+                    </argLine>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -302,14 +319,6 @@
                     </compilerArgs>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <annotationProcessorPaths>
-<!--                        TODO this is very old - Should we remove it? -->
-                        <path>
-                            <groupId>com.google.guava</groupId>
-                            <artifactId>guava-beta-checker</artifactId>
-                            <version>1.0</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
                 <executions>
                     <execution>
