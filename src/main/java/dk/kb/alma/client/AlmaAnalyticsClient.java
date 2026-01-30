@@ -2,28 +2,27 @@ package dk.kb.alma.client;
 
 import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.gen.analytics.Report;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 public class AlmaAnalyticsClient {
-    
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final AlmaRestClient almaRestClient;
-    
+
     public AlmaAnalyticsClient(AlmaRestClient almaRestClient) {
         this.almaRestClient = almaRestClient;
     }
-    
+
     public AlmaRestClient getAlmaRestClient() {
         return almaRestClient;
     }
-    
+
     /*Reports*/
-    
+
     /**
      * @param reportPath Full path to the report
      * @param filter     Optional.	An XML representation of a filter in OBI format ???
@@ -41,20 +40,20 @@ public class AlmaAnalyticsClient {
         filter = filter == null ? "" : filter;
         limit = restrictLimit(limit);
         col_names = col_names == null ? true : col_names;
-        
+
         Report almaReport = almaRestClient.get(almaRestClient.constructLink()
-                                                             .path("/analytics/reports")
-                                                             .query("path", reportPath)
-                                                             .query("filter", filter)
-                                                             .query("limit", limit)
-                                                             .query("col_names", col_names), Report.class, false);
+                .path("/analytics/reports")
+                .query("path", reportPath)
+                .query("filter", filter)
+                .query("limit", limit)
+                .query("col_names", col_names), Report.class, false);
         Element doc = almaReport.getAnies().get(0);
         return dk.kb.alma.client.analytics.Report.parseFromAlmaReport(
                 doc,
                 null);
     }
-    
-    
+
+
     /**
      * @param report
      * @return
@@ -65,12 +64,12 @@ public class AlmaAnalyticsClient {
         if (report.isFinished()) {
             throw new IllegalArgumentException("The report is finished, there is no more to get here");
         }
-        log.debug("Using Token {}",report.getToken());
+        log.debug("Using Token {}", report.getToken());
         final Report rawReport;
         try {
             //Important that cache is not used, as this is the same url being requested each time
             rawReport = almaRestClient.get(almaRestClient.constructLink().path("/analytics/reports")
-                                                         .query("token", report.getToken()), Report.class, false);
+                    .query("token", report.getToken()), Report.class, false);
         } catch (AlmaKnownException e) {
             //TODO This is a hack, but it seems that sometimes we miss isFinished...?
             if (e.getErrorCode().equals("420033") && e.getErrorMessage().equals("No more rows to fetch")) {
@@ -103,7 +102,7 @@ Caused by: java.lang.IllegalArgumentException: Invalid return type 'application/
     
     
      */
-    
+
     /**
      * Transforms the input integer to be * positive * between 25 and 1000 * A multiple of 25
      *
@@ -111,16 +110,16 @@ Caused by: java.lang.IllegalArgumentException: Invalid return type 'application/
      * @return
      */
     protected static Integer restrictLimit(@Nullable Integer limit) {
-        
+
         limit = (limit == null ? 25 : limit); //if null, set to 25
-        
+
         limit = Math.max(0, limit); //Make positive
-        
+
         final double multipleOf25 = Math.ceil(limit / 25.0); //Find the multiple of 25
         final long multipliedBack = (long) multipleOf25 * 25;
         limit = (int) Math.min(1000L, multipliedBack);
-        
+
         return limit;
     }
-    
+
 }

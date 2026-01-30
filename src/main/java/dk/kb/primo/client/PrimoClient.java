@@ -12,22 +12,22 @@ import org.apache.cxf.jaxrs.impl.UriBuilderImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
 
 import jakarta.ws.rs.core.MediaType;
+
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class PrimoClient {
-    
+
     public URI restBaseURLSuprima;// = URI.create("https://kbdk-kgl-psb.primo.exlibrisgroup.com/primaws/rest");
     //public URI restBaseURLSuprima; = URI.create("https://kbdk-kgl-psb.primo.exlibrisgroup.com/primaws/rest");
     //public URI restBaseURLSuprima = URI.create("https://soeg.kb.dk/primaws/rest");
-    
+
     private final String inst;
     private final String vid;
     private final String lang;
     private Map<String, String> globalParams;
-    
+
     /**
      * @param restBaseURLSuprima
      * @param inst
@@ -36,9 +36,9 @@ public class PrimoClient {
      */
     public PrimoClient(URI restBaseURLSuprima, String inst, String vid, String lang) {
         this.restBaseURLSuprima = restBaseURLSuprima;
-        this.inst               = inst;
-        this.vid                = vid;
-        this.lang               = lang;
+        this.inst = inst;
+        this.vid = vid;
+        this.lang = lang;
     }
 
     private WebClient getWebClient(URI link) {
@@ -79,8 +79,8 @@ public class PrimoClient {
 
         return client;
     }
-    
-    
+
+
     // webpack:///src/main/webapp/components/appConfig/appConfig.ts
     
     /*
@@ -153,71 +153,66 @@ public class PrimoClient {
 };
 
      */
-    
+
     /**
      *
-     *  @see  <a href="https://developers.exlibrisgroup.com/primo/apis/docs/primoSearch/R0VUIC9wcmltby92MS9zZWFyY2g=/">Primo search</a> for more detail.
+     * @param query             The query string that you want to use to perform a search.
+     *                          The query string uses the following format:
      *
-     * @param query    The query string that you want to use to perform a search.
-     *                 The query string uses the following format:
+     *                          <pre>q=$field_1,$precision_1,$value_1[[,$operator_1];$field_n,$precision_n,$value_n...]</pre>
      *
-     *                 <pre>q=$field_1,$precision_1,$value_1[[,$operator_1];$field_n,$precision_n,$value_n...]</pre>
+     *                          <ul>
+     *                           <li> field - The data field that you want to search within. The following fields are valid: any (for any field), title, creator (for author), sub (for subject), and usertag (for tag). </li>
+     *                           <li> precision - The precision operation that you want to apply to the field. The following precision operators are valid: exact (value must match the data in the field exactly), begins_with (the value must be found at the beginning of the field), and contains (the value must be found anywhere in the field). </li>
+     *                           <li> value - The search terms, which can be a word, phrase, or exact phrase (group of words enclosed by quotes), and can include the following logical operators: AND, OR, and NOT. For more information regarding search terms, see Performing Basic Searches.</li>
+     *                           <li> operator - When specifying multiple search fields for advanced searches, this parameter applies the following logical operations between fields: AND (specified values must be found in both fields), OR (specified values must be found in at least one of the fields), NOT (the specified value of the next field must not be found). If no operator is specified, the system defaults to AND.</li>
+     *                          </ul>
+     *                          Note: Multiple fields are delimited by a semicolon. <br/>
+     *                          Limitation: The value must not include a semicolon character.
+     *                          <p>
+     *                          In the following example, the system searches for all records in which the word home is found anywhere within the record's title</p>
+     *                          <pre>q=title,contains,home</pre>
      *
-     *                 <ul>
-     *                  <li> field - The data field that you want to search within. The following fields are valid: any (for any field), title, creator (for author), sub (for subject), and usertag (for tag). </li>
-     *                  <li> precision - The precision operation that you want to apply to the field. The following precision operators are valid: exact (value must match the data in the field exactly), begins_with (the value must be found at the beginning of the field), and contains (the value must be found anywhere in the field). </li>
-     *                  <li> value - The search terms, which can be a word, phrase, or exact phrase (group of words enclosed by quotes), and can include the following logical operators: AND, OR, and NOT. For more information regarding search terms, see Performing Basic Searches.</li>
-     *                  <li> operator - When specifying multiple search fields for advanced searches, this parameter applies the following logical operations between fields: AND (specified values must be found in both fields), OR (specified values must be found in at least one of the fields), NOT (the specified value of the next field must not be found). If no operator is specified, the system defaults to AND.</li>
-     *                 </ul>
-     *                 Note: Multiple fields are delimited by a semicolon. <br/>
-     *                 Limitation: The value must not include a semicolon character.
-     *                 <p>
-     *                 In the following example, the system searches for all records in which the word home is found anywhere within the record's title</p>
-     *                 <pre>q=title,contains,home</pre>
+     *                          <p>In the following example, the system searches for all records in which the title field contains the words pop and music and the subject field contains the word korean: </p>
+     *                          <pre>q=title,contains,pop music,AND;sub,contains,korean</pre>
+     * @param offset            The offset of the results from which to start displaying the results.
+     *                          *                 <br/>
+     * @param limit             The maximum number of results in the response
+     *                          *                 <br/>
+     * @param qInclude          Filters the results by the facets that you want to include. The logical AND operation is applied
+     *                          between the facets.
+     *                          This filter uses the following format:
+     *                          <pre>qInclude=$facet_category_1,exact,$facet_name_1[|,|$facet_category_n,exact,$facet_name_n...]</pre>
      *
-     *                 <p>In the following example, the system searches for all records in which the title field contains the words pop and music and the subject field contains the word korean: </p>
-     *                 <pre>q=title,contains,pop music,AND;sub,contains,korean</pre>
-     * @param offset   The offset of the results from which to start displaying the results.
-     *                 *                 <br/>
-     * @param limit    The maximum number of results in the response
-     *                 *                 <br/>
-     * @param qInclude Filters the results by the facets that you want to include. The logical AND operation is applied
-     *                 between the facets.
-     *                 This filter uses the following format:
-     *                 <pre>qInclude=$facet_category_1,exact,$facet_name_1[|,|$facet_category_n,exact,$facet_name_n...]</pre>
+     *                          <p>Note: Multiple categories are delimited by the following string of characters: |,|</p>
      *
-     *                 <p>Note: Multiple categories are delimited by the following string of characters: |,|</p>
+     *                          <ul>
+     *                           <li> facet_category - The facet category that you want to include. The following categories are valid: facet_rtype (Resources Type), facet_topic (Subject), facet_creator (Author), facet_tlevel (Availability), facet_domain (Collection), facet_library (library name), facet_lang (language), facet_lcc (LCC classification).</li>
+     *                            <li> facet_name - The name of the facet to include (such as Journals if facet_rtype was selected).</li>
+     *                          </ul>
+     *                          <br/>
+     * @param qExclude          Filters the results by the facets that you want to exclude. The logical AND operation is applied
+     *                          between the facets.
+     *                          This parameter uses the following format:
+     *                          <pre>qExclude=$facet_category_1,exact,$facet_name_1[|,|$facet_category_n,exact,$facet_name_n...]</pre>
      *
-     *                 <ul>
-     *                  <li> facet_category - The facet category that you want to include. The following categories are valid: facet_rtype (Resources Type), facet_topic (Subject), facet_creator (Author), facet_tlevel (Availability), facet_domain (Collection), facet_library (library name), facet_lang (language), facet_lcc (LCC classification).</li>
-     *                   <li> facet_name - The name of the facet to include (such as Journals if facet_rtype was selected).</li>
-     *                 </ul>
-     *                 <br/>
-     * @param qExclude Filters the results by the facets that you want to exclude. The logical AND operation is applied
-     *                 between the facets.
-     *                 This parameter uses the following format:
-     *                 <pre>qExclude=$facet_category_1,exact,$facet_name_1[|,|$facet_category_n,exact,$facet_name_n...]</pre>
+     *                          <p>Note: Multiple categories are delimited by the following string of characters: |,|</p>
      *
-     *                 <p>Note: Multiple categories are delimited by the following string of characters: |,|</p>
-     *
-     *                 <ul>
-     *                   <li> facet_category - The facet category that you want to exclude. The following categories are valid: facet_rtype (Resources Type), facet_topic (Subject), facet_creator (Author), facet_tlevel (Availability), facet_domain (Collection), facet_library (library name), facet_lang (language), facet_lcc (LCC classification) </li>
-     *                   <li>facet_name - The name of the facet to exclude (such as Journals if facet_rtype was selected).</li>
-     *                 </ul>
-     *                 <br/>
-     *
-     * @param pcAvailability Indicates whether PC records that do not have full text are displayed in the results. The valid values are true (display all records even if they do not have full text) or false (display full text records only). Default true
-     *
-     * @param getMore Relevant for searches in Metalib.
-     * Indicates whether to expand the number of results in Metalib searches. The valid values are 0 (false) or 1 (true). Default 0
-     *
-     * @param sort The type of sort to perform on the results, which can be based on relevance or a specific field: rank, title, author, or date. Default rank
-     *
-     * @param tab The name of the tab.
-     * @param scope The scope name.
-     * @param skipDeliveryInfo N to include the delivery info, such as the location and holdingID
+     *                          <ul>
+     *                            <li> facet_category - The facet category that you want to exclude. The following categories are valid: facet_rtype (Resources Type), facet_topic (Subject), facet_creator (Author), facet_tlevel (Availability), facet_domain (Collection), facet_library (library name), facet_lang (language), facet_lcc (LCC classification) </li>
+     *                            <li>facet_name - The name of the facet to exclude (such as Journals if facet_rtype was selected).</li>
+     *                          </ul>
+     *                          <br/>
+     * @param pcAvailability    Indicates whether PC records that do not have full text are displayed in the results. The valid values are true (display all records even if they do not have full text) or false (display full text records only). Default true
+     * @param getMore           Relevant for searches in Metalib.
+     *                          Indicates whether to expand the number of results in Metalib searches. The valid values are 0 (false) or 1 (true). Default 0
+     * @param sort              The type of sort to perform on the results, which can be based on relevance or a specific field: rank, title, author, or date. Default rank
+     * @param tab               The name of the tab.
+     * @param scope             The scope name.
+     * @param skipDeliveryInfo  N to include the delivery info, such as the location and holdingID
      * @param includeNewspapers
      * @return
+     * @see <a href="https://developers.exlibrisgroup.com/primo/apis/docs/primoSearch/R0VUIC9wcmltby92MS9zZWFyY2g=/">Primo search</a> for more detail.
      */
     public JsonNode search(String query,
                            Integer offset,
@@ -231,57 +226,57 @@ public class PrimoClient {
                            String scope,
                            String skipDeliveryInfo,
                            Boolean includeNewspapers) {
-        
+
         var value = getWebClient(restBaseURLSuprima)
-                            .path("pub")
-                            .path("pnxs")
-                            .query("blendFacetsSeparately", false)
-                            .query("disableCache", "false")
-                            .query("getMore", getMore)
-                            //.query("inst", "45KBDK_KGL")
-                            .query("inst", inst)
-                            .query("lang", lang)
-                            .query("limit", limit)
-                            .query("newspapersActive", "true")
-                            .query("newspapersSearch", includeNewspapers)
-                            .query("offset", offset)
-                            .query("pcAvailability", pcAvailability)
-                            .query("q", query)
-                            .query("qExclude", qExclude)
-                            .query("qInclude", qInclude)
-                            .query("rapido", "false")
-                            .query("refEntryActive", "true")
-                            .query("rtaLinks", "false")
-                            .query("scope", scope)
-                            .query("skipDelivery", skipDeliveryInfo)
-                            .query("sort", sort)
-                            .query("tab", tab)
-                            .query("vid", vid)
-                            .get(String.class);
+                .path("pub")
+                .path("pnxs")
+                .query("blendFacetsSeparately", false)
+                .query("disableCache", "false")
+                .query("getMore", getMore)
+                //.query("inst", "45KBDK_KGL")
+                .query("inst", inst)
+                .query("lang", lang)
+                .query("limit", limit)
+                .query("newspapersActive", "true")
+                .query("newspapersSearch", includeNewspapers)
+                .query("offset", offset)
+                .query("pcAvailability", pcAvailability)
+                .query("q", query)
+                .query("qExclude", qExclude)
+                .query("qInclude", qInclude)
+                .query("rapido", "false")
+                .query("refEntryActive", "true")
+                .query("rtaLinks", "false")
+                .query("scope", scope)
+                .query("skipDelivery", skipDeliveryInfo)
+                .query("sort", sort)
+                .query("tab", tab)
+                .query("vid", vid)
+                .get(String.class);
         return JSON.fromJson(value, JsonNode.class);
     }
-    
+
     public JsonNode getTranslations(String targetLanguage) {
         var value = getWebClient(restBaseURLSuprima).path("pub")
-                                                    .path("translations")
-                                                    .path(vid)
-                                                    //.path("45KBDK_KGL:KGL")
-                                                    //.query("lang", "da")
-                                                    .query("lang", targetLanguage)
-                                                    .get(String.class);
-        
+                .path("translations")
+                .path(vid)
+                //.path("45KBDK_KGL:KGL")
+                //.query("lang", "da")
+                .query("lang", targetLanguage)
+                .get(String.class);
+
         return JSON.fromJson(value, JsonNode.class);
     }
-    
+
     public JsonNode getConfig() {
         var value = getWebClient(restBaseURLSuprima).path("pub")
-                                                    .path("configuration")
-                                                    .path("vid")
-                                                    //.path("45KBDK_KGL:KGL")
-                                                    .path(vid)
-                                                    .get(String.class);
-        
+                .path("configuration")
+                .path("vid")
+                //.path("45KBDK_KGL:KGL")
+                .path(vid)
+                .get(String.class);
+
         return JSON.fromJson(value, JsonNode.class);
-        
+
     }
 }

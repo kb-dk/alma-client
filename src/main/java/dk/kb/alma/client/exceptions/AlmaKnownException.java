@@ -1,8 +1,8 @@
 package dk.kb.alma.client.exceptions;
 
 import dk.kb.alma.gen.web_service_result.WebServiceResult;
-
 import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
 import java.util.stream.Collectors;
 
@@ -10,13 +10,13 @@ import static dk.kb.util.other.StringListUtils.notNull;
 
 
 public class AlmaKnownException extends AlmaClientException {
-    
-    
+
+
     private final WebServiceResult result;
     private final String errorCode;
     private final String errorMessage;
-    
-    
+
+
     public AlmaKnownException(String operation,
                               String entityMessage,
                               URI currentURI,
@@ -24,54 +24,54 @@ public class AlmaKnownException extends AlmaClientException {
                               WebServiceResult result,
                               Exception e) {
         super("Failed with code '" + parseErrorCode(result) + "' / '" + parseErrorMessage(result) + "' on operation '" + operation + "' "
-              + notNull(entityMessage) + " on URI '" + currentURI+"'",
-              operation,
-              entityMessage,
-              currentURI,
-              response,
-              e);
+                        + notNull(entityMessage) + " on URI '" + currentURI + "'",
+                operation,
+                entityMessage,
+                currentURI,
+                response,
+                e);
         errorCode = parseErrorCode(result);
-        errorMessage= parseErrorMessage(result);
+        errorMessage = parseErrorMessage(result);
         this.result = result;
-        
+
     }
-    
+
     public WebServiceResult getResult() {
         return result;
     }
-    
+
     protected static String parseErrorCode(WebServiceResult result) {
         if (result.isErrorsExist()) {
             String errorCode = result.getErrorList()
-                                     .getErrors()
-                                     .stream()
-                                     .findFirst()
-                                     .map(error -> error.getErrorCode())
-                                     .orElse("");
-            
+                    .getErrors()
+                    .stream()
+                    .findFirst()
+                    .map(error -> error.getErrorCode())
+                    .orElse("");
+
             return errorCode;
-            
+
         }
         return "";
     }
-    
+
     protected static String parseErrorMessage(WebServiceResult result) {
         if (result.isErrorsExist()) {
             String errorMessage = result.getErrorList()
-                                        .getErrors()
-                                        .stream()
-                                        .map(error -> error.getErrorMessage())
-                                        .collect(
-                                                Collectors.joining(", "));
+                    .getErrors()
+                    .stream()
+                    .map(error -> error.getErrorMessage())
+                    .collect(
+                            Collectors.joining(", "));
             return errorMessage;
         }
         return "";
     }
-    
+
     public String getErrorCode() {
         return errorCode;
     }
-    
+
     public String getErrorMessage() {
         return errorMessage;
     }

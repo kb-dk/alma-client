@@ -6,14 +6,12 @@ import dk.kb.alma.gen.sru.Explain;
 import dk.kb.alma.gen.sru.SearchRetrieveResponse;
 import dk.kb.util.other.StringListUtils;
 import dk.kb.util.xml.XML;
+import jakarta.xml.bind.JAXBException;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.w3c.dom.Element;
 
-import jakarta.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.net.URI;
@@ -21,20 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 class AlmaSRUClientTest {
 

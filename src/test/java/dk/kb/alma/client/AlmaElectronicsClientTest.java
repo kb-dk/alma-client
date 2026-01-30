@@ -7,16 +7,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class AlmaElectronicsClientTest {
     private static AlmaRestClient client;
-    
+
     @BeforeAll
     static void setupAlmaClient() throws IOException {
         client = TestUtils.getAlmaClient();
     }
-    
+
     @Test
     @Disabled("apikey is not allowed...")
     void getElectronicCollections() {
@@ -24,6 +22,6 @@ class AlmaElectronicsClientTest {
         ElectronicCollections collections = electronicsClient.getElectronicCollections(null, null, null);
         System.out.println(collections);
     }
-    
-   
+
+
 }

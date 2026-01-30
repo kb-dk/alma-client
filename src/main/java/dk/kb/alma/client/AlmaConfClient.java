@@ -19,84 +19,84 @@ import org.slf4j.LoggerFactory;
  */
 public class AlmaConfClient {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     private final AlmaRestClient almaRestClient;
-    
+
     public AlmaConfClient(AlmaRestClient almaRestClient) {
         this.almaRestClient = almaRestClient;
     }
-    
+
     /*ORG UNITS*/
-    
+
     public Libraries getLibraries() {
         return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/conf/libraries"),
-                                  Libraries.class);
+                        .path("/conf/libraries"),
+                Libraries.class);
     }
-    
+
     public Library getLibrary(String libraryCode) {
         return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/conf/libraries/")
-                                                .path(libraryCode),
-                                  Library.class);
+                        .path("/conf/libraries/")
+                        .path(libraryCode),
+                Library.class);
     }
-    
+
     public Locations getLibraryLocations(String libraryCode) {
         return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/conf/libraries/")
-                                                .path(libraryCode)
-                                                .path("/locations"),
-                                  Locations.class);
+                        .path("/conf/libraries/")
+                        .path(libraryCode)
+                        .path("/locations"),
+                Locations.class);
     }
-    
+
     public Location getLibraryLocation(String libraryCode, String locationCode) {
         return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/conf/libraries/")
-                                                .path(libraryCode)
-                                                .path("/locations/")
-                                                .path(locationCode),
-                                  Location.class);
+                        .path("/conf/libraries/")
+                        .path(libraryCode)
+                        .path("/locations/")
+                        .path(locationCode),
+                Location.class);
     }
-    
+
     /*GENERAL*/
-   
-    
+
+
     public CodeTable getCodeTable(String codeTableName)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return getCodeTable(codeTableName, "da", null);
     }
-    
+
     public CodeTable getCodeTable(String codeTableName, String lang, String scope)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/conf/code-tables/")
-                                       .path(codeTableName)
-                                       .replaceQueryParam("lang", lang);
-        if (scope != null){
-            link = link.query("scope",scope);
+                .path(codeTableName)
+                .replaceQueryParam("lang", lang);
+        if (scope != null) {
+            link = link.query("scope", scope);
         }
         return almaRestClient.get(link, CodeTable.class);
     }
-    
+
     public CodeTables getCodeTables()
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         return getCodeTables("da", null);
     }
-    
+
     public CodeTables getCodeTables(String lang, String scope)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/conf/code-tables")
-                                       .replaceQueryParam("lang", lang);
-        if (scope != null){
-            link = link.query("scope",scope);
+                .replaceQueryParam("lang", lang);
+        if (scope != null) {
+            link = link.query("scope", scope);
         }
         return almaRestClient.get(link, CodeTables.class);
     }
-    
+
     public General getGeneralConf() {
         return almaRestClient.get(almaRestClient.constructLink()
-                                                .path("/conf/general"),
-                                  General.class);
+                        .path("/conf/general"),
+                General.class);
     }
-    
-    
+
+
 }
