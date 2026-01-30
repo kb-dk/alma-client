@@ -35,7 +35,7 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <!-- Run 'mvn package -DallTests' to run all tests, including slow ones
              Annotate tests with '@Tag("slow")' or '@Tag("fast")' -->
-        <!-- Specify java version here, to support forbiddenapis plugin -->
+        <!-- Specify java version here, to support forbidden APIs plugin -->
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <!-- Replace the line below with  -->
@@ -49,12 +49,12 @@
         <cxf.version>4.1.4</cxf.version>
 
         <kb-util.version>2.0.1</kb-util.version>
-        <marc4j.version>2.9.2</marc4j.version>
+        <marc4j.version>2.9.6</marc4j.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <junit.version>6.0.1</junit.version>
+        <junit.version>6.0.2</junit.version>
         <junit-jupiter-engine.version>${junit.version}</junit-jupiter-engine.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <logback-classic.version>1.5.22</logback-classic.version>
+        <logback-classic.version>1.5.26</logback-classic.version>
         <mockito-core.version>5.21.0</mockito-core.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
@@ -64,9 +64,9 @@
         <jaxb-runtime.version>4.0.6</jaxb-runtime.version>
         <jaxb-maven-plugin.version>4.0.12</jaxb-maven-plugin.version>
         <angus-activation.version>2.0.3</angus-activation.version>
-        <jackson.version>3.0.3</jackson.version>
+        <jackson.version>3.0.4</jackson.version>
         <jackson-datatype-jsr310.version>3.0.0-rc2</jackson-datatype-jsr310.version>
-        <jackson-annotations.version>3.0-rc2</jackson-annotations.version>
+        <jackson-annotations.version>3.0-rc5</jackson-annotations.version>
         <jaxb-maven-plugin.generateDirectory>target/generated-sources/</jaxb-maven-plugin.generateDirectory>
         <byte-buddy.version>1.17.7</byte-buddy.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
