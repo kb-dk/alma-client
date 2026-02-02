@@ -18,28 +18,28 @@ import java.util.function.Function;
 import static dk.kb.alma.client.utils.Utils.withDefault;
 
 public class AlmaTasksClient {
-    
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     private final AlmaRestClient almaRestClient;
     private final int batchSize;
-    
+
     public AlmaTasksClient(AlmaRestClient almaRestClient) {
         this(almaRestClient, 100);
     }
-    
+
     public AlmaTasksClient(AlmaRestClient almaRestClient, int batchSize) {
         this.almaRestClient = almaRestClient;
         this.batchSize = batchSize;
     }
-    
+
     public AlmaRestClient getAlmaRestClient() {
         return almaRestClient;
     }
-    
-    
+
+
     /*Requested Resources*/
-    
+
     public Iterator<RequestedResource> getRequestedResourceIterator(String libraryId,
                                                                     String circulationDeskName,
                                                                     String location,
@@ -51,34 +51,34 @@ public class AlmaTasksClient {
             if (offset == null) {
                 offset = 0;
             }
-            List<Logger> loggers = Lists.asList(log,errorLoggers);
+            List<Logger> loggers = Lists.asList(log, errorLoggers);
             List<RequestedResource> batchOfRequestedResources = getBatchOfRequestedResources(batchSize,
-                                                                                             offset,
-                                                                                             libraryId,
-                                                                                             circulationDeskName,
-                                                                                             location,
-                                                                                             allOrNothing,
-                                                                                             loggers);
+                    offset,
+                    libraryId,
+                    circulationDeskName,
+                    location,
+                    allOrNothing,
+                    loggers);
             log.info("Retrieved requests {} to {} for (libraryID={},circulationDesk={},location={})",
-                     offset,
-                     offset + batchOfRequestedResources.size(),
-                     libraryId,
-                     circulationDeskName,
-                     location);
-            
-            if (batchOfRequestedResources.size() < batchSize){
+                    offset,
+                    offset + batchOfRequestedResources.size(),
+                    libraryId,
+                    circulationDeskName,
+                    location);
+
+            if (batchOfRequestedResources.size() < batchSize) {
                 batchOfRequestedResources = Utils.toModifiableList(batchOfRequestedResources);
                 batchOfRequestedResources.add(null);
             }
-            
+
             return AutochainingIterator.IteratorOffset.of(offset + batchOfRequestedResources.size(),
-                                                          batchOfRequestedResources.iterator());
+                    batchOfRequestedResources.iterator());
         };
-        
+
         return new AutochainingIterator<>(nextIteratorFunction);
     }
-    
-    
+
+
     /**
      * Get a specific batch of requested resources, detailed by limit and offset
      *
@@ -102,35 +102,35 @@ public class AlmaTasksClient {
         //}
         //This does not use getLinkValue, as we do NOT want these things cached
         WebClient link = almaRestClient.constructLink()
-                                       .path("task-lists")
-                                       .path("requested-resources")
-                                       .query("library", libraryID)
-                                       .query("circ_desk", circulationDeskName)
-                                       .query("location",withDefault(location,""))
-                                       .query("order_by", "call_number")
-                                       .query("direction", "asc")
-                                       .query("pickup_inst")
-                                       .query("reported")
-                                       .query("printed")
-                                       .query("limit", limit)
-                                       .query("offset", offset);
-        
+                .path("task-lists")
+                .path("requested-resources")
+                .query("library", libraryID)
+                .query("circ_desk", circulationDeskName)
+                .query("location", withDefault(location, ""))
+                .query("order_by", "call_number")
+                .query("direction", "asc")
+                .query("pickup_inst")
+                .query("reported")
+                .query("printed")
+                .query("limit", limit)
+                .query("offset", offset);
+
         RequestedResources result;
         try {
             result = almaRestClient.get(link, RequestedResources.class, false);
         } catch (AlmaKnownException e) {
-            
+
             if (allOrNothing) {
                 throw e;
             } else {
                 for (Logger logger : errorLoggers) {
                     //Known alma errors, we can be more intelligent here
                     logger.error("Failed to retrieve content [{}-{}] for '{}'/'{}' with error {}. Continuing on",
-                              offset,
-                              offset + limit,
-                              libraryID,
-                              circulationDeskName,
-                              e.getMessage());
+                            offset,
+                            offset + limit,
+                            libraryID,
+                            circulationDeskName,
+                            e.getMessage());
                 }
                 return Collections.emptyList();
             }
@@ -139,26 +139,26 @@ public class AlmaTasksClient {
             if (allOrNothing) {
                 throw new RuntimeException(
                         "Failed to retrieve content [" + offset + "-" + (offset + limit) + "] for '" + libraryID + "'/'"
-                        + circulationDeskName + "'", e);
+                                + circulationDeskName + "'", e);
             } else {
                 for (Logger logger : errorLoggers) {
                     //Known alma errors, we can be more intelligent here
                     logger.error("Failed to retrieve content [{}-{}] for '{}'/'{}'. Continuing on",
-                                 offset,
-                                 offset + limit,
-                                 libraryID,
-                                 circulationDeskName,
-                                 e);
+                            offset,
+                            offset + limit,
+                            libraryID,
+                            circulationDeskName,
+                            e);
                 }
                 return Collections.emptyList();
             }
         }
         log.debug("Completed fetching requests {}-{} for '{}'/'{}'",
-                  offset,
-                  offset + limit,
-                  libraryID,
-                  circulationDeskName);
-        
+                offset,
+                offset + limit,
+                libraryID,
+                circulationDeskName);
+
         Integer total_records = result.getTotalRecordCount();
         if (offset >= total_records || result.getRequestedResources() == null) {
             return Collections.emptyList();
@@ -166,9 +166,9 @@ public class AlmaTasksClient {
             return result.getRequestedResources();
         }
     }
-    
+
     /*Lending requests*/
-    
+
     /**
      * Get Lending Requests. Optional parameters may be null.
      *
@@ -197,7 +197,7 @@ public class AlmaTasksClient {
         link = tryAddQueryParameter(link, "supplied_format", suppliedFormat);
         return almaRestClient.get(link, UserResourceSharingRequests.class);
     }
-    
+
     /**
      * Currently the only supported action is 'mark_reported'. Optional parameters may be null.
      *
@@ -227,7 +227,7 @@ public class AlmaTasksClient {
         link = tryAddQueryParameter(link, "supplied_format", suppliedFormat);
         return almaRestClient.post(link, UserResourceSharingRequests.class, "");
     }
-    
+
     private WebClient tryAddQueryParameter(WebClient link, String parameterKey, String parameterValue) {
         if (parameterValue != null) {
             return link.query(parameterKey, parameterValue);
@@ -235,7 +235,7 @@ public class AlmaTasksClient {
             return link;
         }
     }
-    
+
     /*Printouts*/
-    
+
 }

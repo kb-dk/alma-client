@@ -1,0 +1,360 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation>
+			Fine/fee is a charge made for a user, for receiving library services.
+			Fine/fee might have related transactions, which indicate activities made on the fine/fee (such as payment, waiving etc.).
+		</xs:documentation>
+	</xs:annotation>
+	<xs:element name="fee" type="fee"/>
+	<xs:complexType name="fee">
+		<xs:annotation>
+			<xs:documentation>Fee object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>950645520000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						Identifier of the fee in Alma.
+						Should be used in subsequent queries regarding the fee.
+						Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get post</xs:tags>
+						<xs:codeTable>HFrUserFinesFees.fineFeeType</xs:codeTable>
+						<xs:example>OVERDUEFINE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The fine / fee type. Mandatory.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Overdue item fine</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="status" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>HFrUserFinesFees.fineFeeStatus</xs:codeTable>
+						<xs:example>ACTIVE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The fine / fee status.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Active</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="user_primary_id" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>45231001001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Primary ID of the charged user. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="balance" type="xs:float" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>200.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The fine / fee balance.
+						Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="remaining_vat_amount" type="xs:float">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>250.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The fine / fee remaining vat amount.
+						Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="original_amount" type="xs:float">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get post</xs:tags>
+						<xs:example>400.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The fine / fee original amount. Mandatory for POST.
+						For type CREDIT it is retrieved as a negative number, but for POST the number should be positive.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="original_vat_amount" type="xs:float">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>400.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The fine / fee original vat amount.
+						Output parameter.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="creation_time" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Date the fine / fee was created.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="status_time" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2019-12-18T14:36:48.659Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date the fine / fee was last changed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="comment" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Fine / fee comment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="owner">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get post</xs:tags>
+						<xs:codeTable>libraries</xs:codeTable>
+						<xs:example>GRAD</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The fine / fee owner. Mandatory for POST.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Graduate Library</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="title" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>American Quest / by Bradford Smith</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item title.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="barcode" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get post</xs:tags>
+						<xs:example>00023705571000021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item barcode.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="transactions" type="transactions" minOccurs="0"/>
+			<xs:element name="bursar_transaction_id" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The unique sequence used for the fine/fee identification when communicating with the Bursar system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="transactions">
+		<xs:annotation>
+			<xs:documentation>A list of transactions.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="transaction" type="transaction">
+				<xs:annotation>
+					<xs:documentation>Transaction Object.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="transaction">
+		<xs:annotation>
+			<xs:documentation>Transaction object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="transaction_id" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						Identifier of the transaction in Alma.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:codeTable>FineFeeTransactionType</xs:codeTable>
+						<xs:example>DEPOSIT</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The fine / fee transaction type.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="amount" type="xs:float">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>400.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The transaction amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="vat_amount" type="xs:float">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>400.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The transaction vat amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="reason" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>null</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The reason for the transaction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="comment" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example> Date generated: 10/21/2014, Due: 06/23/2014, Fine Policy: Overdue Fine for All Hours, Action: Renewed</xs:example>
+					</xs:appinfo>
+					<xs:documentation>A note attached to the transaction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="created_by" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>John Smith</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The operator who last updated the transaction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="external_transaction_id" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2010000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The transaction external ID.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="transaction_time" type="xs:dateTime">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2019-12-18T14:36:48.659Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date and time of the transaction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="received_by">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:codeTable>circ_desks</xs:codeTable>
+						<xs:example>MDL</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The circulation desk in which the transaction was received.
+					Output parameter. If no circulation desk indicated in this field, it is indicated as Not at desk. </xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="payment_method">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:codeTable>WorkbenchPaymentMethod</xs:codeTable>
+						<xs:example>CASH</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The payment method of the transaction.
+					Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

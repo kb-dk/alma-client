@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:annotation>
+		<xs:documentation>Alma digital representation.</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="representation" type="representation" />
+
+	<xs:complexType name="representation">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get post put delete</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Representation. Boolean attribute 'is_remote' is false if not specified.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>3244229950001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Internal representation ID.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="library" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>libraries</xs:codeTable>
+						<xs:example>LAW</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Library code. Mandatory. See [Get libraries API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed]</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="label" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>North and South</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Representation label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="public_note" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>public note example</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Representation public note.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="usage_type" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>RepresentationUsageType</xs:codeTable>
+						<xs:example>PRESERVATION_MASTER</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Representation usage type. Mandatory. Possible codes are listed in 'RepresentationUsageType' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="active" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>DigitalRepresentationBaseStatus</xs:codeTable>
+						<xs:tags>get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						Whether the representation is active. Default is active (true).
+						Possible code are listed in DigitalRepresentationBaseStatus [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+						This field can be updated by the PUT action for all representations.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<!-- Special (partial) Rep fields -->
+			<xs:element name="entity_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>representationEntityType</xs:codeTable>
+						<xs:example>ISSUE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Representation Entity Type. Possible values are listed in Representation Entity Type code-table '.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="author" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>John Smith</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Author. Relevant only for entity_type=CHAPTER, ARTICLE, AUDIOVISUAL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>Representation title</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Title. Relevant only for entity_type=CHAPTER, ARTICLE, AUDIOVISUAL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="volume" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>volume example</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Volume. Relevant only for entity_type=ARTICLE, ISSUE, Issue-Detailed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="issue" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>issue example</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Issue. Relevant only for entity_type=ISSUE, ARTICLE, Issue-Detailed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2017-11-11Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date. Relevant only for entity_type=ISSUE, ARTICLE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="start_page" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>10</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Start Page. Relevant only for entity_type=CHAPTER, ARTICLE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="end_page" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>50</xs:example>
+					</xs:appinfo>
+					<xs:documentation>End Page. Relevant only for entity_type=CHAPTER, ARTICLE.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="track" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>track example</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Track. Relevant only for entity_type=AUDIOVISUAL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="start_time" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Start Time. Relevant only for entity_type=AUDIOVISUAL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="end_time" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>End Time. Relevant only for entity_type=AUDIOVISUAL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Number. Relevant only for entity_type=CHAPTER, Issue-Detailed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="year" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2010</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Number. Relevant only for entity_type=Issue-Detailed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="season_month" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>3</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Number. Relevant only for entity_type=Issue-Detailed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="day_in_month" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>10</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Number. Relevant only for entity_type=Issue-Detailed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="access_rights_policy_id" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Representation access rights policy id. Can be used only when is_remote=false.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="copyrights_statement_id" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Representation copyrights id. Can be used only when is_remote=false.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="delivery_url" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2144/3</xs:example>
+					</xs:appinfo>
+					<xs:documentation>URL to view the representation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="thumbnail_url" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>URL to view the representation thumbnail.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="request_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>1230012884132</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Related digitization request id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="deposit_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>14611712810</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Related deposit id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		
+			<xs:element name="po_line" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>08-000030003</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The related PO line number. In the GET action, this will be the matching representation's PO line ID. In POST and PUT actions, a one-time PO line will be closed.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="repository" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>EQUELLA_OAI_DC1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The repository code as defined in the list of Alma remote repositories. Mandatory when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="originating_record_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>originating_record_id3</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Unique ID of the object in the remote repository. Mandatory when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="linking_parameter_1" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2144/3</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Other remote repository object identifier. Optional when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linking_parameter_2" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Other remote repository object identifier. Optional when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linking_parameter_3" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Other remote repository object identifier. Optional when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linking_parameter_4" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Other remote repository object identifier. Optional when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="linking_parameter_5" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Other remote repository object identifier. Optional when is_remote=true, should not be used when is_remote=false.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="created_by" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>exl_impl</xs:example>
+					</xs:appinfo>
+					<xs:documentation>User who created the representation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="created_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2015-01-22Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date the representation was created.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last_modified_by" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>exl_impl</xs:example>
+					</xs:appinfo>
+					<xs:documentation>User who last modified the representation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last_modified_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2015-01-22Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date the representation was last modified.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="files" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>File-level information.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="total_record_count" type="xs:int">
+								<xs:annotation>
+									<xs:documentation>The total number of files.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="link" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>Link to the files URI.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+		</xs:all>
+
+		<xs:attribute name="is_remote" type="xs:boolean" use="required">
+			<xs:annotation>
+				<xs:documentation>Type of representation.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="link" type="xs:string" use="optional" />
+	</xs:complexType>
+</xs:schema>

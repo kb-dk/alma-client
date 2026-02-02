@@ -1,0 +1,1413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:include schemaLocation="rest_network_numbers.xsd" />
+	<xs:annotation>
+		<xs:documentation>An object representation of a Physical Item's data.</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="item" type="item" />
+
+	<xs:complexType name="item">
+		<xs:annotation>
+			<xs:documentation>A Physical item.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="bib_data" type="bib_data" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Bibliographic data of the Physical Item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="holding_data" type="holding_data" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Information of the Holding that this Physical Item belongs to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="item_data" type="item_data" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Physical Item data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="additional_info" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Additional information following an action on the item. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="link" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="bib_data">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Bibliographic data of the Physical Item. Output parameter.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="mms_id" type="xs:string" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>991122800000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>mms_id. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="bib_suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+						<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the bib record should be published to Primo. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="title" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Title of a book in Alma</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The title of the Bibliographic record to which this Physical Item relates. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="author" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Miller, John</xs:example>
+					</xs:appinfo>
+					<xs:documentation>author</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="issn" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>issn. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="isbn" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>9780596514556 (pbk.)</xs:example>
+					</xs:appinfo>
+					<xs:documentation>isbn. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="complete_edition" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Complete edition. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="network_numbers" type="network_numbers" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Network number, control number. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="place_of_publication" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Sebastopol, CA :</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Place of publication, part of the imprint information. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date_of_publication" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2013</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date of publication. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="publisher_const" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>P'Reilly Media Inc</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Publisher_const, part of the imprint information. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="link" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="holding_data">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get post put</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Information of the Holding that this Physical Item belongs to.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="holding_id" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>224831320000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Holding pid, a unique holding id that the item is associated with.
+Currently, cannot be updated for an existing item.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="holding_suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example/>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the holding record should be published to Primo. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="calculated_suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be published to Primo. Note that this field might be true even when suppress_from_publishing is false. This is, for example, if the entire location has been suppressed. Output parameter.        </xs:documentation>
+				</xs:annotation>
+  			</xs:element>
+			
+			<xs:element name="permanent_call_number_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The call number type for permanent_call_number. Possible codes are listed in 'CallNumberType' code-table.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:codeTable>CallNumberType</xs:codeTable>
+						<xs:example>2</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="permanent_call_number" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>111.222</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The call number of the holdings record that the item officially belongs to. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="call_number_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The call number type for the call_number field. Possible codes are listed in 'CallNumberType' code-table.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:codeTable>CallNumberType</xs:codeTable>
+						<xs:example>4</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="call_number" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>333.444</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The current call number, effective for the item. When the item is in a temporary location it will change accordingly. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="accession_number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>accession number. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="copy_id" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>142312420001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's copy ID, used to identify individual copies of the same title when multiple copies exist at the same location.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="in_temp_location" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indicates whether the item is currently in temporary location. Default is False.
+					In order to move an item to a temporary location use PUT to change this field to true and modify the temp_library and temp_location to the relevant codes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="temp_library" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Temporary library.
+Relevant only if in_temp_location is True.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="temp_location" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Temporary location.
+Relevant only if in_temp_location is True.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="temp_call_number_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The call number type used for temp_call_number.
+Possible codes are listed in 'CallNumberType' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+Relevant when in_temp_location=true.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>CallNumberType</xs:codeTable>
+						<xs:example>6</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="temp_call_number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's call number when the items is at a temporary location.
+Relevant when in_temp_location=true.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="temp_call_number_source" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+	                    <xs:example>Source of classification or shelving scheme</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The call number source that is equivalent to the $2 in the holdings record. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="temp_policy" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The item's temporary override policy.
+Possible codes are listed in 'ItemPolicy' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+Relevant only if in_temp_location is True.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>ItemPolicy</xs:codeTable>
+						<xs:example>09</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="due_back_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2020-02-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item is due back from the temporary location.
+Relevant only if in_temp_location is True.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="link" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="item_data">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get post put</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Physical Item data.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="pid" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>23344156380001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Physical item pid. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="barcode" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>39031031697261</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's barcode.
+If not sent as part of the PUT or POST actions, Alma will generate a barcode based on the barcode generation rules.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="creation_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2012-06-10Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item was created. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="modification_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2012-06-10Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item was modified. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="base_status" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:codeTable>BaseStatus</xs:codeTable>
+						<xs:example>0</xs:example>
+						<xs:documentation>The item's basic status: In place / Not in place. Output parameter.
+Possible codes are listed in 'BaseStatus' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+						</xs:documentation>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="awaiting_reshelving" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indicates whether the item is currently waiting to be reshelved, according to the library/circulation desk/reshelve without transit rule definitions. 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="reshelving_time" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2020-06-23T14:00:00.000Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indicates the time when the item will be reshelved, according to the library/circulation desk/reshelve without transit rule definitions. 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="physical_material_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The item's physical form, such as a book or CD-ROM.
+Possible codes are listed in 'PhysicalMaterialType' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>PhysicalMaterialType</xs:codeTable>
+						<xs:example>ROOM</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="policy" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The item's override policy for loan rules.
+Defines the conditions under which a request for this item can be fulfilled.
+						Possible codes are listed in 'ItemPolicy' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>ItemPolicy</xs:codeTable>
+						<xs:example>09</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="provenance" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The item's origin.
+Possible codes are listed in 'provenanceCodes' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>provenanceCodes</xs:codeTable>
+						<xs:example></xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="po_line" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>08-000030003</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The related PO line number.
+						In the GET action, this might be the matching holding's PO line (in case of continuous PO line).
+						In POST and PUT actions, it is possible to update only the specific item's PO line.
+						Hence, in case the PO line in this field is continuous, it will be ignored. Such an update should be done in the holding record itself.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="issue_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2020-08-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The issue date generated from a prediction pattern.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="is_magnetic" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indicates whether the item contains a magnet which can cause it to be damaged when scanned by a self-check machine.
+						Optional. Default is False.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="arrival_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2014-08-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the material was actually received/activated for the first time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="expected_arrival_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2014-08-01Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item was expected to be received.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="year_of_issue" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2015</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The related year for an issue item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_a" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration A</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_b" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration B</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_c" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration C</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_d" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration D</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_e" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration E</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_f" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration F</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_g" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration G</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enumeration_h" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>enumeration H</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chronology_i" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>chronology I</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chronology_j" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>chronology J</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chronology_k" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>chronology K</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chronology_l" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>chronology L</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="chronology_m" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>chronology M</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="break_indicator" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The code that indicates the reason for a break in the enumeration or chronology. 	Possible codes are listed in 'breakIndicatorCodes' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API]. Relevant only if in_temp_location is True.</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>breakIndicatorCodes</xs:codeTable>
+						<xs:example>G</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="pattern_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>4</xs:example>
+					</xs:appinfo>
+					<xs:documentation>A valid 85X field from the item's holdings record.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="linking_number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A valid subfield $8 from the 85X field in pattern_type. </xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type_of_unit" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The FIRST subfield $o of the relevant Pattern Type and Linking Number. Output parameter.</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>This item's description</xs:example>
+					</xs:appinfo>
+					<xs:documentation>This item's description.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="replacement_cost" type="xs:float" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>50.0</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The charge administered to the patron if the item is lost.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="receiving_operator" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The Operator who received the item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="process_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Process type.
+Possible codes are listed in 'PROCESSTYPE' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:codeTable>PROCESSTYPE</xs:codeTable>
+						<xs:example>ACQ</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="work_order_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+The code of the work order type.
+Relevant when process_type=WORK_ORDER_DEPARTMENT.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="work_order_at" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+The code of the department that is handling the work order process.
+Relevant when process_type= WORK_ORDER_DEPARTMENT.
+A list of departments can be retrieved using GET /almaws/v1/conf/departments.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="inventory_number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>10791310001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The number of this physical item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="inventory_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2013-12-11Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item was modified.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="inventory_price" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The price of the item. The value is assumed to be in
+					the default currency for your institution.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="receive_number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>10791310001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The number of this physical item receive.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="weeding_number" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>10791310001021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The number of this physical item weeding.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="weeding_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>2013-12-11Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date the item was weeded.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+
+			<xs:element name="library" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get put</xs:tags>
+						<xs:codeTable>libraries</xs:codeTable>
+						<xs:example>GRAD</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Library.
+In PUT, updating the library and/or location might move the item to a different Holding record, or will create a new holding record for it.
+In POST action the library will be defined according to the holding_id field.
+see [Get libraries API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAxBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed]</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="location" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get put</xs:tags>
+						<xs:example>STACK</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Location.
+In PUT, updating the library and/or location might move the item to a different Holding record, or will create a new holding record for it.
+In POST action, will be defined according to the holding_id field.
+see [Get locations API|https://developers.exlibrisgroup.com/alma/apis/conf/GET/gwPcGly021p29HpB7XTI4Dp4I8TKv6CAreHxJz3zVZbDL9ogrSqDbgE+r4q6vcJ0xBlD4LyRaVE=/37088dc9-c685-4641-bc7f-60b5ca7cabed]</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="alternative_call_number" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>121108431000</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The call number indicated on the item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="alternative_call_number_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type for alternative_call_number.
+Possible codes are listed in 'CallNumberType' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>CallNumberType</xs:codeTable>
+						<xs:example>1</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="alt_number_source" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>105510551055</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The ID number for the item that corresponds to the alternative call number type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="storage_location_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>1021021021</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The ID number of the location where the item is stored.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pages" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's number of pages.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pieces" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's number of pieces.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="public_note" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>Public note</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content that is displayed in Primo.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="fulfillment_note" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>Fulfillment note</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content that is displayed during the circulation process.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="due_date" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>2020-06-23T14:00:00.000Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The item's due date. If not on loan - empty. This field will be populated only if the 'expand' query parameter is sent.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="due_date_policy" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The loan policy as displayed in discovery. This field will be populated only if the 'expand' query parameter is sent.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internal_note_1" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content regarding an item for internal use by Alma staff.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internal_note_2" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content regarding an item for internal use by Alma staff.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="internal_note_3" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content regarding an item for internal use by Alma staff.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="statistics_note_1" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content that is exposed in analytics.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="statistics_note_2" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content that is exposed in analytics.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="statistics_note_3" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains note content that is exposed in analytics.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="requested" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether item is requested or not. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="edition" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Edition of the item. Output parameter. Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="imprint" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Imprint of the item. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="language" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>EN</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Language of the item. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="library_details" type="library_details" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Information regarding the item's owning library. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parsed_alt_call_number"
+				type="parsed_alt_call_number" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Parsing information for the alternative call number. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parsed_call_number"
+				type="parsed_call_number" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Parsing information for the call number. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="parsed_issue_level_description"
+				type="parsed_issue_level_description" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Parsing information for the description. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="title_abcnph" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>abcnph title</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="physical_condition" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>ItemPhysicalCondition</xs:codeTable>
+						<xs:example>#</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The physical condition of the item.  Usually used to note less than ideal condition.
+					Possible codes are listed in 'ItemPhysicalCondition' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="committed_to_retain" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+				<xs:appinfo>
+					<xs:codeTable>BooleanYesNo</xs:codeTable>
+					<xs:tags>api get post put</xs:tags>
+					<xs:example>true</xs:example>
+				</xs:appinfo>
+				<xs:documentation>If true, this item is part of a collaborative collecting agreement and should not be deleted from this institution.  NOTE: This field will only be available if a feature flag is set for Collaborative Collections.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="retention_reason" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+				<xs:appinfo>
+					<xs:codeTable>RetentionReason</xs:codeTable>
+					<xs:tags>api get post put</xs:tags>
+					<xs:example>RareItem</xs:example>
+				</xs:appinfo>
+				<xs:documentation>The reason for the retention. Possible codes are listed in the 'Retention Reason' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="retention_note" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>Keep for the state library.</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Contains a note about the retention of this item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="library_details">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Information regarding the item's owning library. Output parameter.
+Returned only when view=label.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="address" type="library_address" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>The library's related address. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="library_address">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>The library's related address. Output parameter.
+Returned only when view=label.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="line1" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>address line 1</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Line 1 of the address. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="line2" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>address line 2</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Line 2 of the address. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="line3" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>address line 3</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Line 3 of the address. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="line4" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>address line 4</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Line 4 of the address. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="line5" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>address line 5</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Line 5 of the address. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="city" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Boston</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The relevant city. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="country" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>CountryCodes</xs:codeTable>
+						<xs:tags>api get</xs:tags>
+						<xs:example>VUT</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The address' relevant country.
+Possible codes are listed in the 'Country Codes' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+Output parameter. Returned only when view=label.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>example@example.com</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="phone" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1821-131353</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="postal_code" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>391850011</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The address' relevant postal code. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>state</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The address' relevant state. Output parameter.
+Returned only when view=label.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+
+	</xs:complexType>
+	<xs:complexType name="parsed_alt_call_number">
+		<xs:sequence>
+			<xs:element name="alt_call_no" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="parsed_call_number">
+		<xs:sequence>
+			<xs:element name="call_no" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="parsed_issue_level_description">
+		<xs:sequence>
+			<xs:element name="issue_level_description" type="xs:string" maxOccurs="unbounded" minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

@@ -10,28 +10,27 @@ import dk.kb.alma.gen.item.electronic.ElectronicService;
 import dk.kb.alma.gen.item.electronic.ElectronicServices;
 import dk.kb.alma.gen.portfolios.Portfolio;
 import dk.kb.alma.gen.portfolios.Portfolios;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 public class AlmaElectronicsClient {
-    
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     private final AlmaRestClient almaRestClient;
-    
+
     public AlmaElectronicsClient(@NotNull AlmaRestClient almaRestClient) {
         this.almaRestClient = almaRestClient;
     }
-    
+
     public AlmaRestClient getAlmaRestClient() {
         return almaRestClient;
     }
-    
-    
+
+
     public ElectronicCollections getElectronicCollections(@Nullable String query,
                                                           @Nullable Integer offset,
                                                           @Nullable Integer limit)
@@ -40,16 +39,16 @@ public class AlmaElectronicsClient {
         Utils.nullable(query).ifPresent(value -> link.query("q", value));
         Utils.nullable(limit).ifPresent(value -> link.query("limit", value));
         Utils.nullable(offset).ifPresent(value -> link.query("offset", value));
-        
+
         return almaRestClient.get(link, ElectronicCollections.class);
     }
-    
+
     public ElectronicCollection getElectronicCollection(@NotNull String collectionID)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient.constructLink().path("/electronic/e-collections/").path(collectionID);
         return almaRestClient.get(link, ElectronicCollection.class);
     }
-    
+
     public ElectronicServices getElectronicCollectionServices(@NotNull String collectionID)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient
@@ -59,8 +58,8 @@ public class AlmaElectronicsClient {
                 .path("/e-services");
         return almaRestClient.get(link, ElectronicServices.class);
     }
-    
-    
+
+
     public ElectronicService getElectronicCollectionService(@NotNull String collectionID, @NotNull String serviceID)
             throws AlmaConnectionException, AlmaKnownException, AlmaUnknownException {
         WebClient link = almaRestClient
@@ -71,7 +70,7 @@ public class AlmaElectronicsClient {
                 .path(serviceID);
         return almaRestClient.get(link, ElectronicService.class);
     }
-    
+
     public Portfolios getElectronicCollectionServicePortfolios(@NotNull String collectionID,
                                                                @NotNull String serviceID,
                                                                @Nullable Integer offset,
@@ -88,7 +87,7 @@ public class AlmaElectronicsClient {
         Utils.nullable(offset).ifPresent(value -> link.query("offset", value));
         return almaRestClient.get(link, Portfolios.class);
     }
-    
+
     public Portfolio getElectronicCollectionServicePortfolio(@NotNull String collectionID,
                                                              @NotNull String serviceID,
                                                              @NotNull String portfolioID)
@@ -101,7 +100,7 @@ public class AlmaElectronicsClient {
                 .path(serviceID)
                 .path("/portfolios/")
                 .path(portfolioID);
-    
+
         return almaRestClient.get(link, Portfolio.class);
     }
 }

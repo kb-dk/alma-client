@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:include schemaLocation="rest_network_numbers.xsd" />
+	<xs:annotation>
+		<xs:documentation>An object representation of a Bibliographic Record</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="bib" type="bib" />
+
+	<xs:complexType name="bib">
+		<xs:annotation>
+			<xs:documentation>Bibliographic record object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+
+			<xs:element name="mms_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>991129830000541</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Bibliographic record identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="record_format" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>marc21</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Bibliographic format: marc21, unimarc, kormarc, cnmarc, dc, dcap01, dcap02, dcap-etd, mods, lcbf_work or lcbf_instance. Default is marc21.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="linked_record_id" minOccurs="0"
+				maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Linked record identifier. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="title" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Mythology /</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The title of the Bibliographic record. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="author" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Harrison, Jane Ellen,</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Author. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="issn" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>issn. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="isbn" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>isbn. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="complete_edition" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Complete edition. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="network_numbers" type="network_numbers" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Network number, control number. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="place_of_publication" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Boston :</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Place of publication, part of the imprint information. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date_of_publication" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1924</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date of publication. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="publisher_const" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Marshall Jones</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Publisher_const, part of the imprint information. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="holdings" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>/almaws/v1/bibs/991129830000541/holdings</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Link to a list of Holdings for the Bib record. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="created_by" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>exl_impl</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Creator of the record. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="created_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2013-11-05Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The record creation date. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last_modified_by" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>exl_impl</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Last user to modify the record. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last_modified_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2014-01-20Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Date by which the last change to the record was made. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="suppress_from_publishing" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be published to Primo.
+					Note that the default is true which means that the record will NOT be published.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="suppress_from_external_search" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be found in external search.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="suppress_from_metadoor" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>false</xs:example>
+					</xs:appinfo>
+					<xs:documentation> (under construction) Indication whether the record should be found in MetaDoor.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="rank" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation> (under construction) MetaDoor quality score of metadata </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="enrichment_source" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>01MY_INST</xs:example>
+					</xs:appinfo>
+					<xs:documentation>(under construction) Institution of where the bib was enriched from using MetaDoor</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:appinfo>
+										<xs:example>Institution of data</xs:example>
+									</xs:appinfo>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="enrichment_workflow" minOccurs="0" maxOccurs="1">
+            	<xs:annotation>
+            	 	<xs:appinfo>
+                  		<xs:tags>api get</xs:tags>
+                  		<xs:codeTable>MetadoorEnrichmentWorkflow</xs:codeTable>
+                  		<xs:example>Mediated enrichment</xs:example>
+              		 </xs:appinfo>
+               		<xs:documentation>(under construction) Workflow of which the bib was enriched by MetaDoor.
+					Possible codes are listed in 'MetadoorEnrichmentWorkflow' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].</xs:documentation>
+            	</xs:annotation>
+            	<xs:complexType>
+               		<xs:simpleContent>
+                  		<xs:extension base="xs:string">
+                     		<xs:attribute name="desc" type="xs:string" use="optional" />
+                  		</xs:extension>
+               		</xs:simpleContent>
+            	</xs:complexType>
+         	</xs:element>
+			<xs:element name="sync_with_oclc" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>BIBS</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be found in external search.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sync_with_libraries_australia" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>NONE</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Indication whether the record should be found in external search.
+					Note that the default is false which means that the record will be found.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="originating_system" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>ILS</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The system in which the record was initially generated. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="originating_system_id" type="xs:string"
+				minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>120033845110</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The id of the record in the original system. Output parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cataloging_level" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The cataloging level of the bibliographic record. Possible codes are listed in 'CatalogerLevel' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>CatalogerLevel</xs:codeTable>
+						<xs:example>00</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="brief_level" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Briefness of the record. Ten levels of brief records can be defined from 01 through 10, where 01 represents the most brief record and 10 represents a full record. Possible codes are listed in 'BriefLevels' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>api get post put</xs:tags>
+						<xs:codeTable>BriefLevels</xs:codeTable>
+						<xs:example>01</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+
+			<xs:element name="warnings" type="warnings" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Warnings returned by the validation process when creating or updating a bibliographic record</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="requests" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Number of requests for title. Output parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute name="link" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="warnings">
+		<xs:annotation>
+			<xs:documentation>List of warnings returned by the validation process when creating or updating a bibliographic record</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="warning" type="warning" minOccurs="0"
+					maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Specific warning.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="warning">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Validation warning.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>Validation warning message.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

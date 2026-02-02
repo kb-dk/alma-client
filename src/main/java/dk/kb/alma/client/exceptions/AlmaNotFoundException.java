@@ -1,8 +1,8 @@
 package dk.kb.alma.client.exceptions;
 
 import dk.kb.alma.gen.web_service_result.WebServiceResult;
+import jakarta.ws.rs.core.Response;
 
-import javax.ws.rs.core.Response;
 import java.net.URI;
 
 public class AlmaNotFoundException extends AlmaKnownException {

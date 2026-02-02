@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>Information about a list of linking parameters related to an electronic resource.</xs:documentation>
+    </xs:annotation>
+    <xs:element name="linking_parameters" type="linking_parameters"/>
+    <xs:complexType name="linking_parameters">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post put</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>List of linking parameters. In the PUT action the incoming list will replace the existing list. If the incoming list is empty, the existing list will be deleted.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="linking_parameter" type="linking_parameter" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Specific linking parameter.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="linking_parameter">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:tags>api get post put</xs:tags>
+            </xs:appinfo>
+            <xs:documentation>Specific linking parameter.</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put post</xs:tags>
+                        <xs:example/>
+                    </xs:appinfo>
+                    <xs:documentation>The parameter name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <xs:tags>api get put post</xs:tags>
+                        <xs:example/>
+                    </xs:appinfo>
+                    <xs:documentation>The parameter value.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+</xs:schema>

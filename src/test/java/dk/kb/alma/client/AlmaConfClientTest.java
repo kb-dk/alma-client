@@ -8,26 +8,27 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static dk.kb.alma.client.TestUtils.getAlmaClient;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AlmaConfClientTest {
-    
+
     private static AlmaRestClient client;
-    
+
     @BeforeAll
     static void setupAlmaClient() throws IOException {
         client = TestUtils.getAlmaClient();
     }
+
     @Test
     public void testGetCodeTable() throws AlmaConnectionException, IOException {
         AlmaConfClient almaClient = new AlmaConfClient(client);
-        
+
         CodeTable requestCancellationReasons = almaClient.getCodeTable("electronicMaterialType");
         Rows rows = requestCancellationReasons.getRows();
         assertNotNull(rows);
         assertTrue(rows.getRows().size() > 0);
     }
-    
-    
+
+
 }

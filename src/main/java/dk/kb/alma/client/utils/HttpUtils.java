@@ -1,22 +1,20 @@
 package dk.kb.alma.client.utils;
 
 import dk.kb.alma.client.HttpClient;
-import dk.kb.alma.client.exceptions.AlmaConnectionException;
 import dk.kb.alma.client.exceptions.AlmaUnknownException;
 import dk.kb.alma.gen.web_service_result.Error;
 import dk.kb.alma.gen.web_service_result.ErrorList;
 import dk.kb.alma.gen.web_service_result.WebServiceResult;
 import dk.kb.util.xml.XML;
+import jakarta.annotation.Nullable;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,9 +24,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class HttpUtils {
-    
+
     protected final static Logger log = LoggerFactory.getLogger(HttpUtils.class);
-    
+
     public static WebServiceResult readWebServiceResult(HttpClient.Operation operation,
                                                         URI currentURI,
                                                         WebApplicationException e,
@@ -37,18 +35,18 @@ public class HttpUtils {
         WebServiceResult result;
         try {
             if (Stream.of(MediaType.APPLICATION_XML_TYPE,
-                          MediaType.TEXT_XML_TYPE,
-                          MediaType.APPLICATION_JSON_TYPE)
-                      .anyMatch(mediaType -> response.getMediaType().isCompatible(mediaType))) {
+                            MediaType.TEXT_XML_TYPE,
+                            MediaType.APPLICATION_JSON_TYPE)
+                    .anyMatch(mediaType -> response.getMediaType().isCompatible(mediaType))) {
                 result = response.readEntity(WebServiceResult.class);
             } else {
                 throw new AlmaUnknownException(operation.name(),
-                                               entityMessage,
-                                               currentURI,
-                                               response,
-                                               new IllegalArgumentException("Invalid return type '"
-                                                                            + response.getMediaType()
-                                                                            + "'"));
+                        entityMessage,
+                        currentURI,
+                        response,
+                        new IllegalArgumentException("Invalid return type '"
+                                + response.getMediaType()
+                                + "'"));
             }
         } catch (Exception e2) {
             log.error(
@@ -60,29 +58,22 @@ public class HttpUtils {
         }
         return result;
     }
-    
+
     public static <E> String formatEntityMessage(E entity, WebApplicationException e) {
         String entityMessage = "";
         if (entity != null) {
-            try {
-                entityMessage = "with entity '" + XML.marshall(entity) + "' ";
-            } catch (JAXBException jaxbException) {
-                throw new AlmaConnectionException(jaxbException
-                                                  + ": Failed to parse entity '"
-                                                  + entity
-                                                  + "' as xml, but throwing the original WebApplicationException", e);
-            }
+            entityMessage = "with entity '" + XML.marshall(entity) + "' ";
         }
         return entityMessage;
     }
-    
+
     public static Response getResponse(WebApplicationException e) {
         Response response = e.getResponse();
         //Buffer entity so we can read the response multiple times
         response.bufferEntity();
         return response;
     }
-    
+
     @Nullable
     public static Error getFirstError(WebServiceResult result) {
         return Optional
@@ -97,19 +88,19 @@ public class HttpUtils {
                 .findFirst()
                 .orElse(null);
     }
-    
+
     public static void extendTimeouts(HttpClient.Operation operation, WebClient uri, URI currentURI) {
         HTTPClientPolicy clientPolicy = WebClient.getConfig(uri).getHttpConduit().getClient();
         clientPolicy.setConnectionTimeout(clientPolicy.getConnectionTimeout() * 2);
         clientPolicy.setReceiveTimeout(clientPolicy.getReceiveTimeout() * 2);
         clientPolicy.setConnectionRequestTimeout(clientPolicy.getConnectionRequestTimeout() * 2);
         log.debug("Increased timeouts to connect={}ms and receive={}ms for the {}ing of {}",
-                  clientPolicy.getConnectionTimeout(),
-                  clientPolicy.getReceiveTimeout(),
-                  operation.name(),
-                  currentURI);
+                clientPolicy.getConnectionTimeout(),
+                clientPolicy.getReceiveTimeout(),
+                operation.name(),
+                currentURI);
     }
-    
+
     /**
      * Walk through the Throwable cause-tree and return it as a list
      *

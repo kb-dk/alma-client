@@ -1,0 +1,426 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:documentation>
+				Job instance object represents a specific submittion of the job.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:element name="job_instance" type="job_instance"/>
+
+	<xs:complexType name="job_instance">
+		<xs:annotation>
+			<xs:documentation>job_instance Object.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1108569450000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						Unique id of the specific job instance. Should be used in subsequent queries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="external_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1108569450000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						External id of the specific job instance.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Export Physical Items - war and love - 04/15/2015 16:07</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The job instance name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="submitted_by" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>exl_impl</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The person who ran the job.
+						This can be "System" for system jobs, "API" for jobs which were initiated by API, or the praimary_id of a specific staff.
+						In case of a staff, the "desc" attribute will contain the user's full name.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="submit_time" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2015-04-15T13:07:40.800Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date and time when the job was submitted.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="start_time" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2015-04-15T13:07:40.868Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date and time when the job started.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="end_time" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2015-04-15T13:07:44.359Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date and time when the job ended.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="progress" type="xs:decimal" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>100</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The progress (percent) of the job instance so far.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="status" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>systemJobStatus</xs:codeTable>
+						<xs:tags>api get post put</xs:tags>
+						<xs:example>QUEUED</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The current status of the job.
+						Possible codes are listed in 'systemJobStatus' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API]
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="status_date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>2015-04-15Z</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The date in which the status was last updated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="alerts" type="alerts" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						List of Alerts that are related to the job run.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="counters" type="counters" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						List of the job instance's related counters.
+						In the Alma UI, theses are "counters", "statistics" and "errors" lists.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="actions" type="actions" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						Relevant for MD import job instances.
+						List of the job instance's related actions.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="job_info" type="job_info" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						Related job information.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="alerts">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+				<xs:example>/almawa/v1/conf/jobs/M26714670000011/instacnce/1108569450000121</xs:example>
+			</xs:appinfo>
+			<xs:documentation>
+				List of Alerts thar are related to the job instance.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="alert" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:codeTable>SystemJobReportAlertMessage</xs:codeTable>
+						<xs:example>alert_general_success</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						Specific alert.
+						Possible codes are listed in 'SystemJobReportAlertMessage' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="counters">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				List of the job instance's related counters.
+				In the Alma UI, theses are "counters", "statistics" and "errors" lists.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific counter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="counter">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Specific counter.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="type" minOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>4</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The counter type. Mandatory.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The counter value. Mandatory.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+		<xs:complexType name="actions">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+						Relevant for MD import job instances.
+						List of the job instance's related actions.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="action" type="action" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>Specific action.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="action">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Specific action.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="type" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>CREATE_SET</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The action type. Currently, only CREATE_SET is supported.
+						This action is parallel to the "create title set" option from the Alma UI for MD import job instance.
+						Note that in order to submit this action, you can use the link URL with POST.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="population" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						The population that will be part of the "create set" action.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="members" type="xs:int" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The estimated numbers of members in the population.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+
+		<xs:complexType name="job_info">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Related job information.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>1108569450000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The job id.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example>Export Physical Items - war and love - 04/15/2015 16:07</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The job name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get</xs:tags>
+						<xs:example></xs:example>
+					</xs:appinfo>
+					<xs:documentation>The job description.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+					<xs:example>CREATE_SET</xs:example>
+						<xs:codeTable/>
+						<xs:tags>api get</xs:tags>
+					</xs:appinfo>
+					<xs:documentation>
+						The type of the job: MANUAL or SCHEDULED.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="category" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:codeTable>HPaTaskChain.type</xs:codeTable>
+						<xs:tags>api get</xs:tags>
+						<xs:example>NORMALIZATION</xs:example>
+					</xs:appinfo>
+					<xs:documentation>
+						The sub type of the job.
+						For manual jobs, possible codes are listed in 'HPaTaskChain.type' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+						For scheduled jobs, possible codes are listed in 'systemJobsGroups' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	<xs:attribute name="link" type="xs:string" use="optional"/>
+	</xs:complexType>
+
+</xs:schema>

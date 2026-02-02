@@ -1,0 +1,103 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>An object representation of request details</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="rs_request_details" type="rs_request_details" />
+
+	<xs:complexType name="rs_request_details">
+		<xs:annotation>
+			<xs:documentation>Resource sharing request details</xs:documentation>
+		</xs:annotation>
+		
+		<xs:sequence>
+
+
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="amount">
+		<xs:all>
+			<xs:annotation>
+				<xs:appinfo>
+					<xs:tags>api get post</xs:tags>
+					<xs:example>100</xs:example>
+				</xs:appinfo>
+				<xs:documentation>The amount to pay.</xs:documentation>
+			</xs:annotation>
+			<xs:element name="sum" type="xs:decimal" maxOccurs="1" minOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>0.00</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The total sum.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="currency" maxOccurs="1" minOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>api get post</xs:tags>
+						<xs:example>USD</xs:example>
+						<xs:codeTable>MT_CurrencySubset_by_CT_Currency_CT</xs:codeTable>
+					</xs:appinfo>
+					<xs:documentation>
+						The currency. Possible values are listed in 'Currency_CT' [code table|https://developers.exlibrisgroup.com/blog/Working-with-the-code-tables-API].
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="desc" type="xs:string" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="rs_notes">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get post</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>
+				List of related notes that appear in the Notes tab in the UI..
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="rs_note" type="rs_note" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Specific related note.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="rs_note">
+		<xs:annotation>
+			<xs:appinfo>
+				<xs:tags>api get post</xs:tags>
+			</xs:appinfo>
+			<xs:documentation>Specific related note.</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="content" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The note's text. Mandatory.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="created_date" type="xs:date" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						The creation date of the note. Default is the current date.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="created_by" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The creator of the note.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,277 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:annotation>
+		<xs:documentation>An object representation of Rapido offer</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="rs_offer_details" type="rs_offer_details" />
+
+	<xs:complexType name="rs_offer_details">
+		<xs:annotation>
+			<xs:documentation>Rapido offer details</xs:documentation>
+		</xs:annotation>
+		
+		<xs:sequence>
+
+			<xs:element name="policy_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>227339340000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The internal identifier of the best offer chosen policy.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="policy_type" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>Physical</xs:example>
+					</xs:appinfo>
+					<xs:documentation>Whether the policy type is for Digital or Physical.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="supply_time" type="xs:int" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>5</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The amount of time (in hours, divide by 24 for days) till the user receives the item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="loan_period" type="xs:int" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>5</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The amount of time (in days) the user has before having to return the item to the resource sharing library.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="expiry_time" type="xs:int" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>5</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The amount of time (in days) the librarian has before the resource sharing request expire.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="cost" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>10</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The cost of the request.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="currency" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>USD</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The currency that we use for the request cost.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="allow_renewal" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the request renewal is allowed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="maximum_renewals_allowed" type="xs:int" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The number of allowed renewals.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="allow_automatic_renewal" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the request automatic renewal is allowed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="available_mms_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>227339340000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The mms id that the offer belong to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="pod_id" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>227339340000121</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The pod id that the borrowing request is attached to. in case the current pod is a locally managed rota, the rota id should be populated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="pod_name" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>Global pod</xs:example>
+					</xs:appinfo>
+					<xs:documentation>The pod name. in case the current pod is a locally managed rota, the rota id should be populated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="rapido_ind" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the request is a Rapido request or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="unavailable_resource" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the requested resource is unavailable at lender.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="eBookOffer" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the offer POD is an eBook POD.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="extend_due_date_on_close_borrowing_library" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the offer POD enables extending due date when borrowing library is closed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="pua_pod" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>true</xs:example>
+					</xs:appinfo>
+					<xs:documentation>An indication whether the pod is a pua pod.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element name="pickup_members" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						A list of pickup members. Each pickup_member contains a member ID as its value. The description attribute is the institution name followed by the member name.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>
+							<pickup_members>
+								<pickup_member description="Some College - Resource Sharing Library">4768398480003576</pickup_member>
+								<pickup_member description="Some University - Resource Sharing Library">8892008940003876</pickup_member>
+							</pickup_members>
+
+							JSON:
+							{
+							"pickupMembers": [
+
+
+							{              "value": "4768398480003576",              "description": "Some College - Resource Sharing Library"            }
+							,
+
+
+							{              "value": "8892008940003876",              "description": "Some University - Resource Sharing Library"            }
+							]
+							}
+						</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="pickup_member" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="description" type="xs:string" use="required"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="pickup_locations" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						A list of pickup locations. Each pickup_location contains a library code as its value and the library name as a required description attribute.
+					</xs:documentation>
+					<xs:appinfo>
+						<xs:tags>get</xs:tags>
+						<xs:example>
+							<pickup_locations>
+								<pickup_location description="Main Library">MAIN</pickup_location>
+							</pickup_locations>
+
+							JSON:
+
+
+							{          "pickupLocations": [            \{ "value": "MAIN", "description": "Main Library" }
+							]
+							}
+						</xs:example>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="pickup_location" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="description" type="xs:string" use="required"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+		</xs:sequence>
+	</xs:complexType>	 
+</xs:schema>
+

@@ -5,8 +5,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
 public class ParallelUtils {
-    
-    public static <T> T inParrallel(int threads, Callable<T> t){
+
+    public static <T> T inParrallel(int threads, Callable<T> t) {
         ForkJoinPool forkJoinPool = null;
         try {
             forkJoinPool = new ForkJoinPool(threads);

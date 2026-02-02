@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.sbforge</groupId>
         <artifactId>sbforge-parent</artifactId>
-        <version>22</version>
+        <version>25</version>
         <relativePath />
     </parent>
 
     <groupId>dk.kb.alma</groupId>
     <artifactId>alma-client</artifactId>
-    <version>0.45-SNAPSHOT</version>
+    <version>2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
 
@@ -35,115 +35,199 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <!-- Run 'mvn package -DallTests' to run all tests, including slow ones
              Annotate tests with '@Tag("slow")' or '@Tag("fast")' -->
-        <!-- Specify java version here, to support forbiddenapis plugin -->
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <!-- Specify java version here, to support forbidden APIs plugin -->
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <!-- Replace the line below with  -->
         <api.check.phase>none</api.check.phase>
         <!--       to disable forbidden APIs check -->
         <!--      <api.check.phase>process-classes</api.check.phase>-->
 
-
-        <cxf.version>3.4.5</cxf.version>
-        <jackson.version>2.12.5</jackson.version>
-
         <license.name>Apache License, Version 2.0</license.name>
         <license.url>https://www.apache.org/licenses/LICENSE-2.0.txt</license.url>
         <description.short>KB Digitisation on Demand</description.short>
+        <cxf.version>4.1.4</cxf.version>
 
+        <kb-util.version>2.0.1</kb-util.version>
+        <marc4j.version>2.9.6</marc4j.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
+        <junit.version>6.0.2</junit.version>
+        <junit-jupiter-engine.version>${junit.version}</junit-jupiter-engine.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <logback-classic.version>1.5.26</logback-classic.version>
+        <mockito-core.version>5.21.0</mockito-core.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
+        <jakarta.xml.bind-api.version>4.0.4</jakarta.xml.bind-api.version>
+        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
+        <jaxb-runtime.version>4.0.6</jaxb-runtime.version>
+        <jaxb-maven-plugin.version>4.0.12</jaxb-maven-plugin.version>
+        <jaxb-maven-plugin.generateDirectory>target/generated-sources/</jaxb-maven-plugin.generateDirectory>
+        <angus-activation.version>2.0.3</angus-activation.version>
+        <jackson.version>3.0.4</jackson.version>
+        <jackson-datatype-jsr310.version>3.0.0-rc2</jackson-datatype-jsr310.version>
+        <jackson-annotations.version>3.0-rc5</jackson-annotations.version>
+        <jackson-databind.version>3.0.4</jackson-databind.version>
+        <jackson-core.version>3.0.4</jackson-core.version>
+        <byte-buddy.version>1.17.7</byte-buddy.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <argLine/>
+        <snakeyaml.version>2.5</snakeyaml.version>
+        <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
     </properties>
-
 
     <dependencies>
         <dependency>
             <groupId>dk.kb.util</groupId>
             <artifactId>kb-util</artifactId>
-            <version>1.4.6</version>
+            <version>${kb-util.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.marc4j</groupId>
             <artifactId>marc4j</artifactId>
-            <version>2.9.2</version>
+            <version>${marc4j.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
-        <dependency>
-            <!--For the alma rest client-->
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        <!-- JSON processing: jackson -->
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta.xml.bind-api.version}</version>
         </dependency>
-
-
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <groupId>tools.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-datatype-jsr310.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-xml-provider -->
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <groupId>tools.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-xml-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
         <dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.33</version>
+            <version>${slf4j-api.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.18.0</version>
+            <version>${mockito-core.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
-            <version>5.8.2</version>
+            <version>${junit-jupiter-engine.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>2.2</version>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.10</version>
+            <version>${logback-classic.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-runtime.version}</version>
+        </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>${angus-activation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-core</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <!-- Jackson Artifacts are relocated to tools.jackson.core -->
+            <!-- Vi use the new location in our project, but these new versions are here to resolve conflicts -->
+            <!-- Should be removed when they also use the new location -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.21.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+                <version>2.21.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-base</artifactId>
+                <version>2.21.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <testResources>
             <testResource>
@@ -151,50 +235,59 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
-
         <resources>
             <resource>
                 <directory>target/generated-resources</directory>
             </resource>
         </resources>
         <plugins>
+<!--            TODO https://kb-dk.atlassian.net/browse/AOL-654 -->
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>license-maven-plugin</artifactId>-->
+<!--                <version>${license-maven-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>download-licenses</id>-->
+<!--                        <goals>-->
+<!--                            <goal>download-licenses</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <configuration>-->
+<!--                            <licensesOutputDirectory>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-->
+<!--                            </licensesOutputDirectory>-->
+<!--                            <excludedScopes>test</excludedScopes>-->
+<!--                            <licensesConfigFile>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-config.xml-->
+<!--                            </licensesConfigFile>-->
+<!--                            <licensesOutputFile>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses.xml-->
+<!--                            </licensesOutputFile>-->
+<!--                            <licensesErrorsFile>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-errors.xml-->
+<!--                            </licensesErrorsFile>-->
+<!--                            <includeTransitiveDependencies>true</includeTransitiveDependencies>-->
+<!--                            <organizeLicensesByDependencies>true</organizeLicensesByDependencies>-->
+<!--                            <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>2.0.0</version>
-                <executions>
-                    <execution>
-                        <id>download-licenses</id>
-                        <goals>
-                            <goal>download-licenses</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <licensesOutputDirectory>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses
-                            </licensesOutputDirectory>
-                            <excludedScopes>test</excludedScopes>
-                            <licensesConfigFile>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-config.xml
-                            </licensesConfigFile>
-                            <licensesOutputFile>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses.xml
-                            </licensesOutputFile>
-                            <licensesErrorsFile>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-errors.xml
-                            </licensesErrorsFile>
-                            <includeTransitiveDependencies>true</includeTransitiveDependencies>
-                            <organizeLicensesByDependencies>true</organizeLicensesByDependencies>
-                            <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar
+                    </argLine>
+                </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -211,22 +304,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                    </compilerArgs>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.google.errorprone</groupId>
-                            <artifactId>error_prone_core</artifactId>
-                            <version>2.3.3</version>
-                        </path>
-                        <path>
-                            <groupId>com.google.guava</groupId>
-                            <artifactId>guava-beta-checker</artifactId>
-                            <version>1.0</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
                 <executions>
                     <execution>
@@ -238,8 +324,6 @@
                         <configuration>
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>
-                                <!-- Remove -XepDisableAllChecks to keep all checks enabled -->
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:BetaApi:ERROR</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
@@ -254,8 +338,6 @@
                                  NOTE: in this specific case, we could just NOT enable Error Prone at all -->
                             <compilerArgs>
                                 <arg>-XDcompilePolicy=simple</arg>
-                                <!-- Remove -XepDisableAllChecks to keep all checks enabled -->
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:BetaApi:OFF</arg>
                             </compilerArgs>
                         </configuration>
                     </execution>
@@ -265,7 +347,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven-jar-plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -276,17 +358,9 @@
             </plugin>
 
             <plugin>
-                <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>0.15.0</version>
-<!--                <dependencies>
-                    &lt;!&ndash; https://mvnrepository.com/artifact/com.thoughtworks.qdox/qdox &ndash;&gt;
-                    <dependency>
-                        <groupId>com.thoughtworks.qdox</groupId>
-                        <artifactId>qdox</artifactId>
-                        <version>2.0.0</version>
-                    </dependency>
-                </dependencies>-->
+                <groupId>org.jvnet.jaxb</groupId>
+                <artifactId>jaxb-maven-plugin</artifactId>
+                <version>${jaxb-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>xjc_alma_sru</id>
@@ -295,9 +369,8 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
+
                             <generatePackage>dk.kb.alma.gen.sru</generatePackage>
-
-
                             <schemaExcludes>
                                 <exclude>\.txt</exclude>
                                 <exclude>\.xjb</exclude>
@@ -308,22 +381,7 @@
 
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
 
-
-            <plugin>
-                <groupId>com.evolvedbinary.maven.jvnet</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>0.15.0</version>
-<!--                <dependencies>
-                    <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-runtime</artifactId>
-                        <version>3.0.1</version>
-                    </dependency>
-                </dependencies>-->
-                <executions>
                     <execution>
                         <id>rest_portfolios</id>
                         <goals>
@@ -341,7 +399,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.portfolios</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-rest_portfolios/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-rest_portfolios/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -361,7 +419,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.user_resource_sharing_request</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-user_resource_sharing_request/
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-user_resource_sharing_request/
                             </generateDirectory>
                         </configuration>
                     </execution>
@@ -382,11 +440,10 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.partners</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-partners/
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-partners/
                             </generateDirectory>
                         </configuration>
                     </execution>
-
 
 
                     <execution>
@@ -406,7 +463,7 @@
                             </schemas>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.web_service_result</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-web_service_result/
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-web_service_result/
                             </generateDirectory>
                         </configuration>
                     </execution>
@@ -428,7 +485,7 @@
                             </schemas>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.bibs</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-bibs/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-bibs/</generateDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -454,7 +511,7 @@
                             </schemas>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.code_table</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-code_table/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-code_table/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -475,7 +532,7 @@
                             </schemas>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.items</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-items/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-items/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -496,7 +553,7 @@
                             </schemaIncludes>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.users</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-users/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-users/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -517,7 +574,7 @@
                             </schemas>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.fees</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-fees/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-fees/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -538,7 +595,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.libraries</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-libraries/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-libraries/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -558,7 +615,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.general</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-rest_general/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-rest_general/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -578,7 +635,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.requested_resources</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-requested_resources/
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-requested_resources/
                             </generateDirectory>
                         </configuration>
                     </execution>
@@ -600,7 +657,7 @@
                             </schemas>
                             <!--These schemas clashes with the other schemas so they need to be located in a different package-->
                             <generatePackage>dk.kb.alma.gen.user_requests</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-user_requests/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-user_requests/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -620,7 +677,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.locations</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-locations/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-locations/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -640,7 +697,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.holdings</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-holdings/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-holdings/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -660,7 +717,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.holding</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-holding/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-holding/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -685,29 +742,41 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.analytics</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-analytics/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-analytics/</generateDirectory>
                         </configuration>
                     </execution>
-
                     <execution>
-                        <id>alma-rest-webhooks</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
+                        <id>webhook</id>
+                        <goals><goal>generate</goal></goals>
                         <configuration>
-                            <schemaLanguage>XMLSCHEMA</schemaLanguage>
                             <schemas>
                                 <schema>
-                                    <url>https://developers.exlibrisgroup.com/wp-content/uploads/alma/xsd/webhook.xsd
-                                    </url>
+                                    <fileset>
+                                        <directory>src/main/schemas/webhook</directory>
+                                        <excludes>
+                                            <exclude>rest_bib.xsd</exclude>
+                                            <exclude>rest_fee.xsd</exclude>
+                                            <exclude>rest_group_settings.xsd</exclude>
+                                            <exclude>rest_holding.xsd</exclude>
+                                            <exclude>rest_item.xsd</exclude>
+                                            <exclude>rest_item_loan.xsd</exclude>
+                                            <exclude>rest_job_instance.xsd</exclude>
+                                            <exclude>rest_linking_parameters.xsd</exclude>
+                                            <exclude>rest_notes.xsd</exclude>
+                                            <exclude>rest_network_numbers.xsd</exclude>
+                                            <exclude>rest_portfolio.xsd</exclude>
+                                            <exclude>rest_representation.xsd</exclude>
+                                            <exclude>rest_rs_request_details.xsd</exclude>
+                                            <exclude>rest_user_request.xsd</exclude>
+                                            <exclude>rest_user_resource_sharing_request.xsd</exclude>
+                                        </excludes>
+                                    </fileset>
                                 </schema>
                             </schemas>
+                            <generateDirectory>${generated}webhook</generateDirectory>
                             <generatePackage>dk.kb.alma.gen.webhooks</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-webhooks/</generateDirectory>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>alma-rest-item-loans</id>
                         <goals>
@@ -724,7 +793,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.item.loans</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-item-loans/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-item-loans/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -738,7 +807,7 @@
                             <schemaLanguage>XMLSCHEMA</schemaLanguage>
                             <schemaDirectory>src/main/schemas/electronic</schemaDirectory>
                             <generatePackage>dk.kb.alma.gen.item.electronic</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-electronic/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-electronic/</generateDirectory>
                         </configuration>
                     </execution>
 
@@ -758,7 +827,7 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.vendor</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-vendors/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-vendors/</generateDirectory>
 
                         </configuration>
                     </execution>
@@ -779,7 +848,8 @@
                                 </schema>
                             </schemas>
                             <generatePackage>dk.kb.alma.gen.purchase_requests</generatePackage>
-                            <generateDirectory>target/generated-sources/jaxb2-alma-purchase_requests/</generateDirectory>
+                            <generateDirectory>${jaxb-maven-plugin.generateDirectory}jaxb-alma-purchase_requests/
+                            </generateDirectory>
 
                         </configuration>
                     </execution>
@@ -789,7 +859,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>add-test-resource</id>
