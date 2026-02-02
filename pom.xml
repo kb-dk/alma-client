@@ -61,21 +61,21 @@
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
         <jakarta.xml.bind-api.version>4.0.4</jakarta.xml.bind-api.version>
+        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
         <jaxb-runtime.version>4.0.6</jaxb-runtime.version>
         <jaxb-maven-plugin.version>4.0.12</jaxb-maven-plugin.version>
+        <jaxb-maven-plugin.generateDirectory>target/generated-sources/</jaxb-maven-plugin.generateDirectory>
         <angus-activation.version>2.0.3</angus-activation.version>
         <jackson.version>3.0.4</jackson.version>
         <jackson-datatype-jsr310.version>3.0.0-rc2</jackson-datatype-jsr310.version>
         <jackson-annotations.version>3.0-rc5</jackson-annotations.version>
-        <jaxb-maven-plugin.generateDirectory>target/generated-sources/</jaxb-maven-plugin.generateDirectory>
+        <jackson-databind.version>3.0.4</jackson-databind.version>
+        <jackson-core.version>3.0.4</jackson-core.version>
         <byte-buddy.version>1.17.7</byte-buddy.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <argLine/>
         <snakeyaml.version>2.5</snakeyaml.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <jackson-databind.version>3.0.4</jackson-databind.version>
-        <jackson-core.version>3.0.4</jackson-core.version>
-        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
     </properties>
 
     <dependencies>
@@ -195,11 +195,6 @@
                 <version>2.21.0</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.21.0</version>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
                 <version>2.21.0</version>
@@ -246,38 +241,39 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>${license-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>download-licenses</id>
-                        <goals>
-                            <goal>download-licenses</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <licensesOutputDirectory>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses
-                            </licensesOutputDirectory>
-                            <excludedScopes>test</excludedScopes>
-                            <licensesConfigFile>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-config.xml
-                            </licensesConfigFile>
-                            <licensesOutputFile>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses.xml
-                            </licensesOutputFile>
-                            <licensesErrorsFile>
-                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-errors.xml
-                            </licensesErrorsFile>
-                            <includeTransitiveDependencies>true</includeTransitiveDependencies>
-                            <organizeLicensesByDependencies>true</organizeLicensesByDependencies>
-                            <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            TODO https://kb-dk.atlassian.net/browse/AOL-654 -->
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>license-maven-plugin</artifactId>-->
+<!--                <version>${license-maven-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>download-licenses</id>-->
+<!--                        <goals>-->
+<!--                            <goal>download-licenses</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <configuration>-->
+<!--                            <licensesOutputDirectory>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-->
+<!--                            </licensesOutputDirectory>-->
+<!--                            <excludedScopes>test</excludedScopes>-->
+<!--                            <licensesConfigFile>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-config.xml-->
+<!--                            </licensesConfigFile>-->
+<!--                            <licensesOutputFile>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses.xml-->
+<!--                            </licensesOutputFile>-->
+<!--                            <licensesErrorsFile>-->
+<!--                                ${project.build.directory}/generated-resources/META-INF/dependencies-licenses-errors.xml-->
+<!--                            </licensesErrorsFile>-->
+<!--                            <includeTransitiveDependencies>true</includeTransitiveDependencies>-->
+<!--                            <organizeLicensesByDependencies>true</organizeLicensesByDependencies>-->
+<!--                            <cleanLicensesOutputDirectory>true</cleanLicensesOutputDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
