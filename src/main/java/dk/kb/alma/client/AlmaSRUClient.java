@@ -1,8 +1,11 @@
 package dk.kb.alma.client;
 
 import dk.kb.alma.client.sru.Query;
-import dk.kb.alma.gen.sru.*;
+import dk.kb.alma.gen.sru.Explain;
+import dk.kb.alma.gen.sru.ExplainResponse;
 import dk.kb.alma.gen.sru.Record;
+import dk.kb.alma.gen.sru.Records;
+import dk.kb.alma.gen.sru.SearchRetrieveResponse;
 import dk.kb.util.xml.XML;
 import jakarta.annotation.Nonnull;
 import org.apache.cxf.jaxrs.client.WebClient;

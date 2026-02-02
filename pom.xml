@@ -71,6 +71,11 @@
         <byte-buddy.version>1.17.7</byte-buddy.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <argLine/>
+        <snakeyaml.version>2.5</snakeyaml.version>
+        <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
+        <jackson-databind.version>3.0.4</jackson-databind.version>
+        <jackson-core.version>3.0.4</jackson-core.version>
+        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
     </properties>
 
     <dependencies>
@@ -167,6 +172,19 @@
                 <version>${cxf.version}</version>
             </dependency>
             <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <!-- Jackson Artifacts are relocated to tools.jackson.core -->
+            <!-- Vi use the new location in our project, but these new versions are here to resolve conflicts -->
+            <!-- Should be removed when they also use the new location -->
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson-annotations.version}</version>
@@ -177,34 +195,30 @@
                 <version>2.21.0</version>
             </dependency>
             <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>3.0.0-rc2</version>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.19.2</version>
-            </dependency>
-            <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>3.0.0-rc2</version>
+                <version>2.21.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
-                <version>2.20.0</version>
+                <version>2.21.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-base</artifactId>
+                <version>2.21.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>jakarta.activation</groupId>
                 <artifactId>jakarta.activation-api</artifactId>
-                <version>2.1.4</version>
+                <version>${jakarta.activation-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>4.0.4</version>
+                <version>${jakarta.xml.bind-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -214,12 +228,7 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>2.5</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
-                <artifactId>jackson-jakarta-rs-base</artifactId>
-                <version>2.21.0</version>
+                <version>${snakeyaml.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -854,7 +863,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>add-test-resource</id>

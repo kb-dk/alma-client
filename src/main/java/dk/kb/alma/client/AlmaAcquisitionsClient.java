@@ -1,6 +1,18 @@
 package dk.kb.alma.client;
 
-import dk.kb.alma.gen.vendor.*;
+import dk.kb.alma.gen.vendor.Account;
+import dk.kb.alma.gen.vendor.Accounts;
+import dk.kb.alma.gen.vendor.Addresses;
+import dk.kb.alma.gen.vendor.ContactInfo;
+import dk.kb.alma.gen.vendor.EdiInfo;
+import dk.kb.alma.gen.vendor.Emails;
+import dk.kb.alma.gen.vendor.Interfaces;
+import dk.kb.alma.gen.vendor.Notes;
+import dk.kb.alma.gen.vendor.PaymentMethods;
+import dk.kb.alma.gen.vendor.Phones;
+import dk.kb.alma.gen.vendor.Vendor;
+import dk.kb.alma.gen.vendor.Vendors;
+import dk.kb.alma.gen.vendor.WebAddresses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

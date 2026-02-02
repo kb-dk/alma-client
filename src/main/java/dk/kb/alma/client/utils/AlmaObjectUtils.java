@@ -2,7 +2,11 @@ package dk.kb.alma.client.utils;
 
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.requested_resources.RequestedResource;
-import dk.kb.alma.gen.users.*;
+import dk.kb.alma.gen.users.Address;
+import dk.kb.alma.gen.users.Addresses;
+import dk.kb.alma.gen.users.ContactInfo;
+import dk.kb.alma.gen.users.Email;
+import dk.kb.alma.gen.users.User;
 import dk.kb.util.other.StringListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +16,11 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
