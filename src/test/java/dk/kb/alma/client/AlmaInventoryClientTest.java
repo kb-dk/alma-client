@@ -5,22 +5,29 @@ import dk.kb.alma.client.exceptions.AlmaKnownException;
 import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.client.utils.MarcRecordHelper;
 import dk.kb.alma.gen.bibs.Bib;
+import dk.kb.alma.gen.holding.Holding;
 import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.portfolios.Portfolio;
 import dk.kb.util.xml.XML;
+import jakarta.validation.constraints.AssertFalse;
+import jakarta.validation.constraints.AssertTrue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.VariableField;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.List;
 
 import static dk.kb.alma.client.utils.MarcRecordHelper.DF245_TAG;
+import static dk.kb.alma.client.utils.MarcRecordHelper.saveMarcRecordOnHolding;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -138,20 +145,44 @@ class AlmaInventoryClientTest {
     }
 
     @Test
-    public void testGetHoldings() throws AlmaConnectionException, IOException {
+    public void testGetHoldings() throws AlmaConnectionException {
         AlmaInventoryClient almaClient = new AlmaInventoryClient(client, 100);
 
-//        List<String> holdingIdList = new ArrayList<>();
         String bibId = "99122030762505763";
         Holdings holdings = almaClient.getBibHoldings(bibId);
-//        for (int i = 0; i < holdings.getTotalRecordCount(); i++) {
-//            holdingIdList.add(holdings.getHolding().get(i).getHoldingId() );
-//
-//        }
         assertNotNull(holdings);
-        assertTrue(holdings.getHoldings().size() >= 1);
+        assertFalse(holdings.getHoldings().isEmpty());
     }
 
+    @Test
+    public void testUpdateHolding() throws MarcXmlException {
+        AlmaInventoryClient almaClient = new AlmaInventoryClient(client, 100);
+        String bibId = "99122030762505763";
+        String holdId ="222088096330005763";
+        final Holding holding = almaClient.getHolding(bibId, holdId);
+        Record holdingMarcRec = MarcRecordHelper.getMarcRecordFromHolding(holding);
+
+        MarcRecordHelper.addDataField(holdingMarcRec,  "866", '3', '0', 'a', "TestData");
+        MarcRecordHelper.saveMarcRecordOnHolding(holding, holdingMarcRec);
+        almaClient.updateHolding("99122030762505763", holding);
+
+        final Holding holdingUpd = almaClient.getHolding(bibId, holdId);
+        Record holdingUpdMarcRec = MarcRecordHelper.getMarcRecordFromHolding(holdingUpd);
+        List<VariableField> variableFieldsBeforeCleanup = holdingUpdMarcRec.find("866", "TestData");
+        assertFalse(variableFieldsBeforeCleanup.isEmpty(), "The added '866' field with 'TestData' should be present in the holding after update");
+
+        for (VariableField vf : variableFieldsBeforeCleanup){
+            holdingUpdMarcRec.removeVariableField(vf);
+        }
+
+        MarcRecordHelper.saveMarcRecordOnHolding(holdingUpd, holdingUpdMarcRec);
+        almaClient.updateHolding(bibId, holdingUpd);
+
+        final Holding holdingAfterCleanup = almaClient.getHolding(bibId, holdId);
+        Record holdingAfterCleanupMarcRec = MarcRecordHelper.getMarcRecordFromHolding(holdingAfterCleanup);
+        List<VariableField> variableFieldsAfterCleanup = holdingAfterCleanupMarcRec.find("866", "TestData");
+        assertTrue(variableFieldsAfterCleanup.isEmpty(), "The '866' field with 'TestData' should be removed from the holding after cleanup");
+    }
 
     @Test
     public void testCreateBibRecord() throws IOException, AlmaConnectionException {
