@@ -10,13 +10,10 @@ import dk.kb.alma.gen.holdings.Holdings;
 import dk.kb.alma.gen.items.Item;
 import dk.kb.alma.gen.portfolios.Portfolio;
 import dk.kb.util.xml.XML;
-import jakarta.validation.constraints.AssertFalse;
-import jakarta.validation.constraints.AssertTrue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.VariableField;
 
@@ -25,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static dk.kb.alma.client.utils.MarcRecordHelper.DF245_TAG;
-import static dk.kb.alma.client.utils.MarcRecordHelper.saveMarcRecordOnHolding;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
