@@ -1,3 +1,6 @@
+v.2.1 Not released
+* Add functionality to read and write Marc Records for Holdings
+
 v.2.0:
 * Upgrade to Java 25
 * Upgrade all dependencies
