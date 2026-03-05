@@ -1,8 +1,8 @@
 package dk.kb.alma.client.utils;
 
-import com.google.common.base.Charsets;
 import dk.kb.alma.client.exceptions.MarcXmlException;
 import dk.kb.alma.gen.bibs.Bib;
+import dk.kb.alma.gen.holding.Holding;
 import dk.kb.util.xml.XML;
 import org.apache.commons.io.IOUtils;
 import org.marc4j.MarcXmlReader;
@@ -103,11 +103,58 @@ public class MarcRecordHelper {
             MarcXmlWriter marcXmlWriter = new MarcXmlWriter(out);
             marcXmlWriter.write(marcRecord);
             marcXmlWriter.close();
-            String marcXmlString = out.toString(String.valueOf(Charsets.UTF_8));
+            String marcXmlString = out.toString(String.valueOf(StandardCharsets.UTF_8));
             Element marcElement = XML.fromXML(marcXmlString, false).getDocumentElement();
 
             almaRecord.getAnies().clear();
             almaRecord.getAnies().add(marcElement);
+        } catch (IOException e) {
+            throw new MarcXmlException("Failed to save marc record on Alma record");
+        }
+    }
+
+    public static Record getMarcRecordFromHolding(Holding holding) throws MarcXmlException {
+        Node marcXmlNode = null;
+
+        for (Element any : holding.getAnies()) {
+            if (any.getTagName().equals("record")) {
+                marcXmlNode = any;
+            }
+        }
+        if (marcXmlNode == null) {
+            throw new MarcXmlException("Wrong number of marcXml objects:  " + holding.getAnies().size() +
+                    " was found on Holding with id: " + holding.getHoldingId());
+        }
+
+        try (InputStream marcXmlStream = IOUtils.toInputStream(XML.domToString(marcXmlNode), StandardCharsets.UTF_8)) {
+            MarcXmlReader marcXmlReader = new MarcXmlReader(marcXmlStream);
+            Record marcRecord;
+            if (marcXmlReader.hasNext()) {
+                marcRecord = marcXmlReader.next();
+            } else {
+                throw new MarcXmlException(
+                        "No marc record found in marcXml on Holding with id: " + holding.getHoldingId());
+            }
+            if (marcXmlReader.hasNext()) {
+                throw new MarcXmlException("Multiple marc records found in marcXml on Holding with id: " +
+                        holding.getHoldingId());
+            }
+            return marcRecord;
+        } catch (IOException e) {
+            throw new MarcXmlException("Failed to read marcXml from Holding with id: " + holding.getHoldingId(), e);
+        }
+    }
+
+    public static void saveMarcRecordOnHolding(Holding holding, Record marcRecord) throws MarcXmlException {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            MarcXmlWriter marcXmlWriter = new MarcXmlWriter(out);
+            marcXmlWriter.write(marcRecord);
+            marcXmlWriter.close();
+            String marcXmlString = out.toString(String.valueOf(StandardCharsets.UTF_8));
+            Element marcElement = XML.fromXML(marcXmlString, false).getDocumentElement();
+
+            holding.getAnies().clear();
+            holding.getAnies().add(marcElement);
         } catch (IOException e) {
             throw new MarcXmlException("Failed to save marc record on Alma record");
         }
